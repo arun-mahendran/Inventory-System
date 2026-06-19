@@ -1,0 +1,30 @@
+.status {
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.status-delivered {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-assigned {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.status-failed {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.parcel-row {
+    transition: all 0.2s ease;
+}
+
+.parcel-row:hover {
+    background: #eff6ff;
+    cursor: pointer;
+}

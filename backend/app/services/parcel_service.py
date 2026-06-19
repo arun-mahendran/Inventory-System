@@ -1,0 +1,344 @@
+from sqlalchemy.orm import Session
+
+from app.models.parcel import Parcel
+from app.models.customer import Customer
+
+from app.schemas.parcel import ParcelCreate
+
+from app.services.assignment_engine import (
+    auto_assign_parcel
+)
+from app.models.delivery_agent import DeliveryAgent
+from app.models.parcel_assignment_history import (
+    ParcelAssignmentHistory
+)
+
+
+def create_parcel(
+    db: Session,
+    parcel: ParcelCreate
+):
+
+    customer = db.query(Customer).filter(
+        Customer.id == parcel.customer_id
+    ).first()
+
+    if not customer:
+        raise ValueError(
+            "Customer not found"
+        )
+
+    db_parcel = Parcel(
+        tracking_number=parcel.tracking_number,
+        customer_id=parcel.customer_id
+    )
+
+    db.add(db_parcel)
+    db.commit()
+    db.refresh(db_parcel)
+
+    auto_assign_parcel(
+        db,
+        db_parcel.id
+    )
+
+    db.refresh(db_parcel)
+
+    return db_parcel
+
+
+def get_all_parcels(
+    db: Session,
+    status: str = None,
+    agent_id: int = None,
+    customer_id: int = None
+):
+
+    query = db.query(Parcel)
+
+    if status:
+        query = query.filter(
+            Parcel.status == status
+        )
+
+    if agent_id:
+        query = query.filter(
+            Parcel.assigned_agent_id == agent_id
+        )
+
+    if customer_id:
+        query = query.filter(
+            Parcel.customer_id == customer_id
+        )
+
+    parcels = query.all()
+
+    for parcel in parcels:
+
+        parcel.history_count = len(
+            db.query(
+                ParcelAssignmentHistory
+            ).filter(
+                ParcelAssignmentHistory.parcel_id
+                == parcel.id
+            ).all()
+        )
+
+    return parcels
+
+
+def get_parcel_by_id(
+    db: Session,
+    parcel_id: int
+):
+
+    return db.query(
+        Parcel
+    ).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+
+def assign_parcel_to_agent(
+    db: Session,
+    parcel_id: int
+):
+    return auto_assign_parcel(
+        db,
+        parcel_id
+    )
+
+
+def mark_out_for_delivery(
+    db: Session,
+    parcel_id: int
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    parcel.status = "OutForDelivery"
+
+    db.commit()
+    db.refresh(parcel)
+
+    return parcel
+
+
+def mark_delivered(
+    db: Session,
+    parcel_id: int
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    parcel.status = "Delivered"
+
+    if parcel.assigned_agent_id:
+
+        agent = db.query(
+            DeliveryAgent
+        ).filter(
+            DeliveryAgent.id ==
+            parcel.assigned_agent_id
+        ).first()
+
+        if agent:
+
+            if agent.current_parcel_count > 0:
+                agent.current_parcel_count -= 1
+
+            if agent.current_parcel_count < 5:
+                agent.availability_status = (
+                    "Available"
+                )
+            else:
+                agent.availability_status = (
+                    "Busy"
+                )
+
+    db.commit()
+    db.refresh(parcel)
+
+    return parcel
+
+def mark_failed_delivery(
+    db: Session,
+    parcel_id: int,
+    reason: str
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    parcel.status = "FailedDelivery"
+
+    parcel.failure_reason = reason
+
+    if parcel.assigned_agent_id:
+
+        agent = db.query(
+            DeliveryAgent
+        ).filter(
+            DeliveryAgent.id ==
+            parcel.assigned_agent_id
+        ).first()
+
+        if agent:
+
+            if agent.current_parcel_count > 0:
+                agent.current_parcel_count -= 1
+
+            if agent.current_parcel_count < 5:
+                agent.availability_status = (
+                    "Available"
+                )
+            else:
+                agent.availability_status = (
+                    "Busy"
+                )
+
+    db.commit()
+    db.refresh(parcel)
+
+    return parcel
+
+
+def get_parcel_by_tracking_number(
+    db: Session,
+    tracking_number: str
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.tracking_number == tracking_number
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    return parcel
+
+
+def reassign_failed_parcel(
+    db: Session,
+    parcel_id: int
+):
+
+    parcel = db.query(
+        Parcel
+    ).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    if parcel.status != "FailedDelivery":
+        raise ValueError(
+            "Only failed parcels can be reassigned"
+        )
+
+    customer = db.query(
+        Customer
+    ).filter(
+        Customer.id == parcel.customer_id
+    ).first()
+
+    if not customer:
+        raise ValueError(
+            "Customer not found"
+        )
+
+    previous_agent_ids = db.query(
+        ParcelAssignmentHistory.agent_id
+    ).filter(
+        ParcelAssignmentHistory.parcel_id
+        == parcel_id
+    ).all()
+
+    previous_agent_ids = [
+        row[0]
+        for row in previous_agent_ids
+    ]
+
+    agent = db.query(
+        DeliveryAgent
+    ).filter(
+        DeliveryAgent.pincode
+        == customer.pincode,
+        DeliveryAgent.availability_status
+        == "Available",
+        ~DeliveryAgent.id.in_(
+            previous_agent_ids
+        )
+    ).order_by(
+        DeliveryAgent.current_parcel_count.asc()
+    ).first()
+
+    if not agent:
+        raise ValueError(
+            "No alternative delivery agent available"
+        )
+
+    parcel.assigned_agent_id = agent.id
+    parcel.status = "Assigned"
+
+    history = ParcelAssignmentHistory(
+        parcel_id=parcel.id,
+        agent_id=agent.id
+    )
+
+    db.add(history)
+
+    agent.current_parcel_count += 1
+
+    if agent.current_parcel_count >= 5:
+        agent.availability_status = (
+            "Busy"
+        )
+
+    db.commit()
+
+    return {
+        "parcel_id": parcel.id,
+        "agent_id": agent.id,
+        "status": parcel.status
+    }
+
+
+def get_parcel_history(
+    db: Session,
+    parcel_id: int
+):
+
+    return db.query(
+        ParcelAssignmentHistory
+    ).filter(
+        ParcelAssignmentHistory.parcel_id
+        == parcel_id
+    ).order_by(
+        ParcelAssignmentHistory.assigned_at
+    ).all()
