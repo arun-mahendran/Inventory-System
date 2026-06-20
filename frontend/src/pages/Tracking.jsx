@@ -100,46 +100,109 @@ function Tracking() {
                     </div>
 
                     {parcel && (
-
+                        
                         <div
                             style={{
-                                marginTop: "30px",
                                 background: "white",
-                                padding: "24px",
-                                borderRadius: "18px",
+                                padding: "30px",
+                                borderRadius: "20px",
+                                marginTop: "30px",
                                 boxShadow:
                                     "0 10px 25px rgba(0,0,0,0.08)"
                             }}
                         >
 
-                            <h2>
-                                Tracking Result
+                            <h2
+                                style={{
+                                    marginBottom: "25px",
+                                    color: "#0f172a"
+                                }}
+                            >
+                                📦 Tracking Result
                             </h2>
 
-                            <p>
-                                <b>Tracking Number:</b>{" "}
-                                {parcel.tracking_number}
-                            </p>
+                            <div
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns: "220px 1fr",
+                                    rowGap: "18px",
+                                    fontSize: "17px",
+                                    alignItems: "center"
+                                }}
+                            >
 
-                            <p>
-                                <b>Status:</b>{" "}
-                                {parcel.status}
-                            </p>
+                                <b>Tracking Number</b>
 
-                            <p>
-                                <b>Customer ID:</b>{" "}
-                                {parcel.customer_id}
-                            </p>
+                                <span
+                                    style={{
+                                        fontWeight: "600",
+                                        color: "#2563eb"
+                                    }}
+                                >
+                                    {parcel.tracking_number}
+                                </span>
 
-                            <p>
-                                <b>Assigned Agent:</b>{" "}
-                                {parcel.assigned_agent_id || "-"}
-                            </p>
+                                <b>Status</b>
 
-                            <p>
-                                <b>Created At:</b>{" "}
-                                {parcel.created_at}
-                            </p>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "fit-content",
+                                        padding: "6px 14px",
+                                        borderRadius: "999px",
+                                        fontWeight: "600",
+                                        color: "white",
+                                        background:
+                                            parcel.status === "Delivered"
+                                                ? "#22c55e"
+                                                : parcel.status === "FailedDelivery"
+                                                ? "#ef4444"
+                                                : parcel.status === "OutForDelivery"
+                                                ? "#8b5cf6"
+                                                : "#f59e0b"
+                                    }}
+                                >
+                                    {parcel.status}
+                                </span>
+
+                                <b>Customer ID</b>
+
+                                <span>
+                                    {parcel.customer_id}
+                                </span>
+
+                                <b>Assigned Agent</b>
+
+                                <span>
+                                    {parcel.assigned_agent_id || "-"}
+                                </span>
+
+                                <b>Created At</b>
+
+                                <span>
+                                    {new Date(
+                                        parcel.created_at
+                                    ).toLocaleString()}
+                                </span>
+
+                                {
+                                    parcel.failure_reason && (
+                                        <>
+                                            <b>Failure Reason</b>
+
+                                            <span
+                                                style={{
+                                                    color: "#dc2626",
+                                                    fontWeight: "600"
+                                                }}
+                                            >
+                                                {parcel.failure_reason}
+                                            </span>
+                                        </>
+                                    )
+                                }
+
+                            </div>
 
                         </div>
 

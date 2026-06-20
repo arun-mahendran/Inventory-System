@@ -12,6 +12,8 @@ from app.models.delivery_agent import DeliveryAgent
 from app.models.parcel_assignment_history import (
     ParcelAssignmentHistory
 )
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 
 
 def create_parcel(
@@ -33,9 +35,22 @@ def create_parcel(
         customer_id=parcel.customer_id
     )
 
-    db.add(db_parcel)
-    db.commit()
-    db.refresh(db_parcel)
+    try:
+
+        db.add(db_parcel)
+
+        db.commit()
+
+        db.refresh(db_parcel)
+
+    except IntegrityError:
+
+        db.rollback()
+
+        raise HTTPException(
+            status_code=400,
+            detail="Tracking Number already exists"
+        )
 
     auto_assign_parcel(
         db,

@@ -29,6 +29,12 @@ function Parcels() {
     const [failureReason, setFailureReason] =
         useState("");
 
+    const [selectedParcel, setSelectedParcel] =
+        useState(null);
+
+    const [showModal, setShowModal] =
+        useState(false);
+
 const disabledButton = {
     padding: "6px 10px",
     border: "none",
@@ -200,6 +206,34 @@ const filteredParcels =
         );
 
     });
+
+
+const viewParcelDetails = async (
+    parcelId
+) => {
+
+    try {
+
+        const response =
+            await api.get(
+                `/parcels/${parcelId}`
+            );
+
+        setSelectedParcel(
+            response.data
+        );
+
+        setShowModal(
+            true
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+};
 
     useEffect(() => {
 
@@ -382,10 +416,17 @@ const filteredParcels =
 
                                         <td
                                             style={{
-                                                padding: "12px",
-                                                borderTop:
-                                                    "1px solid #e5e7eb"
+                                                padding: "16px",
+                                                color: "#2563eb",
+                                                fontWeight: "600",
+                                                cursor: "pointer",
+                                                textDecoration: "underline"
                                             }}
+                                            onClick={() =>
+                                                viewParcelDetails(
+                                                    parcel.id
+                                                )
+                                            }
                                         >
                                             {parcel.tracking_number}
                                         </td>
@@ -586,6 +627,136 @@ const filteredParcels =
                         </table>
 
                     </div>
+
+                    {
+                        showModal &&
+                        selectedParcel && (
+
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    background:
+                                        "rgba(0,0,0,0.5)",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    zIndex: 9999
+                                }}
+                            >
+
+                                <div
+                                    style={{
+                                        background: "white",
+                                        width: "500px",
+                                        padding: "30px",
+                                        borderRadius: "20px",
+                                        boxShadow:
+                                            "0 20px 40px rgba(0,0,0,0.2)"
+                                    }}
+                                >
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent:
+                                                "space-between",
+                                            alignItems:
+                                                "center",
+                                            marginBottom: "20px"
+                                        }}
+                                    >
+
+                                        <h2>
+                                            📦 Parcel Details
+                                        </h2>
+
+                                        <button
+                                            onClick={() =>
+                                                setShowModal(
+                                                    false
+                                                )
+                                            }
+                                            style={{
+                                                border: "none",
+                                                background: "none",
+                                                cursor: "pointer",
+                                                fontSize: "22px"
+                                            }}
+                                        >
+                                            ✕
+                                        </button>
+
+                                    </div>
+
+                                    <div
+                                        style={{
+                                            display: "grid",
+                                            gridTemplateColumns: "170px 1fr",
+                                            rowGap: "10px",
+                                            marginTop: "20px"
+                                        }}
+                                    >
+
+                                        <b>Tracking Number</b>
+                                        <span>{selectedParcel.tracking_number}</span>
+
+                                        <b>Status</b>
+                                        <span>{selectedParcel.status}</span>
+
+                                        <b>Customer ID</b>
+                                        <span>{selectedParcel.customer_id}</span>
+
+                                        <b>Assigned Agent</b>
+                                        <span>
+                                            {
+                                                selectedParcel.assigned_agent_id || "-"
+                                            }
+                                        </span>
+
+                                        {
+                                            selectedParcel.failure_reason && (
+
+                                                <>
+                                                    <b>
+                                                        Failure Reason
+                                                    </b>
+
+                                                    <span
+                                                        style={{
+                                                            color: "#dc2626",
+                                                            fontWeight: "600"
+                                                        }}
+                                                    >
+                                                        {
+                                                            selectedParcel.failure_reason
+                                                        }
+                                                    </span>
+                                                </>
+
+                                            )
+                                        }
+
+                                        <b>Created At</b>
+                                        <span>
+                                            {
+                                                new Date(
+                                                    selectedParcel.created_at
+                                                ).toLocaleString()
+                                            }
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        )
+                    }
 
                 </PageContainer>
 

@@ -14,6 +14,9 @@ function CreateParcel() {
     const [successMessage, setSuccessMessage] =
         useState("");
 
+    const [errorMessage, setErrorMessage] =
+    useState("");
+
     const [formData, setFormData] = useState({
         tracking_number: "",
         customer_id: ""
@@ -31,6 +34,8 @@ function CreateParcel() {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+
+        setErrorMessage("");
 
         try {
 
@@ -58,6 +63,11 @@ function CreateParcel() {
             console.error(
                 "Create Parcel Error:",
                 error
+            );
+
+            setErrorMessage(
+                error.response?.data?.detail ||
+                "Failed to create parcel"
             );
 
         }
@@ -96,6 +106,26 @@ function CreateParcel() {
                                 }}
                             >
                                 {successMessage}
+                            </div>
+
+                        )
+                    }
+
+                    {
+                        errorMessage && (
+
+                            <div
+                                style={{
+                                    background: "#fee2e2",
+                                    color: "#b91c1c",
+                                    padding: "14px",
+                                    borderRadius: "10px",
+                                    marginTop: "20px",
+                                    marginBottom: "20px",
+                                    fontWeight: "600"
+                                }}
+                            >
+                                ❌ {errorMessage}
                             </div>
 
                         )
