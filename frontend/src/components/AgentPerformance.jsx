@@ -199,8 +199,8 @@ function AgentPerformance() {
                 <table
                     style={{
                         width: "100%",
-                        borderCollapse:
-                            "collapse"
+                        borderCollapse: "collapse",
+                        textAlign: "center"
                     }}
                 >
 
@@ -208,23 +208,23 @@ function AgentPerformance() {
 
                         <tr>
 
-                            <th style={{padding:"12px"}}>
+                            <th style={{padding:"16px", textAlign:"left"}}>
                                 Agent
                             </th>
 
-                            <th style={{padding:"12px"}}>
+                            <th style={{padding:"16px", textAlign:"center"}}>
                                 Active
                             </th>
 
-                            <th style={{padding:"12px"}}>
+                            <th style={{padding:"16px", textAlign:"center"}}>
                                 Delivered
                             </th>
 
-                            <th style={{padding:"12px"}}>
+                            <th style={{padding:"16px", textAlign:"center"}}>
                                 Failed
                             </th>
 
-                            <th style={{padding:"12px"}}>
+                            <th style={{padding:"16px", textAlign:"center"}}>
                                 Success %
                             </th>
 
@@ -244,23 +244,61 @@ function AgentPerformance() {
                                         }
                                     >
 
-                                        <td style={{padding:"12px"}}>
+                                        <td
+                                            style={{
+                                                padding: "16px",
+                                                textAlign: "left",
+                                                borderTop: "1px solid #e5e7eb",
+                                                fontWeight: "600"
+                                            }}
+                                        >
                                             {agent.agent_name}
                                         </td>
 
-                                        <td style={{padding:"12px"}}>
+                                        <td
+                                            style={{
+                                                padding: "16px",
+                                                textAlign: "center",
+                                                borderTop: "1px solid #e5e7eb"
+                                            }}
+                                        >
                                             {agent.active_parcels}
                                         </td>
 
-                                        <td style={{padding:"12px"}}>
+                                        <td
+                                            style={{
+                                                padding: "16px",
+                                                textAlign: "center",
+                                                borderTop: "1px solid #e5e7eb"
+                                            }}
+                                        >
                                             {agent.delivered_parcels}
                                         </td>
 
-                                        <td style={{padding:"12px"}}>
+                                        <td
+                                            style={{
+                                                padding: "16px",
+                                                textAlign: "center",
+                                                borderTop: "1px solid #e5e7eb"
+                                            }}
+                                        >
                                             {agent.failed_parcels}
                                         </td>
 
-                                        <td style={{padding:"12px"}}>
+                                        <td
+                                            style={{
+                                                padding: "16px",
+                                                textAlign: "center",
+                                                borderTop: "1px solid #e5e7eb",
+                                                fontWeight: "700",
+                                                color:
+                                                    agent.success_rate >= 90
+                                                        ? "#16a34a"
+                                                        : agent.success_rate >= 70
+                                                        ? "#ca8a04"
+                                                        : "#dc2626"
+                                            }}
+                                        >
                                             {agent.success_rate}%
                                         </td>
 
