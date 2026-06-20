@@ -7,6 +7,7 @@ import Sidebar from "../components/Sidebar";
 import DashboardCards from "../components/DashboardCards";
 import RecentParcels from "../components/RecentParcels";
 import PageContainer from "../components/PageContainer";
+import AgentPerformance from "../components/AgentPerformance";
 
 function Dashboard() {
 
@@ -321,6 +322,7 @@ function Dashboard() {
 
                         )
                     }
+                    <AgentPerformance />
 
                     <RecentParcels />
 
