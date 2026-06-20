@@ -8,6 +8,7 @@ import DashboardCards from "../components/DashboardCards";
 import RecentParcels from "../components/RecentParcels";
 import PageContainer from "../components/PageContainer";
 import AgentPerformance from "../components/AgentPerformance";
+import DeliveryStatusChart from "../components/DeliveryStatusChart";
 
 function Dashboard() {
 
@@ -125,6 +126,10 @@ function Dashboard() {
                     </p>
 
                     <DashboardCards
+                        summary={summary}
+                    />
+
+                    <DeliveryStatusChart
                         summary={summary}
                     />
 
