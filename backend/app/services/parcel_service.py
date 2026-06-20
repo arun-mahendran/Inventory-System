@@ -305,10 +305,7 @@ def reassign_failed_parcel(
         DeliveryAgent.pincode
         == customer.pincode,
         DeliveryAgent.availability_status
-        == "Available",
-        ~DeliveryAgent.id.in_(
-            previous_agent_ids
-        )
+        == "Available"
     ).order_by(
         DeliveryAgent.current_parcel_count.asc()
     ).first()
@@ -320,6 +317,7 @@ def reassign_failed_parcel(
 
     parcel.assigned_agent_id = agent.id
     parcel.status = "Assigned"
+    parcel.failure_reason = None
 
     history = ParcelAssignmentHistory(
         parcel_id=parcel.id,

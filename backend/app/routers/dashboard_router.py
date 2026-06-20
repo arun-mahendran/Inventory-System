@@ -18,6 +18,7 @@ from app.services.dashboard_service import (
     get_worst_agent,
     get_delivery_metrics,
     get_pincode_wise_parcels,
+    get_recent_parcels,
     get_parcels_by_pincode
 )
 
@@ -78,6 +79,15 @@ def delivery_metrics(
     db: Session = Depends(get_db)
 ):
     return get_delivery_metrics(db)
+
+
+@router.get(
+    "/recent-parcels"
+)
+def recent_parcels(
+    db: Session = Depends(get_db)
+):
+    return get_recent_parcels(db)
 
 
 @router.get(

@@ -246,6 +246,20 @@ def get_pincode_wise_parcels(
     ]
 
 
+def get_recent_parcels(
+    db: Session
+):
+
+    return (
+        db.query(Parcel)
+        .order_by(
+            Parcel.created_at.desc()
+        )
+        .limit(10)
+        .all()
+    )
+
+
 def get_parcels_by_pincode(
     db: Session,
     pincode: str

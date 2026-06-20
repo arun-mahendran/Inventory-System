@@ -14,7 +14,7 @@ function RecentParcels() {
             try {
 
                 const response = await api.get(
-                    "/parcels"
+                    "/dashboard/recent-parcels"
                 );
 
                 console.log(

@@ -122,10 +122,19 @@ def get_parcel(
     parcel_id: int,
     db: Session = Depends(get_db)
 ):
-    return get_parcel_by_id(
+
+    parcel = get_parcel_by_id(
         db,
         parcel_id
     )
+
+    if not parcel:
+        raise HTTPException(
+            status_code=404,
+            detail="Parcel not found"
+        )
+
+    return parcel
 
 
 @router.post(

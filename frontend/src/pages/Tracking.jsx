@@ -100,7 +100,7 @@ function Tracking() {
                     </div>
 
                     {parcel && (
-                        
+
                         <div
                             style={{
                                 background: "white",
@@ -177,15 +177,8 @@ function Tracking() {
                                     {parcel.assigned_agent_id || "-"}
                                 </span>
 
-                                <b>Created At</b>
-
-                                <span>
-                                    {new Date(
-                                        parcel.created_at
-                                    ).toLocaleString()}
-                                </span>
-
                                 {
+                                    parcel.status === "FailedDelivery" &&
                                     parcel.failure_reason && (
                                         <>
                                             <b>Failure Reason</b>
@@ -201,6 +194,14 @@ function Tracking() {
                                         </>
                                     )
                                 }
+
+                                <b>Created At</b>
+
+                                <span>
+                                    {new Date(
+                                        parcel.created_at
+                                    ).toLocaleString()}
+                                </span>
 
                             </div>
 

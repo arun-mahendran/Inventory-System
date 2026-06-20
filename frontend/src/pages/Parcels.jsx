@@ -35,6 +35,8 @@ function Parcels() {
     const [showModal, setShowModal] =
         useState(false);
 
+    const [errorMessage, setErrorMessage] = useState("");
+
 const disabledButton = {
     padding: "6px 10px",
     border: "none",
@@ -132,9 +134,9 @@ const reassignParcel = async (
 
     } catch (error) {
 
-        console.error(
-            "Reassign Error:",
-            error
+        setErrorMessage(
+            error.response?.data?.detail ||
+            "Failed to reassign parcel"
         );
 
     }
@@ -266,6 +268,26 @@ const viewParcelDetails = async (
                         <h1>
                             Parcels
                         </h1>
+
+                        {
+                            errorMessage && (
+
+                                <div
+                                    style={{
+                                        background: "#fee2e2",
+                                        color: "#b91c1c",
+                                        padding: "14px",
+                                        borderRadius: "10px",
+                                        marginTop: "15px",
+                                        marginBottom: "15px",
+                                        fontWeight: "600"
+                                    }}
+                                >
+                                    ⚠ {errorMessage}
+                                </div>
+
+                            )
+                        }
 
                         <button
                             onClick={() =>
