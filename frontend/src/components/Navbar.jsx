@@ -22,25 +22,45 @@ function Navbar({
             >
 
                 <button
-
                     onClick={() =>
                         setSidebarOpen(
                             !sidebarOpen
                         )
                     }
 
+                    onMouseEnter={(e) =>
+                        e.currentTarget.style.transform =
+                            "scale(1.08)"
+                    }
+
+                    onMouseLeave={(e) =>
+                        e.currentTarget.style.transform =
+                            "scale(1)"
+                    }
+
                     style={{
+
                         border: "none",
-                        background: "transparent",
+                        background: "#0f172a",
+
+                        width: "44px",
+                        height: "44px",
+                        borderRadius: "12px",
                         cursor: "pointer",
                         display: "flex",
-                        alignItems: "center"
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow:
+                            "0 8px 20px rgba(15,23,42,0.25)",
+                        transition:
+                            "all 0.25s ease"
+
                     }}
                 >
 
                     <HiOutlineMenuAlt2
-                        size={30}
-                        color="#334155"
+                        size={28}
+                        color="white"
                     />
 
                 </button>
