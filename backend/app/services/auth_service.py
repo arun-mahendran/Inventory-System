@@ -43,5 +43,9 @@ def login_user(
 
     return {
         "access_token": token,
-        "token_type": "bearer"
+        "token_type": "bearer",
+        "change_password":
+            not user.is_password_changed,
+        "user_id":
+            user.id
     }

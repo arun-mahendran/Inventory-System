@@ -32,10 +32,14 @@ function Parcels() {
     const [selectedParcel, setSelectedParcel] =
         useState(null);
 
+    const [showFilterDropdown, setShowFilterDropdown] =
+    useState(false);
+
     const [showModal, setShowModal] =
         useState(false);
 
     const [errorMessage, setErrorMessage] = useState("");
+
 
 const disabledButton = {
     padding: "6px 10px",
@@ -45,6 +49,7 @@ const disabledButton = {
     color: "#6b7280",
     cursor: "not-allowed"
 };
+
 
 const fetchParcels = async () => {
 
@@ -237,6 +242,33 @@ const viewParcelDetails = async (
 
 };
 
+const filters = [
+    {
+        label: "📦 All Parcels",
+        value: "All"
+    },
+    {
+        label: "🟡 Assigned",
+        value: "Assigned"
+    },
+    {
+        label: "🚚 Out For Delivery",
+        value: "OutForDelivery"
+    },
+    {
+        label: "✅ Delivered",
+        value: "Delivered"
+    },
+    {
+        label: "❌ Failed Delivery",
+        value: "FailedDelivery"
+    },
+    {
+        label: "🔄 Reassigned",
+        value: "Reassigned"
+    }
+];
+
     useEffect(() => {
 
     fetchParcels();
@@ -322,47 +354,136 @@ const viewParcelDetails = async (
                     <div
                         style={{
                             display: "flex",
-                            gap: "10px",
-                            marginBottom: "20px",
-                            flexWrap: "wrap"
+                            alignItems: "center",
+                            gap: "20px",
+                            marginBottom: "25px"
                         }}
                     >
 
-                        {
-                            [
-                                "All",
-                                "Assigned",
-                                "OutForDelivery",
-                                "Delivered",
-                                "FailedDelivery",
-                                "Reassigned"
-                            ].map((filter) => (
+                        <span
+                            style={{
+                                fontSize: "16px",
+                                fontWeight: "600",
+                                color: "#334155"
+                            }}
+                        >
+                            🔍 Filter Parcels
+                        </span>
 
-                                <button
-                                    key={filter}
-                                    onClick={() =>
-                                        setSelectedFilter(filter)
+                        <div
+                            style={{
+                                position: "relative",
+                                width: "230px"
+                            }}
+                        >
+
+                            <div
+                                onClick={() =>
+                                    setShowFilterDropdown(
+                                        !showFilterDropdown
+                                    )
+                                }
+
+                                style={{
+                                    background: "white",
+                                    padding: "14px 18px",
+                                    borderRadius: "16px",
+                                    boxShadow:
+                                        "0 8px 20px rgba(0,0,0,0.08)",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    cursor: "pointer",
+                                    fontWeight: "600",
+                                    fontSize: "16px",
+                                    border: "2px solid #e2e8f0"
+                                }}
+                            >
+
+                                {
+                                    filters.find(
+                                        f => f.value === selectedFilter
+                                    )?.label
+                                }
+
+                                <span>
+                                    {
+                                        showFilterDropdown
+                                            ? "▲"
+                                            : "▼"
                                     }
-                                    style={{
-                                        padding: "8px 14px",
-                                        border: "none",
-                                        borderRadius: "8px",
-                                        cursor: "pointer",
-                                        background:
-                                            selectedFilter === filter
-                                            ? "#2563eb"
-                                            : "#e5e7eb",
-                                        color:
-                                            selectedFilter === filter
-                                            ? "white"
-                                            : "#374151"
-                                    }}
-                                >
-                                    {filter}
-                                </button>
+                                </span>
 
-                            ))
-                        }
+                            </div>
+
+                            {
+                                showFilterDropdown && (
+
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: "60px",
+                                            width: "100%",
+                                            background: "white",
+                                            borderRadius: "18px",
+                                            boxShadow:
+                                                "0 15px 35px rgba(0,0,0,0.15)",
+                                            overflow: "hidden",
+                                            zIndex: 1000
+                                        }}
+                                    >
+
+                                        {
+                                            filters.map((filter) => (
+
+                                                <div
+                                                    key={filter.value}
+
+                                                    onClick={() => {
+
+                                                        setSelectedFilter(
+                                                            filter.value
+                                                        );
+
+                                                        setShowFilterDropdown(
+                                                            false
+                                                        );
+
+                                                    }}
+
+                                                    style={{
+                                                        padding: "12px 18px",
+                                                        cursor: "pointer",
+                                                        fontWeight: "500",
+                                                        fontSize: "15px",
+
+                                                        background:
+                                                            selectedFilter === filter.value
+                                                                ? "#eff6ff"
+                                                                : "white",
+
+                                                        transition: "all 0.2s ease",
+
+                                                        borderBottom:
+                                                            filter.value !== "Reassigned"
+                                                                ? "1px solid #f1f5f9"
+                                                                : "none"
+                                                    }}
+                                                >
+
+                                                    {filter.label}
+
+                                                </div>
+
+                                            ))
+                                        }
+
+                                    </div>
+
+                                )
+                            }
+
+                        </div>
 
                     </div>
 

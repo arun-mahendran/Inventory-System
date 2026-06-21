@@ -6,14 +6,16 @@ from sqlalchemy.orm import Session
 
 from app.schemas.user import (
     UserCreate,
-    UserResponse
+    UserResponse,
+    ChangePasswordRequest
 )
 
 from app.services.user_service import (
     create_user,
     get_all_users,
     get_user_by_id,
-    delete_user
+    delete_user,
+    update_password
 )
 
 from app.utils.dependencies import get_db
@@ -77,3 +79,18 @@ def remove_user(
     return {
         "message": "User deleted successfully"
     }
+
+
+@router.patch(
+    "/{user_id}/change-password"
+)
+def change_password(
+    user_id: int,
+    request: ChangePasswordRequest,
+    db: Session = Depends(get_db)
+):
+    return update_password(
+        db,
+        user_id,
+        request.new_password
+    )

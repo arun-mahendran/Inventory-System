@@ -21,7 +21,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=DeliveryAgentResponse)
+@router.post("/",)
 def create_agent(
     agent: DeliveryAgentCreate,
     db: Session = Depends(get_db)

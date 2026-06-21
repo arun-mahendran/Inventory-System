@@ -4,6 +4,7 @@ from app.models.user import User
 from app.schemas.user import UserCreate
 
 from app.core.security import hash_password
+from app.utils.security import (get_password_hash)
 
 
 def create_user(db: Session, user: UserCreate):
@@ -61,3 +62,36 @@ def delete_user(
         db.commit()
 
     return user
+
+
+def update_password(
+    db: Session,
+    user_id: int,
+    new_password: str
+):
+
+    user = db.query(
+        User
+    ).filter(
+        User.id == user_id
+    ).first()
+
+    if not user:
+        raise ValueError(
+            "User not found"
+        )
+
+    user.password = (
+        get_password_hash(
+            new_password
+        )
+    )
+
+    user.is_password_changed = True
+
+    db.commit()
+
+    return {
+        "message":
+            "Password updated"
+    }

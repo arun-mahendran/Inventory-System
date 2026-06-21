@@ -20,3 +20,7 @@ class UserResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ChangePasswordRequest(BaseModel):
+    new_password: str

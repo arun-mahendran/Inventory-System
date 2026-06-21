@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from sqlalchemy.sql import func
-
+from sqlalchemy import Boolean
 from app.database import Base
 
 
@@ -19,3 +19,4 @@ class User(Base):
         server_default=func.now(),
         onupdate=func.now()
     )
+    is_password_changed = Column(Boolean, default=False)

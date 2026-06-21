@@ -12,6 +12,8 @@ import Parcels from "./pages/Parcels";
 import CreateParcel from "./pages/CreateParcel";
 import Tracking from "./pages/Tracking";
 import ParcelHistory from "./pages/ParcelHistory";
+import CreateAgent from "./pages/CreateAgent";
+import ChangePassword from "./pages/ChangePassword";
 
 function App() {
     return (
@@ -70,6 +72,16 @@ function App() {
                 element={
                     <ParcelHistory />
                 }
+            />
+
+            <Route
+                path="/create-agent"
+                element={<CreateAgent />}
+            />
+
+            <Route
+                path="/change-password"
+                element={<ChangePassword />}
             />
 
         </Routes>

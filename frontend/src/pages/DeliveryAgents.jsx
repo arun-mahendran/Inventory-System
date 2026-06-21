@@ -5,10 +5,13 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
+import { useNavigate } from "react-router-dom";
 
 function DeliveryAgents() {
 
     const [agents, setAgents] = useState([]);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
 
@@ -65,6 +68,10 @@ function DeliveryAgents() {
                         </h1>
 
                         <button
+                            onClick={() =>
+                                navigate("/create-agent")
+                            }
+
                             style={{
                                 background: "#2563eb",
                                 color: "white",
@@ -106,7 +113,7 @@ function DeliveryAgents() {
                                             padding: "12px"
                                         }}
                                     >
-                                        Vehicle
+                                        Agent
                                     </th>
 
                                     <th
@@ -156,7 +163,30 @@ function DeliveryAgents() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {agent.vehicle_number}
+
+                                            <div>
+
+                                                <div
+                                                    style={{
+                                                        fontWeight: "600",
+                                                        color: "#0f172a"
+                                                    }}
+                                                >
+                                                    {agent.agent_name}
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        fontSize: "13px",
+                                                        color: "#64748b",
+                                                        marginTop: "4px"
+                                                    }}
+                                                >
+                                                    🚚 {agent.vehicle_number}
+                                                </div>
+
+                                            </div>
+
                                         </td>
 
                                         <td

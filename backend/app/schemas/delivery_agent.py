@@ -3,7 +3,9 @@ from datetime import datetime
 
 
 class DeliveryAgentCreate(BaseModel):
-    user_id: int
+    full_name: str
+    email: str
+    phone: str
     hub_id: int
     vehicle_number: str
     pincode: str
@@ -12,6 +14,7 @@ class DeliveryAgentCreate(BaseModel):
 class DeliveryAgentResponse(BaseModel):
     id: int
     user_id: int
+    agent_name: str   
     hub_id: int
     vehicle_number: str
     pincode: str
