@@ -14,6 +14,7 @@ import Tracking from "./pages/Tracking";
 import ParcelHistory from "./pages/ParcelHistory";
 import CreateAgent from "./pages/CreateAgent";
 import ChangePassword from "./pages/ChangePassword";
+import CreateCustomer from "./pages/CreateCustomer";
 
 function App() {
     return (
@@ -82,6 +83,11 @@ function App() {
             <Route
                 path="/change-password"
                 element={<ChangePassword />}
+            />
+
+            <Route
+                path="/create-customer"
+                element={<CreateCustomer />}
             />
 
         </Routes>

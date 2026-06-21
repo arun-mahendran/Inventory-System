@@ -89,6 +89,7 @@ def get_agent_performance(
         success_rate = 0
 
         if total_completed > 0:
+
             success_rate = round(
                 (
                     delivered_parcels /
@@ -108,8 +109,26 @@ def get_agent_performance(
             }
         )
 
-    return result
+    result = [
 
+        r for r in result
+
+        if r["delivered_parcels"] > 0
+        or r["failed_parcels"] > 0
+
+    ]
+
+    result = sorted(
+
+        result,
+
+        key=lambda x: x["success_rate"],
+
+        reverse=True
+
+    )
+
+    return result[:5]
 
 
 def get_top_agent(

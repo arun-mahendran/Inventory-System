@@ -36,6 +36,6 @@ body {
 }
 
 .table-row:hover {
-    background: #eff6ff;
-    cursor: pointer;
+    background: #f8fafc;
+    transform: scale(1.005);
 }

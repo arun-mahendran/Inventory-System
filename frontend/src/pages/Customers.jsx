@@ -5,15 +5,45 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
+import { useNavigate } from "react-router-dom";
 
 function Customers() {
+
+    const navigate = useNavigate();
 
     const [customers, setCustomers] = useState([]);
 
     useEffect(() => {
 
-    const fetchCustomers = async () => {
+        const fetchCustomers = async () => {
 
+            try {
+
+                const response = await api.get(
+                    "/customers/"
+                );
+
+                setCustomers(
+                    response.data
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "Customer Error:",
+                    error
+                );
+
+            }
+
+        };
+
+        fetchCustomers();
+
+    }, []);
+
+    useEffect(() => {
+    const fetchCustomers = async () => {
         try {
 
             const response = await api.get(
@@ -66,6 +96,10 @@ function Customers() {
                         </h1>
 
                         <button
+                            onClick={() =>
+                                navigate("/create-customer")
+                            }
+
                             style={{
                                 background: "#2563eb",
                                 color: "white",

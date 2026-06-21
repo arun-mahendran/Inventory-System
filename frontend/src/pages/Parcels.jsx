@@ -10,6 +10,7 @@ import api from "../api/axios";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
+import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 
 function Parcels() {
 
@@ -360,15 +361,30 @@ const filters = [
                         }}
                     >
 
-                        <span
+                        <div
                             style={{
-                                fontSize: "16px",
-                                fontWeight: "600",
-                                color: "#334155"
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "8px"
                             }}
                         >
-                            🔍 Filter Parcels
-                        </span>
+
+                            <HiOutlineAdjustmentsHorizontal
+                                size={22}
+                                color="#2563eb"
+                            />
+
+                            <span
+                                style={{
+                                    fontSize: "16px",
+                                    fontWeight: "600",
+                                    color: "#334155"
+                                }}
+                            >
+                                Filter Parcels
+                            </span>
+
+                        </div>
 
                         <div
                             style={{
