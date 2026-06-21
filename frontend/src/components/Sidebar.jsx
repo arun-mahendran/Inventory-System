@@ -108,6 +108,8 @@ function Sidebar({
             <NavLink
                 to="/dashboard"
 
+                title={!sidebarOpen ? "Dashboard" : ""}
+
                 className={({ isActive }) =>
                     isActive
                         ? "sidebar-link active-link"
@@ -127,6 +129,8 @@ function Sidebar({
 
             <NavLink
                 to="/customers"
+
+                title={!sidebarOpen ? "Customers" : ""}
 
                 className={({ isActive }) =>
                     isActive
@@ -148,6 +152,8 @@ function Sidebar({
             <NavLink
                 to="/delivery-agents"
 
+                title={!sidebarOpen ? "Agents" : ""}
+
                 className={({ isActive }) =>
                     isActive
                         ? "sidebar-link active-link"
@@ -167,6 +173,8 @@ function Sidebar({
 
             <NavLink
                 to="/parcels"
+
+                title={!sidebarOpen ? "Parcels" : ""}
 
                 className={({ isActive }) =>
                     isActive
@@ -188,6 +196,8 @@ function Sidebar({
             <NavLink
                 to="/tracking"
 
+                title={!sidebarOpen ? "Tracking" : ""}
+
                 className={({ isActive }) =>
                     isActive
                         ? "sidebar-link active-link"
@@ -207,6 +217,8 @@ function Sidebar({
 
             <NavLink
                 to="/analytics"
+
+                title={!sidebarOpen ? "Analytics" : ""}
 
                 className={({ isActive }) =>
                     isActive
@@ -228,6 +240,8 @@ function Sidebar({
 
             <NavLink
                 to="/reports"
+
+                title={!sidebarOpen ? "Reports" : ""}
 
                 className={({ isActive }) =>
                     isActive

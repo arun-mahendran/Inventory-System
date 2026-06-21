@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { FiUsers } from "react-icons/fi";
 
@@ -13,9 +11,6 @@ function Customers() {
     const navigate = useNavigate();
 
     const [customers, setCustomers] = useState([]);
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     useEffect(() => {
     const fetchCustomers = async () => {
@@ -46,23 +41,7 @@ function Customers() {
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <div
                         style={{
@@ -228,9 +207,7 @@ function Customers() {
 
                     </div>
 
-                </PageContainer>
-
-            </div>
+                </MainLayout>
         </>
     );
 }

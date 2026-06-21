@@ -3,18 +3,13 @@ import { useParams } from "react-router-dom";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 
 function ParcelHistory() {
 
     const { id } = useParams();
 
     const [history, setHistory] = useState([]);
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     useEffect(() => {
 
@@ -57,23 +52,7 @@ function ParcelHistory() {
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <h1>
                         Parcel History
@@ -172,9 +151,7 @@ function ParcelHistory() {
 
                     </div>
 
-                </PageContainer>
-
-            </div>
+                </MainLayout>
         </>
     );
 }

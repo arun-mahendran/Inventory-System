@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+import MainLayout from "../components/MainLayout";
 import DashboardCards from "../components/DashboardCards";
 import RecentParcels from "../components/RecentParcels";
-import PageContainer from "../components/PageContainer";
 import AgentPerformance from "../components/AgentPerformance";
 import DeliveryStatusChart from "../components/DeliveryStatusChart";
 
@@ -27,9 +25,6 @@ function Dashboard() {
 
     const [searchPincode, setSearchPincode] =
     useState("");
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
 
     const fetchParcelsByPincode =
@@ -96,23 +91,7 @@ function Dashboard() {
 
    return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <h1
                         style={{
@@ -341,9 +320,7 @@ function Dashboard() {
 
                     <RecentParcels />
 
-                </PageContainer>
-
-            </div>
+               </MainLayout>
         </>
     );
 }

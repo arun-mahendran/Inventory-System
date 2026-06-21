@@ -3,16 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 
 function CreateCustomer() {
 
     const navigate = useNavigate();
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     const [showModal, setShowModal] = useState(false);
 
@@ -77,24 +72,7 @@ function CreateCustomer() {
     return (
 
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     {showModal && (
 
@@ -400,10 +378,7 @@ function CreateCustomer() {
 
                     </form>
 
-                </PageContainer>
-
-            </div>
-
+                </MainLayout>
         </>
 
     );

@@ -1,10 +1,6 @@
 import { useState } from "react";
-
 import api from "../api/axios";
-
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 
 function Tracking() {
 
@@ -13,9 +9,6 @@ function Tracking() {
 
     const [parcel, setParcel] =
         useState(null);
-
-    const [sidebarOpen, setSidebarOpen] =
-        useState(true);
 
     const searchParcel = async () => {
 
@@ -46,23 +39,7 @@ function Tracking() {
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <h1>
                         Parcel Tracking
@@ -219,9 +196,7 @@ function Tracking() {
 
                     )}
 
-                </PageContainer>
-
-            </div>
+               </MainLayout>
         </>
     );
 }

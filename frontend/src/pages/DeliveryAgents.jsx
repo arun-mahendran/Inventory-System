@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { FiTruck } from "react-icons/fi";
 
@@ -13,9 +11,6 @@ function DeliveryAgents() {
     const [agents, setAgents] = useState([]);
 
     const navigate = useNavigate();
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     useEffect(() => {
 
@@ -48,23 +43,7 @@ function DeliveryAgents() {
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <div
                         style={{
@@ -267,9 +246,7 @@ function DeliveryAgents() {
 
                     </div>
 
-                </PageContainer>
-
-            </div>
+                </MainLayout>
 
         </>
     );

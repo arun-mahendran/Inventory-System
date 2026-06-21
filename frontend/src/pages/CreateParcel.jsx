@@ -3,16 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
 
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 
 function CreateParcel() {
 
     const navigate = useNavigate();
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     const [successMessage, setSuccessMessage] =
         useState("");
@@ -79,23 +74,7 @@ function CreateParcel() {
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <h1>
                         Create Parcel
@@ -221,9 +200,7 @@ function CreateParcel() {
 
                     </form>
 
-                </PageContainer>
-
-            </div>
+               </MainLayout>
         </>
     );
 }

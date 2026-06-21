@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 import { FiCopy, FiX } from "react-icons/fi";
 import { LuKeyRound } from "react-icons/lu";
 import { HiOutlineCheckCircle } from "react-icons/hi";
@@ -12,9 +10,6 @@ import { HiOutlineCheckCircle } from "react-icons/hi";
 function CreateAgent() {
 
     const navigate = useNavigate();
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     const [formData, setFormData] = useState({
         full_name: "",
@@ -125,24 +120,7 @@ function CreateAgent() {
     return (
 
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                <PageContainer
-                    sidebarOpen={sidebarOpen}
-                >
+            <MainLayout>
 
                     <h1>
                         Create Delivery Agent
@@ -602,9 +580,7 @@ function CreateAgent() {
 
                     )}
 
-                </PageContainer>
-
-            </div>
+                </MainLayout>
 
         </>
 

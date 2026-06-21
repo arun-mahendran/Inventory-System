@@ -6,19 +6,13 @@ import {
 } from "react-router-dom";
 
 import api from "../api/axios";
-
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import PageContainer from "../components/PageContainer";
+import MainLayout from "../components/MainLayout";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { FiPackage } from "react-icons/fi";
 
 function Parcels() {
 
     const navigate = useNavigate();
-
-    const [sidebarOpen, setSidebarOpen] =
-    useState(true);
 
     const [parcels, setParcels] = useState([]);
 
@@ -282,23 +276,7 @@ const filters = [
 
     return (
         <>
-            <Navbar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-            />
-
-            <div
-                style={{
-                    display: "flex"
-                }}
-            >
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
-                />
-
-                    <PageContainer
-                        sidebarOpen={sidebarOpen}
-                    >
+            <MainLayout>
 
                     <div
                         style={{
@@ -940,9 +918,7 @@ const filters = [
                         )
                     }
 
-                </PageContainer>
-
-            </div>
+                </MainLayout>
 
             {
                 showFailedModal && (
