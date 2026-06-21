@@ -13,6 +13,9 @@ function CreateAgent() {
 
     const navigate = useNavigate();
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     const [formData, setFormData] = useState({
         full_name: "",
         email: "",
@@ -122,7 +125,10 @@ function CreateAgent() {
     return (
 
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
@@ -130,9 +136,13 @@ function CreateAgent() {
                 }}
             >
 
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <h1>
                         Create Delivery Agent

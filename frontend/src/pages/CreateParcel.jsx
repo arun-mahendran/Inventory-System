@@ -11,6 +11,9 @@ function CreateParcel() {
 
     const navigate = useNavigate();
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     const [successMessage, setSuccessMessage] =
         useState("");
 
@@ -76,16 +79,23 @@ function CreateParcel() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <h1>
                         Create Parcel

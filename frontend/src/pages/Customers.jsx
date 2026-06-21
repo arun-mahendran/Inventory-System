@@ -14,34 +14,8 @@ function Customers() {
 
     const [customers, setCustomers] = useState([]);
 
-    useEffect(() => {
-
-        const fetchCustomers = async () => {
-
-            try {
-
-                const response = await api.get(
-                    "/customers/"
-                );
-
-                setCustomers(
-                    response.data
-                );
-
-            } catch (error) {
-
-                console.error(
-                    "Customer Error:",
-                    error
-                );
-
-            }
-
-        };
-
-        fetchCustomers();
-
-    }, []);
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
 
     useEffect(() => {
     const fetchCustomers = async () => {
@@ -72,16 +46,23 @@ function Customers() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <div
                         style={{

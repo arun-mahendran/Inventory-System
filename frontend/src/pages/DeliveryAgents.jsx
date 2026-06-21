@@ -14,6 +14,9 @@ function DeliveryAgents() {
 
     const navigate = useNavigate();
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     useEffect(() => {
 
         const fetchAgents = async () => {
@@ -45,16 +48,23 @@ function DeliveryAgents() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <div
                         style={{

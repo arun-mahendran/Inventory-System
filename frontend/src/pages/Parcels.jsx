@@ -17,6 +17,9 @@ function Parcels() {
 
     const navigate = useNavigate();
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     const [parcels, setParcels] = useState([]);
 
     const [selectedFilter, setSelectedFilter] =
@@ -279,16 +282,23 @@ const filters = [
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                    <PageContainer>
+                    <PageContainer
+                        sidebarOpen={sidebarOpen}
+                    >
 
                     <div
                         style={{

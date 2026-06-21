@@ -14,6 +14,9 @@ function Tracking() {
     const [parcel, setParcel] =
         useState(null);
 
+    const [sidebarOpen, setSidebarOpen] =
+        useState(true);
+
     const searchParcel = async () => {
 
         try {
@@ -43,16 +46,23 @@ function Tracking() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <h1>
                         Parcel Tracking

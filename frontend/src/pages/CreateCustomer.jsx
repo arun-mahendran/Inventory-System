@@ -11,6 +11,9 @@ function CreateCustomer() {
 
     const navigate = useNavigate();
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     const [showModal, setShowModal] = useState(false);
 
     const [createdCustomer, setCreatedCustomer] = useState(null);
@@ -74,7 +77,10 @@ function CreateCustomer() {
     return (
 
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
@@ -82,9 +88,13 @@ function CreateCustomer() {
                 }}
             >
 
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     {showModal && (
 

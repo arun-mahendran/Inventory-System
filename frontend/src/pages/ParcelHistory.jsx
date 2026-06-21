@@ -13,6 +13,9 @@ function ParcelHistory() {
 
     const [history, setHistory] = useState([]);
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
     useEffect(() => {
 
         const fetchHistory = async () => {
@@ -54,16 +57,23 @@ function ParcelHistory() {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <h1>
                         Parcel History
