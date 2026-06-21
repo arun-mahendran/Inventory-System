@@ -1,11 +1,13 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+//import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
-
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
+import { FiCopy, FiX } from "react-icons/fi";
+import { LuKeyRound } from "react-icons/lu";
+import { HiOutlineCheckCircle } from "react-icons/hi";
 
 function CreateAgent() {
 
@@ -25,6 +27,8 @@ function CreateAgent() {
 
     const [showModal, setShowModal] =
     useState(false);
+
+    const [hubs, setHubs] = useState([]);
 
     const handleChange = (e) => {
 
@@ -79,6 +83,35 @@ function CreateAgent() {
         }
 
     };
+
+    useEffect(() => {
+
+    const fetchHubs = async () => {
+
+        try {
+
+            const response = await api.get(
+                "/hubs/"
+            );
+
+            console.log(response.data);
+
+            setHubs(response.data);
+
+        } catch (error) {
+
+            console.error(
+                "Hub Error:",
+                error
+            );
+
+        }
+
+    };
+
+    fetchHubs();
+
+}, []);
 
     return (
 
@@ -185,22 +218,57 @@ function CreateAgent() {
                                 marginBottom: "20px"
                             }}
                         >
-                            <label>
-                                Hub ID
+
+                            <label
+                                style={{
+                                    display: "block",
+                                    marginBottom: "8px",
+                                    fontWeight: "600",
+                                    color: "#334155"
+                                }}
+                            >
+                                Hub
                             </label>
 
-                            <input
-                                type="number"
+                            <select
                                 name="hub_id"
+
                                 value={formData.hub_id}
+
                                 onChange={handleChange}
+
                                 required
+
                                 style={{
                                     width: "100%",
-                                    padding: "12px",
-                                    marginTop: "8px"
+                                    padding: "14px 16px",
+                                    borderRadius: "12px",
+                                    border: "1px solid #d1d5db",
+                                    fontSize: "15px",
+                                    background: "#f8fafc",
+                                    color: "#0f172a",
+                                    cursor: "pointer",
+                                    outline: "none"
                                 }}
-                            />
+                            >
+
+                                <option value="">
+                                    Select Hub
+                                </option>
+
+                                {hubs.map((hub) => (
+
+                                    <option
+                                        key={hub.id}
+                                        value={hub.id}
+                                    >
+                                        {hub.hub_name}
+                                    </option>
+
+                                ))}
+
+                            </select>
+
                         </div>
 
                         <div
@@ -274,58 +342,133 @@ function CreateAgent() {
                                 position: "fixed",
                                 top: 0,
                                 left: 0,
-                                width: "100%",
-                                height: "100%",
-                                background:
-                                    "rgba(0,0,0,0.5)",
+                                width: "100vw",
+                                height: "100vh",
+                                background: "rgba(15,23,42,0.55)",
+                                backdropFilter: "blur(4px)",
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
-                                zIndex: 1000
+                                zIndex: 9999
                             }}
                         >
 
                             <div
                                 style={{
                                     background: "white",
+                                    width: "420px",
+                                    maxWidth: "90%",
+                                    borderRadius: "28px",
                                     padding: "35px",
-                                    borderRadius: "20px",
-                                    width: "450px",
+                                    position: "relative",
                                     textAlign: "center",
                                     boxShadow:
-                                        "0 20px 40px rgba(0,0,0,0.2)"
+                                        "0 25px 60px rgba(0,0,0,0.18)"
                                 }}
                             >
 
-                                <div
+                            {/* Close Button */}
+
+                            <button
+                                onClick={() =>
+                                    setShowModal(false)
+                                }
+
+                                style={{
+                                    position: "absolute",
+                                    top: "18px",
+                                    right: "18px",
+                                    border: "none",
+                                    background: "#f1f5f9",
+                                    width: "36px",
+                                    height: "36px",
+                                    borderRadius: "50%",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+                                <FiX size={18} />
+                            </button>
+
+
+                            {/* Success Icon */}
+
+                            <div
+                                style={{
+                                    width: "75px",
+                                    height: "75px",
+                                    margin: "0 auto 25px",
+                                    borderRadius: "50%",
+                                    background: "#dcfce7",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                            >
+
+                                <HiOutlineCheckCircle
+                                    size={42}
+                                    color="#16a34a"
+                                />
+
+                            </div>
+
+                            <h2
+                                style={{
+                                    marginBottom: "24px",
+                                    color: "#0f172a"
+                                }}
+                            >
+                                Delivery Agent Created
+                            </h2>
+
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    marginBottom: "18px"
+                                }}
+                            >
+
+                                <LuKeyRound
+                                    size={20}
+                                    color="#64748b"
+                                />
+
+                                <span
                                     style={{
-                                        fontSize: "60px",
-                                        marginBottom: "15px"
+                                        color: "#64748b",
+                                        fontWeight: "600"
                                     }}
                                 >
-                                    ✅
-                                </div>
-
-                                <h2
-                                    style={{
-                                        color: "#059669",
-                                        marginBottom: "15px"
-                                    }}
-                                >
-                                    Agent Created Successfully
-                                </h2>
-
-                                <p>
                                     Temporary Password
-                                </p>
+                                </span>
 
-                                <div
+                            </div>
+
+
+                            {/* Password Box */}
+
+                            <div
+                                style={{
+                                    background: "#f8fafc",
+                                    border: "1px solid #e2e8f0",
+                                    borderRadius: "16px",
+                                    padding: "16px 18px",
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center"
+                                }}
+                            >
+
+                                <span
                                     style={{
-                                        background: "#f1f5f9",
-                                        padding: "15px",
-                                        borderRadius: "12px",
-                                        marginTop: "10px",
-                                        fontSize: "22px",
+                                        fontSize: "26px",
                                         fontWeight: "700",
                                         color: "#2563eb",
                                         letterSpacing: "3px"
@@ -334,37 +477,72 @@ function CreateAgent() {
                                     {
                                         createdAgent?.temporary_password
                                     }
-                                </div>
-
-                                <p
-                                    style={{
-                                        marginTop: "20px",
-                                        color: "#64748b"
-                                    }}
-                                >
-                                    Share this password with
-                                    the delivery agent.
-                                </p>
+                                </span>
 
                                 <button
-                                    onClick={() =>
-                                        setShowModal(false)
-                                    }
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(
+                                            createdAgent?.temporary_password
+                                        );
+
+                                        alert(
+                                            "Password copied"
+                                        );
+
+                                    }}
 
                                     style={{
-                                        marginTop: "25px",
-                                        background: "#2563eb",
-                                        color: "white",
                                         border: "none",
-                                        padding: "12px 30px",
-                                        borderRadius: "10px",
-                                        cursor: "pointer"
+                                        background: "transparent",
+                                        cursor: "pointer",
+                                        color: "#2563eb",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center"
                                     }}
                                 >
-                                    Close
+
+                                    <FiCopy size={22} />
                                 </button>
 
                             </div>
+
+                           <p
+                                style={{
+                                    color: "#64748b",
+                                    fontSize: "14px",
+                                    marginTop: "16px",
+                                    marginBottom: "18px",
+                                    lineHeight: "1.5"
+                                }}
+                            >
+                                Share this temporary password with the
+                                delivery agent. 
+                            </p>
+
+
+                            <button
+
+                                onClick={() => setShowModal(false)}
+
+                                style={{
+                                    marginTop: "15px",
+                                    width: "100%",
+                                    padding: "14px",
+                                    borderRadius: "14px",
+                                    border: "none",
+                                    background:
+                                        "linear-gradient(135deg,#2563eb,#3b82f6)",
+                                    color: "white",
+                                    fontSize: "16px",
+                                    fontWeight: "600",
+                                    cursor: "pointer"
+                                }}
+                            >
+                                Done
+                            </button>
+
+                        </div>
 
                         </div>
 
