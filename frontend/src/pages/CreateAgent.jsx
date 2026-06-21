@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-//import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
 import Navbar from "../components/Navbar";
@@ -11,7 +11,7 @@ import { HiOutlineCheckCircle } from "react-icons/hi";
 
 function CreateAgent() {
 
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
         full_name: "",
@@ -25,10 +25,14 @@ function CreateAgent() {
     const [createdAgent, setCreatedAgent] =
     useState(null);
 
+    const [loading, setLoading] = useState(false);
+
     const [showModal, setShowModal] =
     useState(false);
 
     const [hubs, setHubs] = useState([]);
+
+    const [copied, setCopied] = useState(false);
 
     const handleChange = (e) => {
 
@@ -44,6 +48,8 @@ function CreateAgent() {
         e.preventDefault();
 
         try {
+
+            setLoading(true);
 
             const response = await api.post(
                 "/delivery-agents/",
@@ -321,19 +327,54 @@ function CreateAgent() {
 
                         <button
                             type="submit"
+                            disabled={loading}
                             style={{
-                                background: "#2563eb",
+                                background:
+                                    loading
+                                        ? "#94a3b8"
+                                        : "#2563eb",
                                 color: "white",
                                 border: "none",
                                 padding: "12px 20px",
                                 borderRadius: "10px",
-                                cursor: "pointer"
+                                cursor:
+                                    loading
+                                        ? "not-allowed"
+                                        : "pointer",
+                                opacity:
+                                    loading ? 0.8 : 1
                             }}
                         >
-                            Create Agent
+                            {
+                                loading
+                                    ? "Creating..."
+                                    : "Create Agent"
+                            }
                         </button>
 
                     </form>
+
+
+                    {copied && (
+                        <div
+                            style={{
+                                position: "fixed",
+                                top: "25px",
+                                right: "25px",
+                                background: "#16a34a",
+                                color: "white",
+                                padding: "14px 22px",
+                                borderRadius: "14px",
+                                boxShadow:
+                                    "0 10px 25px rgba(0,0,0,0.15)",
+                                zIndex: 10000,
+                                fontWeight: "600"
+                            }}
+                        >
+                            ✓ Password copied successfully
+                        </div>
+
+                    )}
 
                     {showModal && (
 
@@ -484,11 +525,10 @@ function CreateAgent() {
                                         navigator.clipboard.writeText(
                                             createdAgent?.temporary_password
                                         );
-
-                                        alert(
-                                            "Password copied"
-                                        );
-
+                                        setCopied(true);
+                                        setTimeout(() => {
+                                            setCopied(false);
+                                        }, 3000);
                                     }}
 
                                     style={{
@@ -522,8 +562,12 @@ function CreateAgent() {
 
 
                             <button
-
-                                onClick={() => setShowModal(false)}
+                                onClick={() => {
+                                    setShowModal(false);
+                                    navigate(
+                                        "/delivery-agents"
+                                    );
+                                }}
 
                                 style={{
                                     marginTop: "15px",
