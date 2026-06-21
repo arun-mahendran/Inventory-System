@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
 import { useNavigate } from "react-router-dom";
+import { FiUsers } from "react-icons/fi";
 
 function Customers() {
 
@@ -91,9 +92,21 @@ function Customers() {
                         }}
                     >
 
-                        <h1>
-                            Customers
-                        </h1>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px"
+                            }}
+                        >
+                            <FiUsers
+                                size={30}
+                                color="#2563eb"
+                            />
+
+                            <h1>Customers</h1>
+
+                        </div>
 
                         <button
                             onClick={() =>

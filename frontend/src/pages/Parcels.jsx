@@ -11,6 +11,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
+import { FiPackage } from "react-icons/fi";
 
 function Parcels() {
 
@@ -298,9 +299,21 @@ const filters = [
                         }}
                     >
 
-                        <h1>
-                            Parcels
-                        </h1>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px"
+                            }}
+                        >
+                            <FiPackage
+                                size={30}
+                                color="#2563eb"
+                            />
+
+                            <h1>Parcels</h1>
+
+                        </div>
 
                         {
                             errorMessage && (

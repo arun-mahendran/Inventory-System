@@ -6,6 +6,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import PageContainer from "../components/PageContainer";
 import { useNavigate } from "react-router-dom";
+import { FiTruck } from "react-icons/fi";
 
 function DeliveryAgents() {
 
@@ -63,9 +64,21 @@ function DeliveryAgents() {
                             marginBottom: "25px"
                         }}
                     >
-                        <h1>
-                            Delivery Agents
-                        </h1>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px"
+                            }}
+                        >
+                            <FiTruck
+                                size={30}
+                                color="#2563eb"
+                            />
+
+                            <h1>Delivery Agents</h1>
+
+                        </div>
 
                         <button
                             onClick={() =>
