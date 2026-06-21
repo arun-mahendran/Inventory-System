@@ -28,6 +28,9 @@ function Dashboard() {
     const [searchPincode, setSearchPincode] =
     useState("");
 
+    const [sidebarOpen, setSidebarOpen] =
+    useState(true);
+
 
     const fetchParcelsByPincode =
     async (pincode) => {
@@ -93,16 +96,23 @@ function Dashboard() {
 
    return (
         <>
-            <Navbar />
+            <Navbar
+                sidebarOpen={sidebarOpen}
+                setSidebarOpen={setSidebarOpen}
+            />
 
             <div
                 style={{
                     display: "flex"
                 }}
             >
-                <Sidebar />
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                />
 
-                <PageContainer>
+                <PageContainer
+                    sidebarOpen={sidebarOpen}
+                >
 
                     <h1
                         style={{

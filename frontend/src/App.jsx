@@ -3,7 +3,7 @@ import {
     Route,
     Navigate
 } from "react-router-dom";
-
+import { useState } from "react";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
@@ -17,6 +17,10 @@ import ChangePassword from "./pages/ChangePassword";
 import CreateCustomer from "./pages/CreateCustomer";
 
 function App() {
+
+    const [sidebarOpen, setSidebarOpen] =
+        useState(true);
+    
     return (
         <Routes>
 

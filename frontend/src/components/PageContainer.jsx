@@ -1,21 +1,34 @@
-function PageContainer({ children }) {
+function PageContainer({
+    children,
+    sidebarOpen
+}) {
 
     return (
         <div
             style={{
-                marginLeft: "300px",
+                marginLeft:
+                    sidebarOpen
+                    ? "300px"
+                    : "90px",
+
                 marginTop: "70px",
-                width: "calc(100vw - 300px)",
+
+                width:
+                    sidebarOpen
+                    ? "calc(100vw - 300px)"
+                    : "calc(100vw - 90px)",
+
                 padding: "25px",
                 background: "#f8fafc",
                 height: "calc(100vh - 70px)",
-                overflowY: "auto"
+                overflowY: "auto",
+                transition:
+                    "all 0.35s ease"
             }}
         >
             {children}
         </div>
     );
-
 }
 
 export default PageContainer;
