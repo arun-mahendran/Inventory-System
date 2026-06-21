@@ -69,11 +69,15 @@ function DeliveryStatusChart({ summary }) {
                 <div
                     style={{
                         width: "50%",
+                        minWidth: "320px",
                         height: "350px"
                     }}
                 >
 
-                    <ResponsiveContainer>
+                    <ResponsiveContainer
+                        width="99%"
+                        height="100%"
+                    >
 
                         <PieChart>
 
