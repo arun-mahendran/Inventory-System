@@ -8,10 +8,10 @@ function Login() {
 
     const navigate = useNavigate();
 
-    const [password, setPassword] =
-    useState("");
-
     const [email, setEmail] =
+        useState("");
+
+    const [password, setPassword] =
         useState("");
 
     const handleSubmit = async (e) => {
@@ -42,6 +42,11 @@ function Login() {
             localStorage.setItem(
                 "full_name",
                 response.data.full_name
+            );
+
+            localStorage.setItem(
+                "user_id",
+                response.data.user_id
             );
 
             if (

@@ -1,0 +1,133 @@
+import { useEffect, useState }
+    from "react";
+
+import api
+    from "../../api/axios";
+
+import AgentLayout
+    from "../components/AgentLayout";
+
+import AgentStatCard
+    from "../components/AgentStatCard";
+
+
+function AgentDashboard() {
+
+    const [summary, setSummary] =
+        useState({
+            assigned: 0,
+            outForDelivery: 0,
+            delivered: 0,
+            failed: 0
+        });
+
+    useEffect(() => {
+
+        const fetchSummary =
+            async () => {
+
+                try {
+
+                    const agentId =
+                        localStorage.getItem(
+                            "user_id"
+                        );
+
+                    const response =
+                        await api.get(
+                            `/delivery-agents/${agentId}/parcels`
+                        );
+
+                    const parcels =
+                        response.data;
+
+                    setSummary({
+
+                        assigned:
+                            parcels.length,
+
+                        outForDelivery:
+                            parcels.filter(
+                                parcel =>
+                                    parcel.status ===
+                                    "OutForDelivery"
+                            ).length,
+
+                        delivered:
+                            parcels.filter(
+                                parcel =>
+                                    parcel.status ===
+                                    "Delivered"
+                            ).length,
+
+                        failed:
+                            parcels.filter(
+                                parcel =>
+                                    parcel.status ===
+                                    "FailedDelivery"
+                            ).length
+
+                    });
+
+                } catch (error) {
+
+                    console.error(
+                        "Agent Dashboard Error:",
+                        error
+                    );
+
+                }
+
+            };
+
+        fetchSummary();
+
+    }, []);
+
+    return (
+
+        <AgentLayout>
+
+            <h1>
+                🚚 Agent Dashboard
+            </h1>
+
+            <div className="cards">
+
+                <AgentStatCard
+                    title="Assigned Parcels"
+                    value={summary.assigned}
+                    color="#2563eb"
+                    icon="📦"
+                />
+
+                <AgentStatCard
+                    title="Out For Delivery"
+                    value={summary.outForDelivery}
+                    color="#f59e0b"
+                    icon="🚚"
+                />
+
+                <AgentStatCard
+                    title="Delivered Today"
+                    value={summary.delivered}
+                    color="#22c55e"
+                    icon="✅"
+                />
+
+                <AgentStatCard
+                    title="Failed Deliveries"
+                    value={summary.failed}
+                    color="#ef4444"
+                    icon="❌"
+                />
+
+            </div>
+
+        </AgentLayout>
+
+    );
+
+}
+
+export default AgentDashboard;

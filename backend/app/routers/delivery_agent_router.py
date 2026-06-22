@@ -14,6 +14,11 @@ from app.services.delivery_agent_service import (
 
 from app.utils.dependencies import get_db
 
+from app.services.delivery_agent_service import (
+    get_agent_parcels
+)
+from app.models.parcel import Parcel
+
 
 router = APIRouter(
     prefix="/delivery-agents",
@@ -56,3 +61,36 @@ def get_agent(
         db,
         agent_id
     )
+
+
+@router.get(
+    "/{agent_id}/parcels"
+)
+def get_parcels_of_agent(
+    agent_id: int,
+    db: Session = Depends(get_db)
+):
+
+    return get_agent_parcels(
+        db,
+        agent_id
+    )
+
+
+@router.get("/tracking/{tracking_number}")
+def track_parcel(
+    tracking_number: str,
+    db: Session = Depends(get_db)
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.tracking_number == tracking_number
+    ).first()
+
+    if not parcel:
+        raise HTTPException(
+            status_code=404,
+            detail="Parcel not found"
+        )
+
+    return parcel

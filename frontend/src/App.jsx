@@ -38,6 +38,13 @@ import ChangePassword from "./pages/ChangePassword";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
+import AgentDashboard from "./agent/pages/AgentDashboard";
+
+import MyParcels from "./agent/pages/MyParcels";
+
+import AgentTracking
+from "./agent/pages/AgentTracking";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -166,6 +173,47 @@ function App() {
 
                         <CreateCustomer />
 
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/agent-dashboard"
+                element={
+                    <ProtectedRoute
+                        allowedRoles={
+                            ["DeliveryAgent"]
+                        }
+                    >
+
+                        <AgentDashboard />
+
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/my-parcels"
+                element={
+                    <ProtectedRoute
+                        allowedRoles={
+                            ["DeliveryAgent"]
+                        }
+                    >
+
+                        <MyParcels />
+
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/agent-tracking"
+                element={
+                    <ProtectedRoute
+                        allowedRoles={["DeliveryAgent"]}
+                    >
+                        <AgentTracking />
                     </ProtectedRoute>
                 }
             />

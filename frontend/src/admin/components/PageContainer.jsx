@@ -8,14 +8,14 @@ function PageContainer({
             style={{
                 marginLeft:
                     sidebarOpen
-                    ? "300px"
+                    ? "280px"
                     : "90px",
 
                 marginTop: "70px",
 
                 width:
                     sidebarOpen
-                    ? "calc(100vw - 300px)"
+                    ? "calc(100vw - 280px)"
                     : "calc(100vw - 90px)",
 
                 padding: "25px",

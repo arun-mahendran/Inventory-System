@@ -15,6 +15,8 @@ from app.utils.security import (
     get_password_hash
 )
 
+from app.models.parcel import Parcel
+
 
 def generate_temp_password():
 
@@ -150,3 +152,18 @@ def get_agent_by_id(
     ).filter(
         DeliveryAgent.id == agent_id
     ).first()
+
+
+def get_agent_parcels(
+    db: Session,
+    agent_id: int
+):
+
+    return (
+        db.query(Parcel)
+        .filter(
+            Parcel.assigned_agent_id
+            == agent_id
+        )
+        .all()
+    )

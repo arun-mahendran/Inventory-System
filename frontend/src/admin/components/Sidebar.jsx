@@ -29,7 +29,7 @@ function Sidebar({
                 top: "70px",
                 width:
                     sidebarOpen
-                    ? "300px"
+                    ? "280px"
                     : "90px",
 
                 height: "calc(100vh - 70px)",
