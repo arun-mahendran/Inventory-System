@@ -1,4 +1,7 @@
-import { Navigate } from "react-router-dom";
+import {
+    Navigate,
+    useLocation
+} from "react-router-dom";
 
 function ProtectedRoute({
     children,
@@ -15,6 +18,16 @@ function ProtectedRoute({
             "role"
         );
 
+    const changePassword =
+        localStorage.getItem(
+            "change_password"
+        ) === "true";
+
+    const location =
+        useLocation();
+
+    // User not logged in
+
     if (!token) {
 
         return (
@@ -26,9 +39,45 @@ function ProtectedRoute({
 
     }
 
+    // Force Delivery Agent
+    // to change password
+
     if (
-        allowedRoles &&
-        !allowedRoles.includes(role)
+
+        role === "DeliveryAgent"
+
+        &&
+
+        changePassword
+
+        &&
+
+        location.pathname !==
+        "/change-password"
+
+    ) {
+
+        return (
+            <Navigate
+                to="/change-password"
+                replace
+            />
+        );
+
+    }
+
+    // Role check
+
+    if (
+
+        allowedRoles
+
+        &&
+
+        !allowedRoles.includes(
+            role
+        )
+
     ) {
 
         return (

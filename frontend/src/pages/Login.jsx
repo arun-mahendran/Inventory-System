@@ -49,7 +49,22 @@ function Login() {
                 response.data.user_id
             );
 
+            localStorage.setItem(
+                "change_password", 
+                response.data.change_password
+            );
+
             if (
+                response.data.change_password
+            ) {
+
+                navigate(
+                    "/change-password"
+                );
+
+            }
+
+            else if (
                 response.data.role ===
                 "Admin"
             ) {
