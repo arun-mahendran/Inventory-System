@@ -15,6 +15,7 @@ import ParcelHistory from "./pages/ParcelHistory";
 import CreateAgent from "./pages/CreateAgent";
 import ChangePassword from "./pages/ChangePassword";
 import CreateCustomer from "./pages/CreateCustomer";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 
@@ -40,58 +41,112 @@ function App() {
 
             <Route
                 path="/dashboard"
-                element={<Dashboard />}
+                element={
+                    <ProtectedRoute>
+
+                        <Dashboard />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/customers"
-                element={<Customers />}
+                element={
+                    <ProtectedRoute>
+
+                        <Customers />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/delivery-agents"
                 element={
-                    <DeliveryAgents />
+                    <ProtectedRoute>
+
+                        <DeliveryAgents />
+
+                    </ProtectedRoute>
                 }
             />
 
             <Route
                 path="/parcels"
-                element={<Parcels />}
+                element={
+                    <ProtectedRoute>
+
+                        <Parcels />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/create-parcel"
                 element={
-                    <CreateParcel />
+                    <ProtectedRoute>
+
+                        <CreateParcel />
+
+                    </ProtectedRoute>
                 }
             />
 
             <Route
                 path="/tracking"
-                element={<Tracking />}
+                element={
+                    <ProtectedRoute>
+
+                        <Tracking />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/parcel-history/:id"
                 element={
-                    <ParcelHistory />
+                    <ProtectedRoute>
+
+                        <ParcelHistory />
+
+                    </ProtectedRoute>
                 }
             />
 
             <Route
                 path="/create-agent"
-                element={<CreateAgent />}
+                element={
+                    <ProtectedRoute>
+
+                        <CreateAgent />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/change-password"
-                element={<ChangePassword />}
+                element={
+                    <ProtectedRoute>
+
+                        <ChangePassword />
+
+                    </ProtectedRoute>
+                }
             />
 
             <Route
                 path="/create-customer"
-                element={<CreateCustomer />}
+                element={
+                    <ProtectedRoute>
+
+                        <CreateCustomer />
+
+                    </ProtectedRoute>
+                }
             />
 
         </Routes>

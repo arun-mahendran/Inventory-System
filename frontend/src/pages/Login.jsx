@@ -1,5 +1,135 @@
+import { useState } from "react";
+import api from "../api/axios";
+import "../styles/login.css";
+import { useNavigate } from "react-router-dom";
+
+
 function Login() {
-    return <h1>Login Page</h1>;
+
+    const navigate = useNavigate();
+
+    const [password, setPassword] =
+    useState("");
+
+    const [email, setEmail] =
+        useState("");
+
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        try {
+
+            const response =
+                await api.post(
+                    "/auth/login",
+                    {
+                        email,
+                        password
+                    }
+                );
+
+            localStorage.setItem(
+                "token",
+                response.data.access_token
+            );
+
+            localStorage.setItem(
+                "role",
+                response.data.role
+            );
+
+            localStorage.setItem(
+                "full_name",
+                response.data.full_name
+            );
+
+            if (
+                response.data.role ===
+                "Admin"
+            ) {
+
+                navigate(
+                    "/dashboard"
+                );
+
+            }
+
+            else if (
+                response.data.role ===
+                "DeliveryAgent"
+            ) {
+
+                navigate(
+                    "/agent-dashboard"
+                );
+
+            }
+
+        } catch (error) {
+
+            alert(
+                error.response?.data?.detail
+            );
+
+        }
+
+    };
+
+    return (
+
+        <div className="login-page">
+
+            <div className="login-card">
+
+                <h1>
+                    Final Mile Delivery Hub
+                </h1>
+
+                <p>
+                    Sign in to continue
+                </p>
+
+                <form
+                    onSubmit={handleSubmit}
+                >
+
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) =>
+                            setEmail(
+                                e.target.value
+                            )
+                        }
+                        required
+                    />
+
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) =>
+                            setPassword(
+                                e.target.value
+                            )
+                        }
+                        required
+                    />
+
+                    <button type="submit">
+                        Login
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    );
+
 }
 
 export default Login;

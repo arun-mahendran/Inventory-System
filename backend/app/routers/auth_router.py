@@ -1,19 +1,19 @@
-from fastapi import APIRouter
-from fastapi import Depends
-from fastapi import HTTPException
-
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException
+)
 from sqlalchemy.orm import Session
-
 from app.schemas.auth import (
     LoginRequest,
     TokenResponse
 )
-
 from app.services.auth_service import (
     login_user
 )
-
-from app.utils.dependencies import get_db
+from app.utils.dependencies import (
+    get_db
+)
 
 
 router = APIRouter(
@@ -30,12 +30,13 @@ def login(
     credentials: LoginRequest,
     db: Session = Depends(get_db)
 ):
+
     try:
 
         return login_user(
-            db,
-            credentials.email,
-            credentials.password
+            db=db,
+            email=credentials.email,
+            password=credentials.password
         )
 
     except ValueError as e:
@@ -43,4 +44,11 @@ def login(
         raise HTTPException(
             status_code=401,
             detail=str(e)
+        )
+
+    except Exception:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Internal Server Error"
         )
