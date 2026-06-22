@@ -5,7 +5,7 @@ import {
     useNavigate
 } from "react-router-dom";
 
-import api from "../api/axios";
+import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 import { FiPackage } from "react-icons/fi";

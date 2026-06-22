@@ -14,7 +14,7 @@ import {
 
 import {FaUserCircle} from "react-icons/fa";
 
-import "../styles/sidebar.css";
+import "../../styles/sidebar.css";
 
 function Sidebar({
     sidebarOpen

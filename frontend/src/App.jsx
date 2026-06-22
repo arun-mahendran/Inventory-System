@@ -3,18 +3,39 @@ import {
     Route,
     Navigate
 } from "react-router-dom";
+
 //import { useState } from "react";
+
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import Customers from "./pages/Customers";
-import DeliveryAgents from "./pages/DeliveryAgents";
-import Parcels from "./pages/Parcels";
-import CreateParcel from "./pages/CreateParcel";
-import Tracking from "./pages/Tracking";
-import ParcelHistory from "./pages/ParcelHistory";
-import CreateAgent from "./pages/CreateAgent";
+import Dashboard
+from "./admin/pages/Dashboard";
+
+import Customers
+from "./admin/pages/Customers";
+
+import DeliveryAgents
+from "./admin/pages/DeliveryAgents";
+
+import Parcels
+from "./admin/pages/Parcels";
+
+import Tracking
+from "./admin/pages/Tracking";
+
+import CreateAgent 
+from "./admin/pages/CreateAgent";
+
+import CreateCustomer 
+from "./admin/pages/CreateCustomer";
+
+import CreateParcel 
+from "./admin/pages/CreateParcel";
+
+import ParcelHistory 
+from "./admin/pages/ParcelHistory";
+
 import ChangePassword from "./pages/ChangePassword";
-import CreateCustomer from "./pages/CreateCustomer";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {

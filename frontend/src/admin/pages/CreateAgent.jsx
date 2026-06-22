@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import api from "../api/axios";
+import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 import { FiCopy, FiX } from "react-icons/fi";
 import { LuKeyRound } from "react-icons/lu";

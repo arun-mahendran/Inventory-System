@@ -1,45 +1,43 @@
 import { useEffect, useState } from "react";
 
-import api from "../api/axios";
+import api from "../../api/axios";
 
 import MainLayout from "../components/MainLayout";
 import { useNavigate } from "react-router-dom";
-import { FiTruck } from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 
-function DeliveryAgents() {
-
-    const [agents, setAgents] = useState([]);
+function Customers() {
 
     const navigate = useNavigate();
 
+    const [customers, setCustomers] = useState([]);
+
     useEffect(() => {
+    const fetchCustomers = async () => {
+        try {
 
-        const fetchAgents = async () => {
+            const response = await api.get(
+                "/customers/"
+            );
 
-            try {
+            setCustomers(
+                response.data
+            );
 
-                const response = await api.get(
-                    "/delivery-agents/"
-                );
+        } catch (error) {
 
-                setAgents(
-                    response.data
-                );
+            console.error(
+                "Customer Error:",
+                error
+            );
 
-            } catch (error) {
+        }
 
-                console.error(
-                    "Agent Error:",
-                    error
-                );
+    };
 
-            }
+    fetchCustomers();
 
-        };
-
-        fetchAgents();
-
-    }, []);
+}, []);
 
     return (
         <>
@@ -53,6 +51,7 @@ function DeliveryAgents() {
                             marginBottom: "25px"
                         }}
                     >
+
                         <div
                             style={{
                                 display: "flex",
@@ -60,18 +59,18 @@ function DeliveryAgents() {
                                 gap: "10px"
                             }}
                         >
-                            <FiTruck
+                            <FiUsers
                                 size={30}
                                 color="#2563eb"
                             />
 
-                            <h1>Delivery Agents</h1>
+                            <h1>Customers</h1>
 
                         </div>
 
                         <button
                             onClick={() =>
-                                navigate("/create-agent")
+                                navigate("/create-customer")
                             }
 
                             style={{
@@ -83,7 +82,7 @@ function DeliveryAgents() {
                                 cursor: "pointer"
                             }}
                         >
-                            + Add Agent
+                            + Add Customer
                         </button>
 
                     </div>
@@ -115,7 +114,16 @@ function DeliveryAgents() {
                                             padding: "12px"
                                         }}
                                     >
-                                        Agent
+                                        Name
+                                    </th>
+
+                                    <th
+                                        style={{
+                                            textAlign: "left",
+                                            padding: "12px"
+                                        }}
+                                    >
+                                        Phone
                                     </th>
 
                                     <th
@@ -133,16 +141,7 @@ function DeliveryAgents() {
                                             padding: "12px"
                                         }}
                                     >
-                                        Parcels
-                                    </th>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Status
+                                        Address
                                     </th>
 
                                 </tr>
@@ -151,10 +150,10 @@ function DeliveryAgents() {
 
                             <tbody>
 
-                                {agents.map((agent) => (
+                                {customers.map((customer) => (
 
                                     <tr
-                                        key={agent.id}
+                                        key={customer.id}
                                         className="table-row"
                                     >
 
@@ -165,30 +164,7 @@ function DeliveryAgents() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-
-                                            <div>
-
-                                                <div
-                                                    style={{
-                                                        fontWeight: "600",
-                                                        color: "#0f172a"
-                                                    }}
-                                                >
-                                                    {agent.agent_name}
-                                                </div>
-
-                                                <div
-                                                    style={{
-                                                        fontSize: "13px",
-                                                        color: "#64748b",
-                                                        marginTop: "4px"
-                                                    }}
-                                                >
-                                                    🚚 {agent.vehicle_number}
-                                                </div>
-
-                                            </div>
-
+                                            {customer.customer_name}
                                         </td>
 
                                         <td
@@ -198,7 +174,7 @@ function DeliveryAgents() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {agent.pincode}
+                                            {customer.phone}
                                         </td>
 
                                         <td
@@ -208,7 +184,7 @@ function DeliveryAgents() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {agent.current_parcel_count}
+                                            {customer.pincode}
                                         </td>
 
                                         <td
@@ -218,22 +194,7 @@ function DeliveryAgents() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            <span
-                                                style={{
-                                                    background:
-                                                        "#dcfce7",
-                                                    color:
-                                                        "#15803d",
-                                                    padding:
-                                                        "6px 12px",
-                                                    borderRadius:
-                                                        "999px",
-                                                    fontWeight:
-                                                        "600"
-                                                }}
-                                            >
-                                                {agent.availability_status}
-                                            </span>
+                                            {customer.address}
                                         </td>
 
                                     </tr>
@@ -247,9 +208,8 @@ function DeliveryAgents() {
                     </div>
 
                 </MainLayout>
-
         </>
     );
 }
 
-export default DeliveryAgents;
+export default Customers;

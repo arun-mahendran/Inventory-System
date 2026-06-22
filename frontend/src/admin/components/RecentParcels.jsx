@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import api from "../api/axios";
-import "../styles/parcelTable.css";
+import api from "../../api/axios";
+import "../../styles/parcelTable.css";
 
 function RecentParcels() {
 

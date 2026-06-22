@@ -1,43 +1,45 @@
 import { useEffect, useState } from "react";
 
-import api from "../api/axios";
+import api from "../../api/axios";
 
 import MainLayout from "../components/MainLayout";
 import { useNavigate } from "react-router-dom";
-import { FiUsers } from "react-icons/fi";
+import { FiTruck } from "react-icons/fi";
 
-function Customers() {
+function DeliveryAgents() {
+
+    const [agents, setAgents] = useState([]);
 
     const navigate = useNavigate();
 
-    const [customers, setCustomers] = useState([]);
-
     useEffect(() => {
-    const fetchCustomers = async () => {
-        try {
 
-            const response = await api.get(
-                "/customers/"
-            );
+        const fetchAgents = async () => {
 
-            setCustomers(
-                response.data
-            );
+            try {
 
-        } catch (error) {
+                const response = await api.get(
+                    "/delivery-agents/"
+                );
 
-            console.error(
-                "Customer Error:",
-                error
-            );
+                setAgents(
+                    response.data
+                );
 
-        }
+            } catch (error) {
 
-    };
+                console.error(
+                    "Agent Error:",
+                    error
+                );
 
-    fetchCustomers();
+            }
 
-}, []);
+        };
+
+        fetchAgents();
+
+    }, []);
 
     return (
         <>
@@ -51,7 +53,6 @@ function Customers() {
                             marginBottom: "25px"
                         }}
                     >
-
                         <div
                             style={{
                                 display: "flex",
@@ -59,18 +60,18 @@ function Customers() {
                                 gap: "10px"
                             }}
                         >
-                            <FiUsers
+                            <FiTruck
                                 size={30}
                                 color="#2563eb"
                             />
 
-                            <h1>Customers</h1>
+                            <h1>Delivery Agents</h1>
 
                         </div>
 
                         <button
                             onClick={() =>
-                                navigate("/create-customer")
+                                navigate("/create-agent")
                             }
 
                             style={{
@@ -82,7 +83,7 @@ function Customers() {
                                 cursor: "pointer"
                             }}
                         >
-                            + Add Customer
+                            + Add Agent
                         </button>
 
                     </div>
@@ -114,16 +115,7 @@ function Customers() {
                                             padding: "12px"
                                         }}
                                     >
-                                        Name
-                                    </th>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Phone
+                                        Agent
                                     </th>
 
                                     <th
@@ -141,7 +133,16 @@ function Customers() {
                                             padding: "12px"
                                         }}
                                     >
-                                        Address
+                                        Parcels
+                                    </th>
+
+                                    <th
+                                        style={{
+                                            textAlign: "left",
+                                            padding: "12px"
+                                        }}
+                                    >
+                                        Status
                                     </th>
 
                                 </tr>
@@ -150,10 +151,10 @@ function Customers() {
 
                             <tbody>
 
-                                {customers.map((customer) => (
+                                {agents.map((agent) => (
 
                                     <tr
-                                        key={customer.id}
+                                        key={agent.id}
                                         className="table-row"
                                     >
 
@@ -164,7 +165,30 @@ function Customers() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {customer.customer_name}
+
+                                            <div>
+
+                                                <div
+                                                    style={{
+                                                        fontWeight: "600",
+                                                        color: "#0f172a"
+                                                    }}
+                                                >
+                                                    {agent.agent_name}
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        fontSize: "13px",
+                                                        color: "#64748b",
+                                                        marginTop: "4px"
+                                                    }}
+                                                >
+                                                    🚚 {agent.vehicle_number}
+                                                </div>
+
+                                            </div>
+
                                         </td>
 
                                         <td
@@ -174,7 +198,7 @@ function Customers() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {customer.phone}
+                                            {agent.pincode}
                                         </td>
 
                                         <td
@@ -184,7 +208,7 @@ function Customers() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {customer.pincode}
+                                            {agent.current_parcel_count}
                                         </td>
 
                                         <td
@@ -194,7 +218,22 @@ function Customers() {
                                                     "1px solid #e5e7eb"
                                             }}
                                         >
-                                            {customer.address}
+                                            <span
+                                                style={{
+                                                    background:
+                                                        "#dcfce7",
+                                                    color:
+                                                        "#15803d",
+                                                    padding:
+                                                        "6px 12px",
+                                                    borderRadius:
+                                                        "999px",
+                                                    fontWeight:
+                                                        "600"
+                                                }}
+                                            >
+                                                {agent.availability_status}
+                                            </span>
                                         </td>
 
                                     </tr>
@@ -208,8 +247,9 @@ function Customers() {
                     </div>
 
                 </MainLayout>
+
         </>
     );
 }
 
-export default Customers;
+export default DeliveryAgents;
