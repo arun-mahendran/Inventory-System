@@ -13,10 +13,33 @@ import AgentStatCard
 import { useNavigate }
     from "react-router-dom";
 
+import {
+    FiTruck,
+    //FiZap,
+    FiActivity,
+    //FiPackage,
+    //FiSearch,
+    //FiClock,
+    FiTrendingUp
+} from "react-icons/fi";
+
+import {
+    MdOutlineAssignment,
+    MdOutlineLocalShipping,
+    MdOutlineDoneAll,
+    MdOutlineCancel
+} from "react-icons/md";
+
 
 function AgentDashboard() {
 
     const navigate = useNavigate();
+
+    const [showAllActivities, setShowAllActivities] =
+        useState(false);
+
+    const [showAllPending, setShowAllPending] =
+        useState(false);
 
     const fullName =
     localStorage.getItem(
@@ -187,28 +210,44 @@ function AgentDashboard() {
                     title="Assigned Parcels"
                     value={summary.assigned}
                     color="#2563eb"
-                    icon="📦"
+                    icon={
+                        <MdOutlineAssignment
+                            size={28}
+                        />
+                    }
                 />
 
                 <AgentStatCard
                     title="Out For Delivery"
                     value={summary.outForDelivery}
                     color="#f59e0b"
-                    icon="🚚"
+                    icon={
+                        <MdOutlineLocalShipping
+                            size={28}
+                        />
+                    }
                 />
 
                 <AgentStatCard
                     title="Delivered Today"
                     value={summary.delivered}
                     color="#22c55e"
-                    icon="✅"
+                    icon={
+                        <MdOutlineDoneAll
+                            size={28}
+                        />
+                    }
                 />
 
                 <AgentStatCard
                     title="Failed Deliveries"
                     value={summary.failed}
                     color="#ef4444"
-                    icon="❌"
+                    icon={
+                        <MdOutlineCancel
+                            size={28}
+                        />
+                    }
                 />
 
             </div>
@@ -224,14 +263,43 @@ function AgentDashboard() {
                 }}
             >
 
-                <h2
+                <div
                     style={{
-                        marginBottom: "25px",
-                        color: "#0f172a"
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "15px",
+                        marginBottom: "30px"
                     }}
                 >
-                    📊 Today's Performance
-                </h2>
+
+                    <div
+                        style={{
+                            width: "60px",
+                            height: "60px",
+                            borderRadius: "16px",
+                            background: "#eff6ff",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                    >
+                        <FiTrendingUp
+                            size={32}
+                            color="#2563eb"
+                        />
+                    </div>
+
+                    <h2
+                        style={{
+                            margin: 0,
+                            fontSize: "34px",
+                            color: "#0f172a"
+                        }}
+                    >
+                        Today's Performance
+                    </h2>
+
+                </div>
 
                 <div
                     style={{
@@ -344,242 +412,347 @@ function AgentDashboard() {
 
             <div
                 style={{
-                    marginTop: "35px",
-                    background: "white",
-                    padding: "30px",
-                    borderRadius: "20px",
-                    boxShadow:
-                        "0 10px 25px rgba(0,0,0,0.08)"
-                }}
-            >
-
-                <h2>
-                    🚚 Pending Deliveries
-                </h2>
-
-                <table
-                    style={{
-                        width: "100%",
-                        marginTop: "20px",
-                        borderCollapse: "collapse"
-                    }}
-                >
-
-                    <thead>
-
-                        <tr>
-
-                            <th>Tracking Number</th>
-                            <th>Customer ID</th>
-                            <th>Status</th>
-
-                        </tr>
-
-                    </thead>
-
-                    <tbody>
-
-                        {
-                            parcels
-
-                                .filter(
-                                    parcel =>
-
-                                        parcel.status ===
-                                        "Assigned"
-
-                                        ||
-
-                                        parcel.status ===
-                                        "OutForDelivery"
-                                )
-
-                                .slice(0, 5)
-
-                                .map(parcel => (
-
-                                    <tr key={parcel.id}>
-
-                                        <td
-                                            style={{
-                                                padding: "15px"
-                                            }}
-                                        >
-                                            {parcel.tracking_number}
-                                        </td>
-
-                                        <td>
-                                            {parcel.customer_id}
-                                        </td>
-
-                                        <td>
-                                            {parcel.status}
-                                        </td>
-
-                                    </tr>
-
-                                ))
-                        }
-
-                    </tbody>
-
-                </table>
-
-            </div>
-
-            <div
-                style={{
+                    display: "grid",
+                    gridTemplateColumns: "1.3fr 1fr",
+                    gap: "25px",
                     marginTop: "35px"
                 }}
             >
 
-                <h2
-                    style={{
-                        marginBottom: "20px",
-                        color: "#0f172a"
-                    }}
-                >
-                    ⚡ Quick Actions
-                </h2>
+                {/* LEFT SIDE */}
 
                 <div
                     style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(3, 1fr)",
-                        gap: "20px"
+                        background: "white",
+                        padding: "30px",
+                        borderRadius: "24px",
+                        boxShadow:
+                            "0 10px 25px rgba(0,0,0,0.08)"
                     }}
                 >
 
-                    <button
-
-                        onClick={() =>
-                            navigate("/my-parcels")
-                        }
-
+                    <div
                         style={{
-                            padding: "20px",
-                            border: "none",
-                            borderRadius: "18px",
-                            background: "#2563eb",
-                            color: "white",
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            cursor: "pointer"
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            marginBottom: "25px"
                         }}
                     >
-                        📦 My Parcels
-                    </button>
 
-                    <button
+                        <FiTruck
+                            size={34}
+                            color="#2563eb"
+                        />
 
-                        onClick={() =>
-                            navigate(
-                                "/agent-tracking"
-                            )
-                        }
+                        <h2
+                            style={{
+                                margin: 0,
+                                fontSize: "34px"
+                            }}
+                        >
+                            Pending Deliveries
+                        </h2>
 
+                    </div>
+
+                    <table
                         style={{
-                            padding: "20px",
-                            border: "none",
-                            borderRadius: "18px",
-                            background: "#22c55e",
-                            color: "white",
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            cursor: "pointer"
+                            width: "100%",
+                            borderCollapse: "collapse"
                         }}
                     >
-                        🔍 Track Parcel
-                    </button>
 
-                    <button
+                        <thead>
 
-                        onClick={() =>
-                            navigate(
-                                "/delivery-history"
-                            )
-                        }
+                            <tr>
 
-                        style={{
-                            padding: "20px",
-                            border: "none",
-                            borderRadius: "18px",
-                            background: "#f59e0b",
-                            color: "white",
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            cursor: "pointer"
-                        }}
-                    >
-                        📜 History
-                    </button>
+                                <th
+                                    style={{
+                                        textAlign: "left",
+                                        padding: "16px",
+                                        color: "#64748b"
+                                    }}
+                                >
+                                    Tracking Number
+                                </th>
 
-                </div>
+                                <th
+                                    style={{
+                                        textAlign: "left",
+                                        padding: "16px",
+                                        color: "#64748b"
+                                    }}
+                                >
+                                    Customer ID
+                                </th>
 
-            </div>
+                                <th
+                                    style={{
+                                        textAlign: "left",
+                                        padding: "16px",
+                                        color: "#64748b"
+                                    }}
+                                >
+                                    Status
+                                </th>
 
-            <div
-                style={{
-                    marginTop: "35px",
-                    background: "white",
-                    padding: "30px",
-                    borderRadius: "20px",
-                    boxShadow:
-                        "0 10px 25px rgba(0,0,0,0.08)"
-                }}
-            >
+                            </tr>
 
-                <h2>
-                    📜 Recent Activities
-                </h2>
+                        </thead>
 
-                <div
-                    style={{
-                        marginTop: "20px"
-                    }}
-                >
+                        <tbody>
+
+                            {
+                                parcels
+                                    .filter(
+                                        parcel =>
+                                            parcel.status === "Assigned" ||
+                                            parcel.status === "OutForDelivery"
+                                    )
+                                    .slice(0,
+                                        showAllPending
+                                            ? parcels.length
+                                            : 5
+                                    )
+
+                                    .map(parcel => (
+
+                                        <tr key={parcel.id}>
+
+                                            <td
+                                                style={{
+                                                    padding: "18px 16px",
+                                                    borderTop:
+                                                        "1px solid #e2e8f0"
+                                                }}
+                                            >
+                                                {parcel.tracking_number}
+                                            </td>
+
+                                            <td
+                                                style={{
+                                                    padding: "18px 16px",
+                                                    borderTop:
+                                                        "1px solid #e2e8f0"
+                                                }}
+                                            >
+                                                {parcel.customer_id}
+                                            </td>
+
+                                            <td
+                                                style={{
+                                                    padding: "18px 16px",
+                                                    borderTop:
+                                                        "1px solid #e2e8f0"
+                                                }}
+                                            >
+
+                                                <span
+                                                    style={{
+                                                        padding: "8px 14px",
+                                                        borderRadius: "10px",
+
+                                                        background:
+                                                            parcel.status === "Assigned"
+                                                                ? "#dbeafe"
+                                                                : "#fef3c7",
+
+                                                        color:
+                                                            parcel.status === "Assigned"
+                                                                ? "#2563eb"
+                                                                : "#d97706"
+                                                    }}
+                                                >
+                                                    {parcel.status}
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+                                    ))
+                            }
+
+                        </tbody>
+
+                    </table>
 
                     {
-                        parcels
-                            .slice(0, 5)
-                            .map(parcel => (
+                        parcels.filter(
+                            parcel =>
 
-                                <div
+                                parcel.status === "Assigned"
 
-                                    key={parcel.id}
+                                ||
+
+                                parcel.status === "OutForDelivery"
+
+                        ).length > 5 && (
+
+                            <div
+                                style={{
+                                    textAlign: "center",
+                                    marginTop: "20px"
+                                }}
+                            >
+
+                                <button
+
+                                    onClick={() =>
+                                        setShowAllPending(
+                                            !showAllPending
+                                        )
+                                    }
 
                                     style={{
-                                        padding: "15px 0",
-                                        borderBottom:
-                                            "1px solid #e2e8f0"
+                                        border: "none",
+                                        background: "#2563eb",
+                                        color: "white",
+                                        padding: "12px 24px",
+                                        borderRadius: "12px",
+                                        cursor: "pointer",
+                                        fontWeight: "600"
                                     }}
                                 >
 
                                     {
 
-                                        parcel.status ===
-                                        "Delivered"
+                                        showAllPending
+                                            ? "View Less"
+                                            : "View More"
 
-                                            ?
-
-                                            `✅ ${parcel.tracking_number} delivered successfully`
-
-                                            :
-
-                                            parcel.status ===
-                                            "FailedDelivery"
-
-                                                ?
-
-                                                `❌ ${parcel.tracking_number} delivery failed`
-
-                                                :
-
-                                                `🚚 ${parcel.tracking_number} currently ${parcel.status}`
                                     }
-                                </div>
-                            ))
+
+                                </button>
+
+                            </div>
+
+                        )
+                    }
+
+                </div>
+
+
+                {/* RIGHT SIDE */}
+
+                <div>
+
+
+                    {/* RECENT ACTIVITIES */}
+
+                    <div
+                        style={{
+                            background: "white",
+                            padding: "30px",
+                            borderRadius: "24px",
+                            boxShadow:
+                                "0 10px 25px rgba(0,0,0,0.08)",
+                            height: "100%"
+                        }}
+                    >
+
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "12px",
+                                marginBottom: "20px"
+                            }}
+                        >
+
+                            <FiActivity
+                                size={30}
+                                color="#22c55e"
+                            />
+
+                            <h2
+                                style={{
+                                    margin: 0,
+                                    fontSize: "30px"
+                                }}
+                            >
+                                Recent Activities
+                            </h2>
+
+                        </div>
+
+                        {
+                            (showAllActivities
+                                ? parcels
+                                : parcels.slice(0, 5)
+                            ).map(parcel => (
+
+                                    <div
+                                        key={parcel.id}
+
+                                        style={{
+                                            padding: "16px 0",
+                                            borderBottom:
+                                                "1px solid #e2e8f0"
+                                        }}
+                                    >
+
+                                        {
+                                            parcel.status === "Delivered"
+
+                                                ? `✅ ${parcel.tracking_number} delivered successfully`
+
+                                                : parcel.status === "FailedDelivery"
+
+                                                    ? `❌ ${parcel.tracking_number} delivery failed`
+
+                                                    : `🚚 ${parcel.tracking_number} currently ${parcel.status}`
+                                        }
+
+                                    </div>
+
+                                ))
+                        }
+
+                    </div>
+                    {
+                        parcels.length > 5 && (
+
+                            <div
+                                style={{
+                                    marginTop: "20px",
+                                    textAlign: "center"
+                                }}
+                            >
+
+                                <button
+
+                                    onClick={() =>
+                                        setShowAllActivities(
+                                            !showAllActivities
+                                        )
+                                    }
+
+                                    style={{
+                                        border: "none",
+                                        background: "#2563eb",
+                                        color: "white",
+                                        padding: "12px 24px",
+                                        borderRadius: "12px",
+                                        cursor: "pointer",
+                                        fontWeight: "600"
+                                    }}
+                                >
+
+                                    {
+
+                                        showAllActivities
+                                            ? "View Less"
+                                            : "View More"
+
+                                    }
+
+                                </button>
+
+                            </div>
+
+                        )
                     }
 
                 </div>
