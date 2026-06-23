@@ -887,7 +887,36 @@ function MyParcels() {
                                 </span>
 
                                 <b>Status</b>
-                                <span>{selectedParcel.status}</span>
+                                <span
+                                    style={{
+                                        display: "inline-block",
+                                        width: "fit-content",
+
+                                        padding: "8px 14px",
+                                        borderRadius: "20px",
+                                        fontWeight: "600",
+
+                                        background:
+                                            selectedParcel.status === "Delivered"
+                                                ? "#dcfce7"
+                                                : selectedParcel.status === "FailedDelivery"
+                                                ? "#fee2e2"
+                                                : selectedParcel.status === "OutForDelivery"
+                                                ? "#fef3c7"
+                                                : "#dbeafe",
+
+                                        color:
+                                            selectedParcel.status === "Delivered"
+                                                ? "#166534"
+                                                : selectedParcel.status === "FailedDelivery"
+                                                ? "#991b1b"
+                                                : selectedParcel.status === "OutForDelivery"
+                                                ? "#92400e"
+                                                : "#1d4ed8"
+                                    }}
+                                >
+                                    {selectedParcel.status}
+                                </span>
 
                                 <b>Failure Reason</b>
                                 <span>
