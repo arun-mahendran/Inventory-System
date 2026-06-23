@@ -12,12 +12,21 @@ from app.services.delivery_agent_service import (
     get_agent_by_id
 )
 
+from app.core.dependencies import (
+    get_current_user
+)
+
 from app.utils.dependencies import get_db
 
 from app.services.delivery_agent_service import (
     get_agent_parcels
 )
 from app.models.parcel import Parcel
+
+from app.core.dependencies import (
+    get_current_admin,
+    get_current_agent
+)
 
 
 router = APIRouter(
@@ -26,10 +35,11 @@ router = APIRouter(
 )
 
 
-@router.post("/",)
+@router.post("/")
 def create_agent(
     agent: DeliveryAgentCreate,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin)
 ):
     try:
         return create_delivery_agent(
@@ -44,18 +54,25 @@ def create_agent(
         )
 
 
-@router.get("/", response_model=list[DeliveryAgentResponse])
+@router.get(
+    "/",
+    response_model=list[DeliveryAgentResponse]
+)
 def get_agents(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin)
 ):
     return get_all_agents(db)
 
 
-@router.get("/{agent_id}",
-            response_model=DeliveryAgentResponse)
+@router.get(
+    "/{agent_id}",
+    response_model=DeliveryAgentResponse
+)
 def get_agent(
     agent_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_admin=Depends(get_current_admin)
 ):
     return get_agent_by_id(
         db,
@@ -68,8 +85,19 @@ def get_agent(
 )
 def get_parcels_of_agent(
     agent_id: int,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_agent=Depends(get_current_agent)
 ):
+
+    if (
+        current_agent["user_id"]
+        != agent_id
+    ):
+
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied"
+        )
 
     return get_agent_parcels(
         db,
@@ -80,7 +108,8 @@ def get_parcels_of_agent(
 @router.get("/tracking/{tracking_number}")
 def track_parcel(
     tracking_number: str,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
 ):
 
     parcel = db.query(Parcel).filter(

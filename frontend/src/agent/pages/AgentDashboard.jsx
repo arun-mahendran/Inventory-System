@@ -13,6 +13,11 @@ import AgentStatCard
 
 function AgentDashboard() {
 
+    const fullName =
+    localStorage.getItem(
+        "full_name"
+    );
+
     const [summary, setSummary] =
         useState({
             assigned: 0,
@@ -88,9 +93,34 @@ function AgentDashboard() {
 
         <AgentLayout>
 
-            <h1>
-                🚚 Agent Dashboard
-            </h1>
+            <div
+                style={{
+                    marginBottom: "30px"
+                }}
+            >
+
+                <h1
+                    style={{
+                        fontSize: "36px",
+                        fontWeight: "700",
+                        marginBottom: "8px",
+                        color: "#0f172a"
+                    }}
+                >
+                    👋 Welcome, {fullName}!
+                </h1>
+
+                <p
+                    style={{
+                        fontSize: "18px",
+                        color: "#64748b",
+                        margin: 0
+                    }}
+                >
+                    Here's your delivery overview for today.
+                </p>
+
+            </div>
 
             <div className="cards">
 

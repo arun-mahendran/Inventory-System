@@ -5,8 +5,6 @@ import {
     FiPackage,
     FiMapPin,
     FiClock,
-    FiUser,
-    FiLock,
     FiLogOut
 } from "react-icons/fi";
 
@@ -139,39 +137,6 @@ function AgentSidebar({
 
             </NavLink>
 
-            <NavLink
-                to="/profile"
-                className={({ isActive }) =>
-                    isActive
-                        ? "sidebar-link active-link"
-                        : "sidebar-link"
-                }
-            >
-                <FiUser size={20} />
-
-                {
-                    sidebarOpen &&
-                    "Profile"
-                }
-
-            </NavLink>
-
-            <NavLink
-                to="/change-password"
-                className={({ isActive }) =>
-                    isActive
-                        ? "sidebar-link active-link"
-                        : "sidebar-link"
-                }
-            >
-                <FiLock size={20} />
-
-                {
-                    sidebarOpen &&
-                    "Change Password"
-                }
-
-            </NavLink>
 
             <NavLink
                 to="/login"
