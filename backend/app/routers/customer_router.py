@@ -15,9 +15,6 @@ from app.services.customer_service import (
 
 from app.utils.dependencies import get_db
 
-from app.core.dependencies import (
-    get_current_admin
-)
 
 
 router = APIRouter(
@@ -30,7 +27,6 @@ router = APIRouter(
 def create_new_customer(
     customer: CustomerCreate,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return create_customer(db, customer)
 
@@ -38,7 +34,6 @@ def create_new_customer(
 @router.get("/", response_model=list[CustomerResponse])
 def get_customers(
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return get_all_customers(db)
 
@@ -50,7 +45,6 @@ def get_customers(
 def get_customer(
     customer_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return get_customer_by_id(
         db,
@@ -62,7 +56,6 @@ def get_customer(
 def remove_customer(
     customer_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     delete_customer(
         db,

@@ -128,8 +128,7 @@ def assign_parcel_to_agent(
 
 def mark_out_for_delivery(
     db: Session,
-    parcel_id: int,
-    current_agent_id: int
+    parcel_id: int
 ):
 
     parcel = db.query(Parcel).filter(
@@ -140,16 +139,6 @@ def mark_out_for_delivery(
         raise HTTPException(
             status_code=404,
             detail="Parcel not found"
-        )
-
-    if (
-        parcel.assigned_agent_id
-        != current_agent_id
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail="Access denied"
         )
 
     parcel.status = "OutForDelivery"
@@ -165,7 +154,6 @@ def mark_out_for_delivery(
 def mark_delivered(
     db: Session,
     parcel_id: int,
-    current_agent_id: int
 ):
 
     parcel = db.query(Parcel).filter(
@@ -176,16 +164,6 @@ def mark_delivered(
         raise HTTPException(
             status_code=404,
             detail="Parcel not found"
-        )
-
-    if (
-        parcel.assigned_agent_id
-        != current_agent_id
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail="Access denied"
         )
 
     parcel.status = "Delivered"
@@ -224,7 +202,6 @@ def mark_failed_delivery(
     db: Session,
     parcel_id: int,
     reason: str,
-    current_agent_id: int
 ):
 
     parcel = db.query(Parcel).filter(
@@ -237,15 +214,6 @@ def mark_failed_delivery(
             detail="Parcel not found"
         )
 
-    if (
-        parcel.assigned_agent_id
-        != current_agent_id
-    ):
-
-        raise HTTPException(
-            status_code=403,
-            detail="Access denied"
-        )
 
     parcel.status = "FailedDelivery"
 

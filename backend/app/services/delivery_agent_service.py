@@ -17,6 +17,9 @@ from app.utils.security import (
 
 from app.models.parcel import Parcel
 
+from app.models.parcel_assignment_history import (
+    ParcelAssignmentHistory
+)
 
 def generate_temp_password():
 
@@ -167,3 +170,74 @@ def get_agent_parcels(
         )
         .all()
     )
+
+
+def delete_delivery_agent(
+    db: Session,
+    agent_id: int
+):
+
+    agent = db.query(
+        DeliveryAgent
+    ).filter(
+        DeliveryAgent.id == agent_id
+    ).first()
+
+    if not agent:
+        raise ValueError(
+            "Delivery Agent not found"
+        )
+
+    # Check active parcels
+
+    active_parcels = db.query(
+        Parcel
+    ).filter(
+        Parcel.assigned_agent_id == agent_id,
+
+        Parcel.status.in_([
+            "Assigned",
+            "OutForDelivery"
+        ])
+    ).count()
+
+    if active_parcels > 0:
+
+        raise ValueError(
+            "Agent has active parcels and cannot be deleted"
+        )
+
+    # Check delivery history
+
+    history_count = db.query(
+        ParcelAssignmentHistory
+    ).filter(
+        ParcelAssignmentHistory.agent_id
+        == agent_id
+    ).count()
+
+    if history_count > 0:
+
+        raise ValueError(
+            "Agent has delivery history and cannot be deleted"
+        )
+
+    # Delete associated user
+
+    user = db.query(
+        User
+    ).filter(
+        User.id == agent.user_id
+    ).first()
+
+    if user:
+        db.delete(user)
+
+    db.delete(agent)
+
+    db.commit()
+
+    return {
+        "message":
+            "Delivery Agent deleted successfully"
+    }

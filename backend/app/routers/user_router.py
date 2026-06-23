@@ -19,7 +19,7 @@ from app.services.user_service import (
 )
 
 from app.utils.dependencies import get_db
-from app.core.dependencies import get_current_admin
+
 
 
 router = APIRouter(
@@ -49,7 +49,6 @@ def create_new_user(
 @router.get("/", response_model=list[UserResponse])
 def get_users(
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return get_all_users(db)
 

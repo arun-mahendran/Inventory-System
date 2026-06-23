@@ -31,11 +31,6 @@ from app.services.parcel_service import (
 
 from app.utils.dependencies import get_db
 
-from app.core.dependencies import (
-    get_current_admin,
-    get_current_agent,
-    get_current_user
-)
 
 
 router = APIRouter(
@@ -51,7 +46,6 @@ router = APIRouter(
 def create_new_parcel(
     parcel: ParcelCreate,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     try:
         return create_parcel(
@@ -75,7 +69,6 @@ def get_parcels(
     agent_id: Optional[int] = None,
     customer_id: Optional[int] = None,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return get_all_parcels(
         db,
@@ -92,7 +85,6 @@ def get_parcels(
 def get_parcel_by_tracking(
     tracking_number: str,
     db: Session = Depends(get_db),
-    current_user=Depends(get_current_user)
 ):
     try:
         return get_parcel_by_tracking_number(
@@ -116,7 +108,6 @@ def get_parcel_by_tracking(
 def parcel_history(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     return get_parcel_history(
         db,
@@ -131,7 +122,6 @@ def parcel_history(
 def get_parcel(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
 
     parcel = get_parcel_by_id(
@@ -154,7 +144,6 @@ def get_parcel(
 def auto_assign(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     try:
         return assign_parcel_to_agent(
@@ -176,14 +165,12 @@ def auto_assign(
 def update_out_for_delivery(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_agent=Depends(get_current_agent)
 ):
     try:
 
         return mark_out_for_delivery(
             db,
-            parcel_id,
-            current_agent["user_id"]
+            parcel_id
         )
 
     except ValueError as e:
@@ -201,14 +188,12 @@ def update_out_for_delivery(
 def update_delivered(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_agent=Depends(get_current_agent)
 ):
     try:
 
         return mark_delivered(
             db,
-            parcel_id,
-            current_agent["user_id"]
+            parcel_id
         )
 
     except ValueError as e:
@@ -227,15 +212,13 @@ def update_failed_delivery(
     parcel_id: int,
     request: FailedDeliveryRequest,
     db: Session = Depends(get_db),
-    current_agent=Depends(get_current_agent)
 ):
     try:
 
         return mark_failed_delivery(
             db,
             parcel_id,
-            request.reason,
-            current_agent["user_id"]
+            request.reason
         )
 
     except ValueError as e:
@@ -252,7 +235,6 @@ def update_failed_delivery(
 def reassign_parcel(
     parcel_id: int,
     db: Session = Depends(get_db),
-    current_admin=Depends(get_current_admin)
 ):
     try:
         return reassign_failed_parcel(

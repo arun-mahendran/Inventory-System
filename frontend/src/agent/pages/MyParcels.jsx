@@ -33,6 +33,18 @@ function MyParcels() {
         setShowModal] =
         useState(false);
 
+    const [showFailureModal,
+        setShowFailureModal] =
+        useState(false);
+
+    const [selectedParcelId,
+        setSelectedParcelId] =
+        useState(null);
+
+    const [failureReason,
+        setFailureReason] =
+        useState("");
+
     const [showFilterDropdown, setShowFilterDropdown] =
     useState(false);
 
@@ -68,7 +80,7 @@ function MyParcels() {
 
                     const agentId =
                         localStorage.getItem(
-                            "user_id"
+                            "delivery_agent_id"
                         );
 
                     const response =
@@ -133,34 +145,61 @@ function MyParcels() {
     };
 
     const reportFailure =
-    async (parcelId) => {
+        (parcelId) => {
 
-        const reason =
-            prompt(
-                "Enter failure reason"
+            setSelectedParcelId(
+                parcelId
             );
 
-        if (!reason) return;
+            setShowFailureModal(
+                true
+            );
 
-        try {
+        };
 
-            await api.patch(
-                `/parcels/${parcelId}/failed`,
-                {
-                    failure_reason:
-                        reason
+    
+        const submitFailure =
+            async () => {
+
+                if (
+                    !failureReason.trim()
+                ) {
+
+                    alert(
+                        "Please enter failure reason"
+                    );
+
+                    return;
+
                 }
-            );
 
-            window.location.reload();
+                try {
 
-        } catch (error) {
+                    await api.patch(
+                        `/parcels/${selectedParcelId}/failed`,
+                        {
+                            reason:
+                                failureReason
+                        }
+                    );
 
-            console.log(error);
+                    setShowFailureModal(
+                        false
+                    );
 
-        }
+                    setFailureReason(
+                        ""
+                    );
 
-    };
+                    window.location.reload();
+
+                } catch (error) {
+
+                    console.log(error);
+
+                }
+
+            };
 
     const filteredParcels =
     filterStatus === "All"
@@ -879,6 +918,135 @@ function MyParcels() {
                                         ).toLocaleString()
                                     }
                                 </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                )
+            }
+
+            {
+                showFailureModal && (
+
+                    <div className="modal-overlay">
+
+                        <div
+                            className="modal-card"
+                            style={{
+                                maxWidth: "450px"
+                            }}
+                        >
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "space-between",
+                                    alignItems: "center",
+                                    marginBottom: "20px"
+                                }}
+                            >
+
+                                <h2>
+                                    ❌ Failed Delivery
+                                </h2>
+
+                                <button
+                                    onClick={() =>
+                                        setShowFailureModal(
+                                            false
+                                        )
+                                    }
+
+                                    style={{
+                                        border: "none",
+                                        background: "none",
+                                        fontSize: "22px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    ✕
+                                </button>
+
+                            </div>
+
+                            <p
+                                style={{
+                                    color: "#64748b",
+                                    marginBottom: "15px"
+                                }}
+                            >
+                                Please enter the reason
+                                for delivery failure.
+                            </p>
+
+                            <textarea
+                                rows="4"
+
+                                value={failureReason}
+
+                                onChange={(e) =>
+                                    setFailureReason(
+                                        e.target.value
+                                    )
+                                }
+
+                                placeholder="Example: Customer not available"
+
+                                style={{
+                                    width: "100%",
+                                    padding: "12px",
+                                    borderRadius: "10px",
+                                    border: "1px solid #cbd5e1",
+                                    resize: "none",
+                                    marginBottom: "20px"
+                                }}
+                            />
+
+                            <div
+                                style={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                    gap: "10px"
+                                }}
+                            >
+
+                                <button
+                                    onClick={() =>
+                                        setShowFailureModal(
+                                            false
+                                        )
+                                    }
+
+                                    style={{
+                                        background: "#e2e8f0",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "10px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+
+                                <button
+                                    onClick={
+                                        submitFailure
+                                    }
+
+                                    style={{
+                                        background: "#ef4444",
+                                        color: "white",
+                                        border: "none",
+                                        padding: "10px 18px",
+                                        borderRadius: "10px",
+                                        cursor: "pointer"
+                                    }}
+                                >
+                                    Submit
+                                </button>
 
                             </div>
 

@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 
+
 class LoginRequest(BaseModel):
     email: str
     password: str
@@ -11,4 +12,5 @@ class TokenResponse(BaseModel):
     role: str
     full_name: str
     user_id: int
+    delivery_agent_id: int | None = None
     change_password: bool
