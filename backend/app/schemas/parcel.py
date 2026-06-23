@@ -12,9 +12,15 @@ class FailedDeliveryRequest(BaseModel):
 
 
 class ParcelResponse(BaseModel):
+
     id: int
     tracking_number: str
     customer_id: int
+
+    # NEW FIELDS
+    customer_name: str | None = None
+    phone: str | None = None
+    address: str | None = None
     assigned_agent_id: int | None
     status: str
     failure_reason: str | None = None

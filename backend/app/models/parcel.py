@@ -8,10 +8,13 @@ from sqlalchemy import (
 
 from sqlalchemy.sql import func
 
+from sqlalchemy.orm import relationship
+
 from app.database import Base
 
 
 class Parcel(Base):
+
     __tablename__ = "parcels"
 
     id = Column(
@@ -48,8 +51,6 @@ class Parcel(Base):
         nullable=True
     )
 
-    # New Columns
-
     out_for_delivery_at = Column(
         DateTime(timezone=True),
         nullable=True
@@ -69,3 +70,6 @@ class Parcel(Base):
         DateTime(timezone=True),
         server_default=func.now()
     )
+
+    # Relationship
+    customer = relationship("Customer")

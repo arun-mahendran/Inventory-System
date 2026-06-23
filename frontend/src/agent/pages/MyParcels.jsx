@@ -225,6 +225,8 @@ function MyParcels() {
     const viewParcelDetails =
     (parcel) => {
 
+        console.log(parcel);
+
         setSelectedParcel(
             parcel
         );
@@ -847,70 +849,51 @@ function MyParcels() {
                                 }}
                             >
 
-                                <b>
-                                    Tracking Number
-                                </b>
+                                <b>Tracking Number</b>
+                                <span>{selectedParcel.tracking_number}</span>
 
+                                <b>Customer Name</b>
                                 <span>
-                                    {
-                                        selectedParcel.tracking_number
-                                    }
+                                    {selectedParcel.customer_name || "-"}
                                 </span>
 
-                                <b>
-                                    Customer ID
-                                </b>
-
+                                <b>Phone Number</b>
                                 <span>
-                                    {
-                                        selectedParcel.customer_id
-                                    }
+                                    {selectedParcel.phone || "-"}
                                 </span>
 
-                                <b>
-                                    Status
-                                </b>
+                                <b>Customer ID</b>
+                                <span>{selectedParcel.customer_id}</span>
 
-                                <span>
-                                    {
-                                        selectedParcel.status
-                                    }
-                                </span>
-
-                                <b>
-                                    Assigned Agent
-                                </b>
-
-                                <span>
-                                    {
-                                        selectedParcel.assigned_agent_id
-                                            || "-"
-                                    }
-                                </span>
-
-                                <b>
-                                    Failure Reason
-                                </b>
+                                <b>Delivery Address</b>
 
                                 <span
                                     style={{
-                                        color:
-                                            "#dc2626",
-
-                                        fontWeight:
-                                            "600"
+                                        whiteSpace: "pre-wrap",
+                                        lineHeight: "1.6"
                                     }}
                                 >
+                                    {selectedParcel.address || "-"}
+                                </span>
+
+                                <b>Status</b>
+                                <span>{selectedParcel.status}</span>
+
+                                <b>Assigned Agent</b>
+                                <span>
                                     {
-                                        selectedParcel.failure_reason
-                                        || "-"
+                                        selectedParcel.assigned_agent_id
+                                            ? `Agent ${selectedParcel.assigned_agent_id}`
+                                            : "-"
                                     }
                                 </span>
 
-                                <b>
-                                    Created At
-                                </b>
+                                <b>Failure Reason</b>
+                                <span>
+                                    {selectedParcel.failure_reason || "-"}
+                                </span>
 
+                                <b>Created At</b>
                                 <span>
                                     {
                                         new Date(

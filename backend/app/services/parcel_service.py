@@ -101,6 +101,20 @@ def get_all_parcels(
             ).all()
         )
 
+        if parcel.customer:
+
+            parcel.customer_name = (
+                parcel.customer.customer_name
+            )
+
+            parcel.phone = (
+                parcel.customer.phone
+            )
+
+            parcel.address = (
+                parcel.customer.address
+            )
+
     return parcels
 
 
@@ -109,11 +123,27 @@ def get_parcel_by_id(
     parcel_id: int
 ):
 
-    return db.query(
+    parcel = db.query(
         Parcel
     ).filter(
         Parcel.id == parcel_id
     ).first()
+
+    if parcel and parcel.customer:
+
+        parcel.customer_name = (
+            parcel.customer.customer_name
+        )
+
+        parcel.phone = (
+            parcel.customer.phone
+        )
+
+        parcel.address = (
+            parcel.customer.address
+        )
+
+    return parcel
 
 
 def assign_parcel_to_agent(
@@ -262,6 +292,20 @@ def get_parcel_by_tracking_number(
     if not parcel:
         raise ValueError(
             "Parcel not found"
+        )
+
+    if parcel.customer:
+
+        parcel.customer_name = (
+            parcel.customer.customer_name
+        )
+
+        parcel.phone = (
+            parcel.customer.phone
+        )
+
+        parcel.address = (
+            parcel.customer.address
         )
 
     return parcel

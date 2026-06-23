@@ -20,6 +20,7 @@ from app.models.parcel import Parcel
 from app.models.parcel_assignment_history import (
     ParcelAssignmentHistory
 )
+from app.models.customer import Customer
 
 def generate_temp_password():
 
@@ -162,14 +163,44 @@ def get_agent_parcels(
     agent_id: int
 ):
 
-    return (
+    parcels = (
         db.query(Parcel)
         .filter(
-            Parcel.assigned_agent_id
-            == agent_id
+            Parcel.assigned_agent_id == agent_id
         )
         .all()
     )
+
+    for parcel in parcels:
+
+        customer = db.query(Customer).filter(
+            Customer.id == parcel.customer_id
+        ).first()
+
+        if customer:
+
+            parcel.customer_name = (
+                customer.customer_name
+            )
+
+            parcel.phone = (
+                customer.phone
+            )
+
+            parcel.address = (
+                customer.address
+            )
+
+        parcel.history_count = len(
+            db.query(
+                ParcelAssignmentHistory
+            ).filter(
+                ParcelAssignmentHistory.parcel_id
+                == parcel.id
+            ).all()
+        )
+
+    return parcels
 
 
 def delete_delivery_agent(
