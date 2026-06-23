@@ -3,6 +3,8 @@ from sqlalchemy.orm import Session
 from app.models.parcel import Parcel
 from app.models.customer import Customer
 
+from datetime import datetime
+
 from app.schemas.parcel import ParcelCreate
 
 from app.services.assignment_engine import (
@@ -152,6 +154,8 @@ def mark_out_for_delivery(
 
     parcel.status = "OutForDelivery"
 
+    parcel.out_for_delivery_at = datetime.now()
+
     db.commit()
     db.refresh(parcel)
 
@@ -185,6 +189,8 @@ def mark_delivered(
         )
 
     parcel.status = "Delivered"
+
+    parcel.delivered_at = datetime.now()
 
     if parcel.assigned_agent_id:
 
@@ -242,6 +248,8 @@ def mark_failed_delivery(
         )
 
     parcel.status = "FailedDelivery"
+
+    parcel.failed_at = datetime.now()
 
     parcel.failure_reason = reason
 

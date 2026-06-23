@@ -19,6 +19,9 @@ class ParcelResponse(BaseModel):
     status: str
     failure_reason: str | None = None
     history_count: int = 0
+    out_for_delivery_at: datetime | None = None
+    delivered_at: datetime | None = None
+    failed_at: datetime | None = None
     created_at: datetime
     class Config:
         from_attributes = True

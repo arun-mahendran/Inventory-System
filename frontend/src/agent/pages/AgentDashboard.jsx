@@ -46,10 +46,17 @@ function AgentDashboard() {
                     const parcels =
                         response.data;
 
+                    const today =
+                        new Date().toDateString();
+
                     setSummary({
 
                         assigned:
-                            parcels.length,
+                            parcels.filter(
+                                parcel =>
+                                    parcel.status ===
+                                    "Assigned"
+                            ).length,
 
                         outForDelivery:
                             parcels.filter(
@@ -59,17 +66,39 @@ function AgentDashboard() {
                             ).length,
 
                         delivered:
-                            parcels.filter(
-                                parcel =>
-                                    parcel.status ===
-                                    "Delivered"
+                            parcels.filter(parcel =>
+
+                                parcel.status ===
+                                "Delivered"
+
+                                &&
+
+                                parcel.delivered_at
+
+                                &&
+
+                                new Date(
+                                    parcel.delivered_at
+                                ).toDateString() === today
+
                             ).length,
 
                         failed:
-                            parcels.filter(
-                                parcel =>
-                                    parcel.status ===
-                                    "FailedDelivery"
+                            parcels.filter(parcel =>
+
+                                parcel.status ===
+                                "FailedDelivery"
+
+                                &&
+
+                                parcel.failed_at
+
+                                &&
+
+                                new Date(
+                                    parcel.failed_at
+                                ).toDateString() === today
+
                             ).length
 
                     });

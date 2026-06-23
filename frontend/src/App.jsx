@@ -45,6 +45,9 @@ import MyParcels from "./agent/pages/MyParcels";
 import AgentTracking
 from "./agent/pages/AgentTracking";
 
+import AgentDeliveryHistory
+from "./agent/pages/AgentDeliveryHistory";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -214,6 +217,19 @@ function App() {
                         allowedRoles={["DeliveryAgent"]}
                     >
                         <AgentTracking />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/delivery-history"
+                element={
+                    <ProtectedRoute
+                        allowedRoles={
+                            ["DeliveryAgent"]
+                        }
+                    >
+                        <AgentDeliveryHistory />
                     </ProtectedRoute>
                 }
             />

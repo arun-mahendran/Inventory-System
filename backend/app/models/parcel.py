@@ -48,6 +48,23 @@ class Parcel(Base):
         nullable=True
     )
 
+    # New Columns
+
+    out_for_delivery_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    delivered_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
+    failed_at = Column(
+        DateTime(timezone=True),
+        nullable=True
+    )
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now()
