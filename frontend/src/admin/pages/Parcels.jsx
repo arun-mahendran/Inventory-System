@@ -861,16 +861,22 @@ const filters = [
                                         }}
                                     >
 
-                                        <b>Tracking Number</b>
-                                        <span>{selectedParcel.tracking_number}</span>
+                                        <b>Tracking Number :</b>
+                                        <span>
+                                            {selectedParcel.tracking_number}
+                                        </span>
 
-                                        <b>Status</b>
-                                        <span>{selectedParcel.status}</span>
+                                        <b>Status :</b>
+                                        <span>
+                                            {selectedParcel.status}
+                                        </span>
 
-                                        <b>Customer ID</b>
-                                        <span>{selectedParcel.customer_id}</span>
+                                        <b>Customer ID :</b>
+                                        <span>
+                                            {selectedParcel.customer_id}
+                                        </span>
 
-                                        <b>Assigned Agent</b>
+                                        <b>Assigned Agent :</b>
                                         <span>
                                             {
                                                 selectedParcel.assigned_agent_id || "-"

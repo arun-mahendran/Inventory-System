@@ -16,6 +16,8 @@ import { FiPackage }
 
 import { FiFilter } from "react-icons/fi";
 
+import { FiMapPin } from "react-icons/fi";
+
 
 function MyParcels() {
 
@@ -841,89 +843,146 @@ function MyParcels() {
                             <div
                                 style={{
                                     display: "grid",
-
-                                    gridTemplateColumns:
-                                        "170px 1fr",
-
-                                    rowGap: "14px"
+                                    gridTemplateColumns: "180px 1fr",
+                                    rowGap: "15px",
+                                    marginTop: "20px"
                                 }}
                             >
 
-                                <b>Tracking Number</b>
-                                <span>{selectedParcel.tracking_number}</span>
+                                <b>Tracking Number :</b>
+                                <span>
+                                    {selectedParcel.tracking_number}
+                                </span>
 
-                                <b>Customer Name</b>
+                                <b>Customer Name :</b>
                                 <span>
                                     {selectedParcel.customer_name || "-"}
                                 </span>
 
-                                <b>Customer ID</b>
+                                <b>Customer ID :</b>
                                 <span>
                                     {selectedParcel.customer_id}
                                 </span>
 
-                                <b>Phone Number</b>
+                                <b>Phone Number :</b>
                                 <span>
                                     {selectedParcel.phone || "-"}
                                 </span>
 
                                 <b>
-                                    Delivery Address
+                                    Delivery Address :
                                 </b>
 
-                                <span
+                                <div
                                     style={{
-                                        whiteSpace: "pre-wrap",
-                                        lineHeight: "1.8",
-                                        color: "#475569"
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "12px"
                                     }}
                                 >
-                                    {
-                                        selectedParcel.address
-                                            ?.split(",")
-                                            .join(",\n")
-                                            || "-"
-                                    }
-                                </span>
 
-                                <b>Status</b>
-                                <span
+                                    <span
+                                        style={{
+                                            whiteSpace: "pre-wrap",
+                                            lineHeight: "1.8",
+                                            color: "#475569"
+                                        }}
+                                    >
+                                        {
+                                            selectedParcel.address
+                                                ?.split(",")
+                                                .join(",\n")
+                                                || "-"
+                                        }
+                                    </span>
+
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                                            selectedParcel.address
+                                        )}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            width: "fit-content",
+
+                                            display: "inline-flex",
+                                            alignItems: "center",
+                                            gap: "8px",
+
+                                            padding: "10px 16px",
+
+                                            background: "#eff6ff",
+                                            color: "#2563eb",
+
+                                            borderRadius: "12px",
+
+                                            textDecoration: "none",
+
+                                            fontSize: "14px",
+                                            fontWeight: "600"
+                                        }}
+                                    >
+                                        <FiMapPin size={16} />
+                                        Open in Google Maps
+                                    </a>
+
+                                </div>
+
+                                <b>Status :</b>
+
+                                <div
                                     style={{
-                                        display: "inline-block",
-                                        width: "fit-content",
-
-                                        padding: "8px 14px",
-                                        borderRadius: "20px",
-                                        fontWeight: "600",
-
-                                        background:
-                                            selectedParcel.status === "Delivered"
-                                                ? "#dcfce7"
-                                                : selectedParcel.status === "FailedDelivery"
-                                                ? "#fee2e2"
-                                                : selectedParcel.status === "OutForDelivery"
-                                                ? "#fef3c7"
-                                                : "#dbeafe",
-
-                                        color:
-                                            selectedParcel.status === "Delivered"
-                                                ? "#166534"
-                                                : selectedParcel.status === "FailedDelivery"
-                                                ? "#991b1b"
-                                                : selectedParcel.status === "OutForDelivery"
-                                                ? "#92400e"
-                                                : "#1d4ed8"
+                                        display: "flex",
+                                        alignItems: "center",
+                                        minHeight: "40px"
                                     }}
                                 >
-                                    {selectedParcel.status}
-                                </span>
+                                    <span
+                                        style={{
+                                            display: "inline-block",
+                                            width: "fit-content",
 
-                                <b>Failure Reason</b>
+                                            padding: "8px 14px",
+                                            borderRadius: "20px",
+                                            fontWeight: "600",
+
+                                            background:
+                                                selectedParcel.status === "Delivered"
+                                                    ? "#dcfce7"
+
+                                                    : selectedParcel.status === "FailedDelivery"
+                                                    ? "#fee2e2"
+
+                                                    : selectedParcel.status === "OutForDelivery"
+                                                    ? "#fef3c7"
+
+                                                    : "#e0e7ff",
+
+                                            color:
+                                                selectedParcel.status === "Delivered"
+                                                    ? "#166534"
+
+                                                    : selectedParcel.status === "FailedDelivery"
+                                                    ? "#991b1b"
+
+                                                    : selectedParcel.status === "OutForDelivery"
+                                                    ? "#92400e"
+
+                                                    : "#4338ca"
+                                        }}
+                                    >
+                                        {selectedParcel.status}
+                                    </span>
+                                </div>
+
+                                <b>Failure Reason :</b>
+
                                 <span>
                                     {selectedParcel.failure_reason || "-"}
                                 </span>
 
-                                <b>Created At</b>
+                                <b>Created At :</b>
+
                                 <span>
                                     {
                                         new Date(
