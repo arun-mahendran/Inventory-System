@@ -1,5 +1,6 @@
 import {
-    useState
+    useState,
+    useEffect
 } from "react";
 
 import AgentNavbar
@@ -14,8 +15,28 @@ function AgentLayout({
 }) {
 
     const [sidebarOpen,
-        setSidebarOpen] =
-        useState(true);
+    setSidebarOpen] =
+    useState(() => {
+
+        const savedState =
+            localStorage.getItem(
+                "agent_sidebar_open"
+            );
+
+        return savedState !== null
+            ? JSON.parse(savedState)
+            : true;
+
+    });
+
+    useEffect(() => {
+
+        localStorage.setItem(
+            "agent_sidebar_open",
+            JSON.stringify(sidebarOpen)
+        );
+
+    }, [sidebarOpen]);
 
     return (
 

@@ -5,6 +5,8 @@ import api from "../../api/axios";
 import AgentLayout
     from "../components/AgentLayout";
 
+import "../../styles/agent-history.css";
+
 function AgentDeliveryHistory() {
 
     const [history, setHistory] =
@@ -18,7 +20,7 @@ function AgentDeliveryHistory() {
 
                 const agentId =
                     localStorage.getItem(
-                        "user_id"
+                        "delivery_agent_id"
                     );
 
                 const response =
@@ -52,142 +54,164 @@ function AgentDeliveryHistory() {
 
     }, []);
 
-
     return (
 
         <AgentLayout>
 
-            <div
-                style={{
-                    marginBottom: "25px"
-                }}
-            >
-                <h1>
-                    📜 Delivery History
-                </h1>
+            <div className="history-page">
 
-                <p
-                    style={{
-                        color: "#64748b"
-                    }}
-                >
-                    View all completed deliveries.
-                </p>
-            </div>
+                <div className="history-header">
 
-            <div
-                className="table-container"
-            >
+                    <h1>
+                        <span>📜</span>
+                        Delivery History
+                    </h1>
 
-                <table
-                    className="data-table"
-                >
+                    <p>
+                        View all completed deliveries.
+                    </p>
 
-                    <thead>
+                </div>
 
-                        <tr>
+                <div className="history-table-container">
 
-                            <th>
-                                Tracking No
-                            </th>
+                    <table className="history-table">
 
-                            <th>
-                                Customer ID
-                            </th>
+                        <thead>
 
-                            <th>
-                                Status
-                            </th>
+                            <tr>
 
-                            <th>
-                                Completed At
-                            </th>
+                                <th>
+                                    Tracking No
+                                </th>
 
-                            <th>
-                                Failure Reason
-                            </th>
+                                <th>
+                                    Customer ID
+                                </th>
 
-                        </tr>
+                                <th>
+                                    Status
+                                </th>
 
-                    </thead>
+                                <th>
+                                    Completed At
+                                </th>
 
-                    <tbody>
+                                <th>
+                                    Failure Reason
+                                </th>
 
-                        {
-                            history.map(
-                                parcel => (
+                            </tr>
 
-                                    <tr
-                                        key={
-                                            parcel.id
-                                        }
-                                    >
+                        </thead>
 
-                                        <td>
-                                            {
-                                                parcel.tracking_number
-                                            }
-                                        </td>
+                        <tbody>
 
-                                        <td>
-                                            {
-                                                parcel.customer_id
-                                            }
-                                        </td>
+                            {
+                                history.length > 0 ?
 
-                                        <td>
+                                    history.map(
+                                        parcel => (
 
-                                            {
-                                                parcel.status
-                                            }
+                                            <tr
+                                                key={
+                                                    parcel.id
+                                                }
+                                            >
 
-                                        </td>
+                                                <td>
+                                                    {
+                                                        parcel.tracking_number
+                                                    }
+                                                </td>
 
-                                        <td>
+                                                <td>
+                                                    {
+                                                        parcel.customer_id
+                                                    }
+                                                </td>
 
-                                            {
-                                                parcel.delivered_at
-                                                    ?
+                                                <td>
 
-                                                    new Date(
+                                                    <span
+                                                        className={
+                                                            parcel.status === "Delivered"
+                                                                ? "status-success"
+                                                                : "status-failed"
+                                                        }
+                                                    >
+
+                                                        {
+                                                            parcel.status === "Delivered"
+                                                                ? "Delivered"
+                                                                : "Failed"
+                                                        }
+
+                                                    </span>
+
+                                                </td>
+
+                                                <td>
+
+                                                    {
                                                         parcel.delivered_at
-                                                    ).toLocaleDateString()
 
-                                                    :
+                                                            ?
 
-                                                    parcel.failed_at
+                                                            new Date(
+                                                                parcel.delivered_at
+                                                            ).toLocaleDateString()
 
-                                                        ?
+                                                            :
 
-                                                        new Date(
                                                             parcel.failed_at
-                                                        ).toLocaleDateString()
 
-                                                        :
+                                                                ?
 
-                                                        "-"
-                                            }
+                                                                new Date(
+                                                                    parcel.failed_at
+                                                                ).toLocaleDateString()
 
-                                        </td>
+                                                                :
 
-                                        <td>
+                                                                "-"
+                                                    }
 
-                                            {
-                                                parcel.failure_reason
-                                                    || "-"
-                                            }
+                                                </td>
 
+                                                <td>
+
+                                                    {
+                                                        parcel.failure_reason
+                                                            || "-"
+                                                    }
+
+                                                </td>
+
+                                            </tr>
+
+                                        )
+                                    )
+
+                                    :
+
+                                    <tr>
+
+                                        <td
+                                            colSpan="5"
+                                            className="empty-history"
+                                        >
+                                            No delivery history found.
                                         </td>
 
                                     </tr>
+                            }
 
-                                )
-                            )
-                        }
+                        </tbody>
 
-                    </tbody>
+                    </table>
 
-                </table>
+                </div>
 
             </div>
 

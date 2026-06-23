@@ -931,60 +931,74 @@ function MyParcels() {
             {
                 showFailureModal && (
 
-                    <div className="modal-overlay">
+                    <div
+                        style={{
+                            position: "fixed",
+                            inset: 0,
+                            background: "rgba(15,23,42,0.35)",
+                            backdropFilter: "blur(8px)",
+                            WebkitBackdropFilter: "blur(8px)",
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            zIndex: 9999
+                        }}
+                    >
 
                         <div
-                            className="modal-card"
                             style={{
-                                maxWidth: "450px"
+                                background: "white",
+                                padding: "30px",
+                                borderRadius: "20px",
+                                width: "450px",
+                                boxShadow:
+                                    "0 20px 40px rgba(0,0,0,0.15)"
                             }}
                         >
 
                             <div
                                 style={{
                                     display: "flex",
-                                    justifyContent: "space-between",
                                     alignItems: "center",
+                                    gap: "14px",
                                     marginBottom: "20px"
                                 }}
                             >
 
-                                <h2>
-                                    ❌ Failed Delivery
-                                </h2>
-
-                                <button
-                                    onClick={() =>
-                                        setShowFailureModal(
-                                            false
-                                        )
-                                    }
-
+                                <span
                                     style={{
-                                        border: "none",
-                                        background: "none",
-                                        fontSize: "22px",
-                                        cursor: "pointer"
+                                        fontSize: "34px"
                                     }}
                                 >
-                                    ✕
-                                </button>
+                                    ⚠️
+                                </span>
+
+                                <div>
+
+                                    <h2
+                                        style={{
+                                            margin: 0,
+                                            fontSize: "34px"
+                                        }}
+                                    >
+                                        Failed Delivery
+                                    </h2>
+
+                                    <p
+                                        style={{
+                                            margin: 0,
+                                            color: "#64748b",
+                                            fontSize: "15px"
+                                        }}
+                                    >
+                                        Select a failure reason
+                                    </p>
+
+                                </div>
 
                             </div>
 
-                            <p
-                                style={{
-                                    color: "#64748b",
-                                    marginBottom: "15px"
-                                }}
-                            >
-                                Please enter the reason
-                                for delivery failure.
-                            </p>
-
-                            <textarea
-                                rows="4"
-
+                            <select
                                 value={failureReason}
 
                                 onChange={(e) =>
@@ -993,59 +1007,109 @@ function MyParcels() {
                                     )
                                 }
 
-                                placeholder="Example: Customer not available"
-
                                 style={{
                                     width: "100%",
-                                    padding: "12px",
-                                    borderRadius: "10px",
-                                    border: "1px solid #cbd5e1",
-                                    resize: "none",
-                                    marginBottom: "20px"
+                                    padding: "16px",
+                                    borderRadius: "14px",
+                                    border: "2px solid #e2e8f0",
+                                    fontSize: "16px",
+                                    outline: "none",
+                                    marginBottom: "25px"
                                 }}
-                            />
+                            >
+
+                                <option value="">
+                                    Select Reason
+                                </option>
+
+                                <option value="Customer Not Available">
+                                    Customer Not Available
+                                </option>
+
+                                <option value="Address Not Reachable">
+                                    Address Not Reachable
+                                </option>
+
+                                <option value="Phone Not Reachable">
+                                    Phone Not Reachable
+                                </option>
+
+                                <option value="Customer Refused Delivery">
+                                    Customer Refused Delivery
+                                </option>
+
+                                <option value="Other">
+                                    Other
+                                </option>
+
+                            </select>
 
                             <div
                                 style={{
                                     display: "flex",
-                                    justifyContent: "flex-end",
-                                    gap: "10px"
+                                    gap: "12px"
                                 }}
                             >
-
-                                <button
-                                    onClick={() =>
-                                        setShowFailureModal(
-                                            false
-                                        )
-                                    }
-
-                                    style={{
-                                        background: "#e2e8f0",
-                                        border: "none",
-                                        padding: "10px 18px",
-                                        borderRadius: "10px",
-                                        cursor: "pointer"
-                                    }}
-                                >
-                                    Cancel
-                                </button>
 
                                 <button
                                     onClick={
                                         submitFailure
                                     }
 
+                                    disabled={
+                                        !failureReason
+                                    }
+
                                     style={{
-                                        background: "#ef4444",
+                                        flex: 1,
+
+                                        background:
+                                            failureReason
+                                                ? "#ef4444"
+                                                : "#d1d5db",
+
+                                        color: "white",
+
+                                        border: "none",
+
+                                        padding: "14px",
+
+                                        borderRadius: "12px",
+
+                                        fontWeight: "600",
+
+                                        cursor:
+                                            failureReason
+                                                ? "pointer"
+                                                : "not-allowed"
+                                    }}
+                                >
+                                    Mark Failed
+                                </button>
+
+                                <button
+                                    onClick={() => {
+
+                                        setShowFailureModal(
+                                            false
+                                        );
+
+                                        setFailureReason("");
+
+                                    }}
+
+                                    style={{
+                                        flex: 1,
+                                        background: "#334155",
                                         color: "white",
                                         border: "none",
-                                        padding: "10px 18px",
-                                        borderRadius: "10px",
+                                        padding: "14px",
+                                        borderRadius: "12px",
+                                        fontWeight: "600",
                                         cursor: "pointer"
                                     }}
                                 >
-                                    Submit
+                                    Cancel
                                 </button>
 
                             </div>
