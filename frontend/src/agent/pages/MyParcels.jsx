@@ -857,36 +857,37 @@ function MyParcels() {
                                     {selectedParcel.customer_name || "-"}
                                 </span>
 
+                                <b>Customer ID</b>
+                                <span>
+                                    {selectedParcel.customer_id}
+                                </span>
+
                                 <b>Phone Number</b>
                                 <span>
                                     {selectedParcel.phone || "-"}
                                 </span>
 
-                                <b>Customer ID</b>
-                                <span>{selectedParcel.customer_id}</span>
-
-                                <b>Delivery Address</b>
+                                <b>
+                                    Delivery Address
+                                </b>
 
                                 <span
                                     style={{
                                         whiteSpace: "pre-wrap",
-                                        lineHeight: "1.6"
+                                        lineHeight: "1.8",
+                                        color: "#475569"
                                     }}
                                 >
-                                    {selectedParcel.address || "-"}
+                                    {
+                                        selectedParcel.address
+                                            ?.split(",")
+                                            .join(",\n")
+                                            || "-"
+                                    }
                                 </span>
 
                                 <b>Status</b>
                                 <span>{selectedParcel.status}</span>
-
-                                <b>Assigned Agent</b>
-                                <span>
-                                    {
-                                        selectedParcel.assigned_agent_id
-                                            ? `Agent ${selectedParcel.assigned_agent_id}`
-                                            : "-"
-                                    }
-                                </span>
 
                                 <b>Failure Reason</b>
                                 <span>
