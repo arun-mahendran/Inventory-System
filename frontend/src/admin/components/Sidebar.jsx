@@ -8,7 +8,6 @@ import {
     FiMapPin,
     FiBarChart2,
     //FiMoon,
-    FiSearch,
     FiFileText
 } from "react-icons/fi";
 
@@ -93,31 +92,6 @@ function Sidebar({
                 )}
 
             </div>
-
-            {sidebarOpen && (
-
-                <div className="sidebar-search">
-
-                    <FiSearch
-                        size={18}
-
-                        color="#94a3b8"
-
-                        style={{
-                            position: "absolute",
-                            left: "15px",
-                            top: "15px"
-                        }}
-                    />
-
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                    />
-
-                </div>
-
-            )}
 
             <NavLink
                 to="/dashboard"
