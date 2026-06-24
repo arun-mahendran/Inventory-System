@@ -207,14 +207,36 @@ function Tracking() {
 
               <h2
                 style={{
-                  color: parcel.status === "Delivered" ? "#16a34a" : "#2563eb",
-                  marginBottom: "20px",
+                    color:
+                    parcel.status === "Delivered"
+                        ? "#16a34a"
+
+                        : parcel.status === "FailedDelivery"
+                        ? "#dc2626"
+
+                        : "#2563eb",
+
+                    marginBottom: "20px",
                 }}
-              >
+                >
                 {parcel.status === "Delivered"
-                  ? "Parcel Delivered Successfully"
-                  : "Parcel Delivery In Progress"}
-              </h2>
+
+                    ? "Parcel Delivered Successfully"
+
+                    : parcel.status === "FailedDelivery"
+
+                    ? "Delivery Attempt Failed"
+
+                    : parcel.status === "OutForDelivery"
+
+                    ? "Parcel is out for delivery"
+
+                    : parcel.status === "Assigned"
+
+                    ? "Parcel assigned to delivery agent"
+
+                    : "Parcel order has been created"}
+                </h2>
 
               <div
                 style={{

@@ -463,6 +463,10 @@ function AgentTracking() {
                                         color:
                                             parcel.status === "Delivered"
                                                 ? "#16a34a"
+
+                                                : parcel.status === "FailedDelivery"
+                                                ? "#dc2626"
+
                                                 : "#2563eb",
 
                                         marginBottom: "30px"
@@ -471,8 +475,22 @@ function AgentTracking() {
 
                                     {
                                         parcel.status === "Delivered"
+
                                             ? "Parcel Delivered Successfully"
-                                            : "It's out for delivery"
+
+                                            : parcel.status === "FailedDelivery"
+
+                                            ? "Delivery Attempt Failed"
+
+                                            : parcel.status === "OutForDelivery"
+
+                                            ? "Parcel is out for delivery"
+
+                                            : parcel.status === "Assigned"
+
+                                            ? "Parcel assigned to delivery agent"
+
+                                            : "Parcel order has been created"
                                     }
 
                                 </h2>
@@ -508,12 +526,20 @@ function AgentTracking() {
                                             left: "0",
 
                                             width:
-                                                parcel.delivered_at
+                                                parcel.status === "Delivered"
                                                     ? "100%"
-                                                    : parcel.out_for_delivery_at
+
+                                                    : parcel.status === "FailedDelivery"
+                                                    ? parcel.out_for_delivery_at
+                                                        ? "75%"
+                                                        : "50%"
+
+                                                    : parcel.status === "OutForDelivery"
                                                     ? "75%"
-                                                    : parcel.assigned_agent_id
+
+                                                    : parcel.status === "Assigned"
                                                     ? "50%"
+
                                                     : "25%",
 
                                             height: "6px",
@@ -523,6 +549,30 @@ function AgentTracking() {
                                             zIndex: 1
                                         }}
                                     />
+
+                                    {
+                                        parcel.status === "FailedDelivery" &&
+                                        parcel.out_for_delivery_at && (
+
+                                            <div
+                                                style={{
+                                                    position: "absolute",
+                                                    top: "18px",
+
+                                                    left: "75%",
+
+                                                    width: "25%",
+
+                                                    height: "6px",
+
+                                                    background: "#ef4444",
+
+                                                    zIndex: 2
+                                                }}
+                                            />
+
+                                        )
+                                    }
 
                                     {
                                         [
@@ -574,8 +624,14 @@ function AgentTracking() {
                                                         borderRadius: "50%",
 
                                                         background:
-                                                            step.active
+                                                            parcel.status === "FailedDelivery" &&
+                                                            index === 3
+
+                                                                ? "#ef4444"
+
+                                                                : step.active
                                                                 ? "#16a34a"
+
                                                                 : "#ffffff",
 
                                                         border:
@@ -597,8 +653,14 @@ function AgentTracking() {
                                                     }}
                                                 >
                                                     {
-                                                        step.active
+                                                        parcel.status === "FailedDelivery" &&
+                                                        index === 3
+
+                                                            ? "✕"
+
+                                                            : step.active
                                                             ? "✓"
+
                                                             : ""
                                                     }
                                                 </div>
