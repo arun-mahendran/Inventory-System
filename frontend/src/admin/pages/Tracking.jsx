@@ -125,7 +125,15 @@ function Tracking() {
                             : "#f59e0b",
                   }}
                 >
-                  {parcel.status}
+                  {
+                    parcel.status === "OutForDelivery"
+                        ? "Out For Delivery"
+
+                        : parcel.status === "FailedDelivery"
+                        ? "Failed Delivery"
+
+                        : parcel.status
+                    }
                 </span>
 
                 <b>Customer ID</b>
