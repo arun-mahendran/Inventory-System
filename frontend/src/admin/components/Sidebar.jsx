@@ -43,7 +43,7 @@ function Sidebar({
             <div
                 style={{
                     textAlign: "center",
-                    marginBottom: "35px",
+                    marginBottom: "30px",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
@@ -52,14 +52,14 @@ function Sidebar({
             >
 
                 <FaUserCircle
-                    size={70}
+                    size={55}
                     color="#60a5fa"
 
                     style={{
                         marginLeft:
                             sidebarOpen
                                 ? "0"
-                                : "-8px",
+                                : "-4px",
 
                         transition:
                             "all 0.35s ease"

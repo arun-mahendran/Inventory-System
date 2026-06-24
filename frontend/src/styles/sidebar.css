@@ -35,15 +35,14 @@
 .sidebar a {
     display: flex;
     align-items: center;
-    gap: 18px;
+    gap: 16px;
     color: #cbd5e1;
     text-decoration: none;
-    padding: 14px 18px;
-    margin-bottom: 10px;
+    padding: 12px 16px;   /* reduced */
+    margin-bottom: 8px;   /* reduced */
     border-radius: 14px;
-    font-size: 15px;
+    font-size: 14px;      /* reduced */
     font-weight: 500;
-    transition: all 0.25s ease;
 }
 
 /* Hover */
@@ -89,14 +88,14 @@
 }
 
 .sidebar-profile h3 {
-    margin-top: 12px;
+    margin-top: 10px;
     color: white;
-    font-size: 24px;
+    font-size: 20px;   /* 24 -> 20 */
 }
 
 .sidebar-profile p {
     color: #94a3b8;
-    font-size: 16px;
+    font-size: 14px;   /* 16 -> 14 */
 }
 
 /* Search Bar */
