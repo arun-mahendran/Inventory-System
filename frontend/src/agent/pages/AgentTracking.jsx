@@ -6,7 +6,12 @@ import AgentLayout from "../components/AgentLayout";
 
 import {
     FiPackage,
-    FiSearch
+    FiSearch,
+    FiUser,
+    FiPhone,
+    FiMapPin,
+    FiClock,
+    FiFileText
 } from "react-icons/fi";
 
 function AgentTracking() {
@@ -171,98 +176,344 @@ function AgentTracking() {
 
                         <div
                             style={{
-                                background:
-                                    "#f8fafc",
-
-                                padding: "25px",
-
-                                borderRadius:
-                                    "16px",
-
-                                border:
-                                    "1px solid #e2e8f0"
+                                display: "grid",
+                                gap: "25px"
                             }}
                         >
 
-                            <h2>
-                                Parcel Details
-                            </h2>
+                            {/* PARCEL INFORMATION */}
 
                             <div
                                 style={{
-                                    display: "grid",
-
-                                    gridTemplateColumns:
-                                        "180px 1fr",
-
-                                    rowGap: "15px",
-
-                                    marginTop: "20px"
+                                    background: "#f8fafc",
+                                    padding: "30px",
+                                    borderRadius: "18px",
+                                    border: "1px solid #e2e8f0"
                                 }}
                             >
 
-                                <b>
-                                    Tracking Number
-                                </b>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        marginBottom: "25px"
+                                    }}
+                                >
 
-                                <span>
-                                    {
-                                        parcel.tracking_number
-                                    }
-                                </span>
+                                    <FiPackage
+                                        size={26}
+                                        color="#2563eb"
+                                    />
 
-                                <b>
-                                    Customer ID
-                                </b>
+                                    <h2
+                                        style={{
+                                            margin: 0
+                                        }}
+                                    >
+                                        Parcel Information
+                                    </h2>
 
-                                <span>
-                                    {
-                                        parcel.customer_id
-                                    }
-                                </span>
+                                </div>
 
-                                <b>
-                                    Status
-                                </b>
+                                <div
+                                    style={{
+                                        display: "grid",
+                                        gridTemplateColumns:
+                                            "180px 1fr",
+                                        rowGap: "20px"
+                                    }}
+                                >
 
-                                <span>
-                                    {parcel.status}
-                                </span>
+                                    <b>Tracking No :</b>
+                                    <span>
+                                        {parcel.tracking_number}
+                                    </span>
 
-                                <b>
-                                    Assigned Agent
-                                </b>
+                                    <b>Customer :</b>
 
-                                <span>
-                                    {
-                                        parcel.assigned_agent_id
-                                            ? `Agent ${parcel.assigned_agent_id}`
-                                            : "-"
-                                    }
-                                </span>
+                                    <span
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "8px"
+                                        }}
+                                    >
+                                        <FiUser />
+                                        {parcel.customer_name}
+                                    </span>
 
-                                <b>
-                                    Failure Reason
-                                </b>
+                                    <b>Phone :</b>
 
-                                <span>
+                                    <span>
+                                        {parcel.phone}
+                                    </span>
+
+                                    <b>Status :</b>
+
+                                    <span
+                                        style={{
+                                            width: "fit-content",
+
+                                            padding: "8px 14px",
+
+                                            borderRadius: "20px",
+
+                                            fontWeight: "600",
+
+                                            background:
+                                                parcel.status === "Delivered"
+                                                    ? "#dcfce7"
+
+                                                    : parcel.status === "FailedDelivery"
+                                                    ? "#fee2e2"
+
+                                                    : parcel.status === "OutForDelivery"
+                                                    ? "#fef3c7"
+
+                                                    : "#ede9fe",
+
+                                            color:
+                                                parcel.status === "Delivered"
+                                                    ? "#166534"
+
+                                                    : parcel.status === "FailedDelivery"
+                                                    ? "#991b1b"
+
+                                                    : parcel.status === "OutForDelivery"
+                                                    ? "#92400e"
+
+                                                    : "#6d28d9"
+                                        }}
+                                    >
+                                        {parcel.status}
+                                    </span>
+
+                                    <b>Address :</b>
+
+                                    <div>
+
+                                        <div
+                                            style={{
+                                                whiteSpace: "pre-wrap",
+                                                lineHeight: "1.8",
+                                                color: "#475569",
+                                                marginBottom: "20px"
+                                            }}
+                                        >
+                                            {
+                                                parcel.address
+                                                    ?.split(",")
+                                                    .join(",\n")
+                                            }
+                                        </div>
+
+                                        <div
+                                            style={{
+                                                display: "flex",
+                                                gap: "12px",
+                                                flexWrap: "wrap"
+                                            }}
+                                        >
+
+                                            <a
+                                                href={`tel:${parcel.phone}`}
+                                                style={{
+                                                    textDecoration: "none",
+
+                                                    background: "#dcfce7",
+
+                                                    color: "#166534",
+
+                                                    padding:
+                                                        "10px 18px",
+
+                                                    borderRadius: "12px",
+
+                                                    fontWeight: "600",
+
+                                                    display: "flex",
+
+                                                    alignItems: "center",
+
+                                                    gap: "8px"
+                                                }}
+                                            >
+                                                <FiPhone />
+
+                                                Call Customer
+
+                                            </a>
+
+                                            <a
+                                                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(parcel.address)}`}
+
+                                                target="_blank"
+
+                                                rel="noopener noreferrer"
+
+                                                style={{
+                                                    textDecoration: "none",
+
+                                                    background: "#dbeafe",
+
+                                                    color: "#1d4ed8",
+
+                                                    padding:
+                                                        "10px 18px",
+
+                                                    borderRadius: "12px",
+
+                                                    fontWeight: "600",
+
+                                                    display: "flex",
+
+                                                    alignItems: "center",
+
+                                                    gap: "8px"
+                                                }}
+                                            >
+
+                                                <FiMapPin />
+
+                                                Open in Maps
+
+                                            </a>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {/* DELIVERY PROGRESS */}
+
+                            <div
+                                style={{
+                                    background: "#f8fafc",
+                                    padding: "30px",
+                                    borderRadius: "18px",
+                                    border: "1px solid #e2e8f0"
+                                }}
+                            >
+
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        marginBottom: "25px"
+                                    }}
+                                >
+
+                                    <FiClock
+                                        size={26}
+                                        color="#f59e0b"
+                                    />
+
+                                    <h2
+                                        style={{
+                                            margin: 0
+                                        }}
+                                    >
+                                        Delivery Progress
+                                    </h2>
+
+                                </div>
+
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        gap: "20px"
+                                    }}
+                                >
+
+                                    <div>
+                                        ✅ Parcel Created
+                                    </div>
+
+                                    <div>
+                                        {
+                                            parcel.assigned_agent_id
+                                                ? "✅ Assigned"
+                                                : "⭕ Assigned"
+                                        }
+                                    </div>
+
+                                    <div>
+                                        {
+                                            parcel.out_for_delivery_at
+                                                ? "✅ Out For Delivery"
+                                                : "⭕ Out For Delivery"
+                                        }
+                                    </div>
+
+                                    <div>
+                                        {
+                                            parcel.delivered_at
+                                                ? "✅ Delivered"
+                                                : "⭕ Delivered"
+                                        }
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            {/* DELIVERY NOTES */}
+
+                            <div
+                                style={{
+                                    background: "#f8fafc",
+                                    padding: "30px",
+                                    borderRadius: "18px",
+                                    border: "1px solid #e2e8f0"
+                                }}
+                            >
+
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "10px",
+                                        marginBottom: "20px"
+                                    }}
+                                >
+
+                                    <FiFileText
+                                        size={26}
+                                        color="#22c55e"
+                                    />
+
+                                    <h2
+                                        style={{
+                                            margin: 0
+                                        }}
+                                    >
+                                        Delivery Notes
+                                    </h2>
+
+                                </div>
+
+                                <p
+                                    style={{
+                                        color: "#475569",
+                                        margin: 0
+                                    }}
+                                >
+
                                     {
                                         parcel.failure_reason
-                                        || "-"
-                                    }
-                                </span>
 
-                                <b>
-                                    Created At
-                                </b>
+                                            ? `Delivery Failed: ${parcel.failure_reason}`
 
-                                <span>
-                                    {
-                                        new Date(
-                                            parcel.created_at
-                                        ).toLocaleString()
+                                            : "No failure reported."
                                     }
-                                </span>
+
+                                </p>
 
                             </div>
 
@@ -271,7 +522,7 @@ function AgentTracking() {
                     )
                 }
 
-            </div>
+                </div>
 
         </AgentLayout>
 
