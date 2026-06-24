@@ -393,8 +393,8 @@ function AgentTracking() {
                             <div
                                 style={{
                                     background: "#f8fafc",
-                                    padding: "30px",
-                                    borderRadius: "18px",
+                                    padding: "35px",
+                                    borderRadius: "20px",
                                     border: "1px solid #e2e8f0"
                                 }}
                             >
@@ -402,127 +402,323 @@ function AgentTracking() {
                                 <div
                                     style={{
                                         display: "flex",
+                                        justifyContent: "space-between",
                                         alignItems: "center",
-                                        gap: "10px",
-                                        marginBottom: "25px"
+                                        marginBottom: "35px"
                                     }}
                                 >
 
-                                    <FiClock
-                                        size={26}
-                                        color="#f59e0b"
-                                    />
-
-                                    <h2
+                                    <div
                                         style={{
-                                            margin: 0
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "12px"
                                         }}
                                     >
-                                        Delivery Progress
-                                    </h2>
 
-                                </div>
+                                        <FiClock
+                                            size={28}
+                                            color="#f59e0b"
+                                        />
 
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        flexDirection: "column",
-                                        gap: "20px"
-                                    }}
-                                >
+                                        <h2
+                                            style={{
+                                                margin: 0
+                                            }}
+                                        >
+                                            Delivery Progress
+                                        </h2>
 
-                                    <div>
-                                        ✅ Parcel Created
                                     </div>
 
-                                    <div>
-                                        {
-                                            parcel.assigned_agent_id
-                                                ? "✅ Assigned"
-                                                : "⭕ Assigned"
-                                        }
-                                    </div>
-
-                                    <div>
-                                        {
-                                            parcel.out_for_delivery_at
-                                                ? "✅ Out For Delivery"
-                                                : "⭕ Out For Delivery"
-                                        }
-                                    </div>
-
-                                    <div>
-                                        {
-                                            parcel.delivered_at
-                                                ? "✅ Delivered"
-                                                : "⭕ Delivered"
-                                        }
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            {/* DELIVERY NOTES */}
-
-                            <div
-                                style={{
-                                    background: "#f8fafc",
-                                    padding: "30px",
-                                    borderRadius: "18px",
-                                    border: "1px solid #e2e8f0"
-                                }}
-                            >
-
-                                <div
-                                    style={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        gap: "10px",
-                                        marginBottom: "20px"
-                                    }}
-                                >
-
-                                    <FiFileText
-                                        size={26}
-                                        color="#22c55e"
-                                    />
-
-                                    <h2
+                                    <span
                                         style={{
-                                            margin: 0
+                                            padding: "10px 18px",
+                                            borderRadius: "30px",
+
+                                            background:
+                                                parcel.status === "Delivered"
+                                                    ? "#dcfce7"
+                                                    : "#fef3c7",
+
+                                            color:
+                                                parcel.status === "Delivered"
+                                                    ? "#166534"
+                                                    : "#92400e",
+
+                                            fontWeight: "600"
                                         }}
                                     >
-                                        Delivery Notes
-                                    </h2>
+                                        {
+                                            parcel.status === "Delivered"
+                                                ? "Delivered"
+                                                : "Arriving Today"
+                                        }
+                                    </span>
 
                                 </div>
 
-                                <p
+                                <h2
                                     style={{
-                                        color: "#475569",
-                                        margin: 0
+                                        color:
+                                            parcel.status === "Delivered"
+                                                ? "#16a34a"
+                                                : "#2563eb",
+
+                                        marginBottom: "30px"
                                     }}
                                 >
 
                                     {
-                                        parcel.failure_reason
-
-                                            ? `Delivery Failed: ${parcel.failure_reason}`
-
-                                            : "No failure reported."
+                                        parcel.status === "Delivered"
+                                            ? "Parcel Delivered Successfully"
+                                            : "It's out for delivery"
                                     }
 
-                                </p>
+                                </h2>
+
+                                <div
+                                    style={{
+                                        position: "relative",
+                                        display: "flex",
+                                        justifyContent: "space-between",
+                                        alignItems: "center",
+                                        marginBottom: "40px"
+                                    }}
+                                >
+
+                                    {/* LINE */}
+
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: "18px",
+                                            left: "0",
+                                            right: "0",
+                                            height: "6px",
+                                            background: "#e2e8f0",
+                                            zIndex: 0
+                                        }}
+                                    />
+
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: "18px",
+                                            left: "0",
+
+                                            width:
+                                                parcel.delivered_at
+                                                    ? "100%"
+                                                    : parcel.out_for_delivery_at
+                                                    ? "75%"
+                                                    : parcel.assigned_agent_id
+                                                    ? "50%"
+                                                    : "25%",
+
+                                            height: "6px",
+
+                                            background: "#16a34a",
+
+                                            zIndex: 1
+                                        }}
+                                    />
+
+                                    {
+                                        [
+                                            {
+                                                label: "Ordered",
+                                                active: true,
+                                                date: parcel.created_at
+                                            },
+
+                                            {
+                                                label: "Assigned",
+                                                active:
+                                                    !!parcel.assigned_agent_id,
+                                                date: parcel.created_at
+                                            },
+
+                                            {
+                                                label: "Out For Delivery",
+                                                active:
+                                                    !!parcel.out_for_delivery_at,
+                                                date:
+                                                    parcel.out_for_delivery_at
+                                            },
+
+                                            {
+                                                label: "Delivered",
+                                                active:
+                                                    !!parcel.delivered_at,
+                                                date:
+                                                    parcel.delivered_at
+                                            }
+
+                                        ].map((step, index) => (
+
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    zIndex: 2,
+                                                    textAlign: "center",
+                                                    width: "150px"
+                                                }}
+                                            >
+
+                                                <div
+                                                    style={{
+                                                        width: "36px",
+                                                        height: "36px",
+
+                                                        borderRadius: "50%",
+
+                                                        background:
+                                                            step.active
+                                                                ? "#16a34a"
+                                                                : "#ffffff",
+
+                                                        border:
+                                                            step.active
+                                                                ? "none"
+                                                                : "3px solid #cbd5e1",
+
+                                                        color: "white",
+
+                                                        margin: "0 auto",
+
+                                                        display: "flex",
+
+                                                        alignItems: "center",
+
+                                                        justifyContent: "center",
+
+                                                        fontWeight: "700"
+                                                    }}
+                                                >
+                                                    {
+                                                        step.active
+                                                            ? "✓"
+                                                            : ""
+                                                    }
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        marginTop: "15px",
+                                                        fontWeight: "600"
+                                                    }}
+                                                >
+                                                    {step.label}
+                                                </div>
+
+                                                <div
+                                                    style={{
+                                                        color: "#64748b",
+                                                        fontSize: "13px",
+                                                        marginTop: "6px"
+                                                    }}
+                                                >
+                                                    {
+                                                        step.date
+                                                            ? new Date(
+                                                                step.date
+                                                            ).toLocaleString()
+                                                            : "-"
+                                                    }
+                                                </div>
+
+                                            </div>
+
+                                        ))
+                                    }
+
+                                                                </div>
+
+                                {/* DELIVERY NOTES */}
+
+                                <div
+                                    style={{
+                                        marginTop: "30px",
+
+                                        padding: "20px",
+
+                                        borderRadius: "16px",
+
+                                        background:
+                                            parcel.failure_reason
+                                                ? "#fef2f2"
+                                                : "#f0fdf4",
+
+                                        border:
+                                            parcel.failure_reason
+                                                ? "1px solid #fecaca"
+                                                : "1px solid #bbf7d0"
+                                    }}
+                                >
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            gap: "10px",
+                                            marginBottom: "10px"
+                                        }}
+                                    >
+
+                                        <FiFileText
+                                            size={22}
+                                            color={
+                                                parcel.failure_reason
+                                                    ? "#dc2626"
+                                                    : "#16a34a"
+                                            }
+                                        />
+
+                                        <h3
+                                            style={{
+                                                margin: 0
+                                            }}
+                                        >
+                                            Delivery Notes
+                                        </h3>
+
+                                    </div>
+
+                                    <p
+                                        style={{
+                                            margin: 0,
+
+                                            color:
+                                                parcel.failure_reason
+                                                    ? "#991b1b"
+                                                    : "#166534",
+
+                                            lineHeight: "1.8"
+                                        }}
+                                    >
+
+                                        {
+                                            parcel.failure_reason
+
+                                                ? `Delivery Failed: ${parcel.failure_reason}`
+
+                                                : "No delivery issues reported."
+                                        }
+
+                                    </p>
+
+                                </div>
 
                             </div>
 
                         </div>
 
                     )
+
                 }
 
-                </div>
+            </div>
 
         </AgentLayout>
 
