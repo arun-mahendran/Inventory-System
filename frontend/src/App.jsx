@@ -48,12 +48,18 @@ from "./agent/pages/AgentTracking";
 import AgentDeliveryHistory
 from "./agent/pages/AgentDeliveryHistory";
 
+import { ToastContainer } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
         //useState(true);
     
     return (
+
+        <>
         <Routes>
 
             <Route
@@ -235,6 +241,27 @@ function App() {
             />
 
         </Routes>
+
+        <ToastContainer
+            position="top-right"
+            autoClose={3000}
+            hideProgressBar={false}
+            newestOnTop
+            closeOnClick
+            pauseOnHover
+            draggable
+            theme="colored"
+
+            toastStyle={{
+                borderRadius: "14px",
+                fontWeight: "600",
+                fontSize: "15px"
+            }}
+        />
+
+        </>
+
+        
     );
 }
 

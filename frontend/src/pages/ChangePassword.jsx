@@ -3,298 +3,309 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
 
+import { FiLock, FiEye, FiEyeOff, FiShield } from "react-icons/fi";
+
+import { toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
 function ChangePassword() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const userId = localStorage.getItem("user_id");
 
-    const userId =
-        localStorage.getItem("user_id");
+  const [newPassword, setNewPassword] = useState("");
 
-    const [newPassword, setNewPassword] =
-        useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-    const [confirmPassword,
-        setConfirmPassword] =
-        useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-    const [message, setMessage] =
-        useState("");
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-    const [errorMessage,
-        setErrorMessage] =
-        useState("");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const handleSubmit = async (e) => {
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
 
-        e.preventDefault();
+    try {
+      await api.patch(`/users/${userId}/change-password`, {
+        new_password: newPassword,
+      });
 
-        if (
-            newPassword !==
-            confirmPassword
-        ) {
+      toast.success("Password changed successfully!");
 
-            setErrorMessage(
-                "Passwords do not match"
-            );
-            return;
+      localStorage.setItem("change_password", "false");
+
+      const role = localStorage.getItem("role");
+
+      setTimeout(() => {
+        if (role === "Admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/agent-dashboard");
         }
+      }, 2000);
+    } catch (error) {
+      toast.error("Failed to change password");
+    }
+  };
 
-        try {
-            await api.patch(
-                `/users/${userId}/change-password`,
-                {
-                    new_password:
-                        newPassword
-                }
-            );
+  return (
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background:
+          "linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #2563eb 100%)",
+      }}
+    >
+      <div
+        style={{
+          width: "480px",
 
-            setMessage(
-                "Password changed successfully!"
-            );
+          background: "rgba(255,255,255,0.95)",
 
-            localStorage.setItem(
-                "change_password",
-                "false"
-            );
+          backdropFilter: "blur(12px)",
 
-            const role =
-                localStorage.getItem("role");
+          padding: "45px",
 
-            setTimeout(() => {
+          borderRadius: "30px",
 
-            if (role === "Admin") {
+          boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
 
-                navigate("/dashboard");
-
-            } else {
-
-                navigate("/agent-dashboard");
-
-            }
-
-        }, 2000);
-
-        } catch (error) {
-
-            setErrorMessage(
-                "Failed to change password"
-            );
-        }
-
-    };
-
-    return (
-
+          border: "1px solid rgba(255,255,255,0.4)",
+        }}
+      >
         <div
-            style={{
-                minHeight: "100vh",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                background:
-                    "linear-gradient(135deg, #eff6ff, #dbeafe)"
-            }}
+          style={{
+            textAlign: "center",
+            marginBottom: "30px",
+          }}
         >
+          <div
+            style={{
+              width: "80px",
+              height: "80px",
 
-            <div
-                style={{
-                    width: "420px",
-                    background: "white",
-                    padding: "40px",
-                    borderRadius: "24px",
-                    boxShadow:
-                        "0 20px 40px rgba(0,0,0,0.1)"
-                }}
-            >
+              borderRadius: "50%",
 
-                <div
-                    style={{
-                        textAlign: "center",
-                        marginBottom: "30px"
-                    }}
-                >
+              background: "linear-gradient(135deg,#2563eb,#3b82f6)",
 
-                    <div
-                        style={{
-                            fontSize: "55px",
-                            marginBottom: "10px"
-                        }}
-                    >
-                        🔐
-                    </div>
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
 
-                    <h1
-                        style={{
-                            marginBottom: "10px",
-                            color: "#0f172a"
-                        }}
-                    >
-                        Change Password
-                    </h1>
+              margin: "0 auto 20px auto",
+            }}
+          >
+            <FiShield size={40} color="white" />
+          </div>
 
-                    <p
-                        style={{
-                            color: "#64748b",
-                            fontSize: "15px"
-                        }}
-                    >
-                        Please change your temporary password
-                        to continue.
-                    </p>
+          <h1
+            style={{
+              marginBottom: "10px",
+              color: "#0f172a",
+            }}
+          >
+            Change Password
+          </h1>
 
-                </div>
-
-                {
-                    message && (
-
-                        <div
-                            style={{
-                                background: "#dcfce7",
-                                color: "#166534",
-                                padding: "12px",
-                                borderRadius: "12px",
-                                marginBottom: "20px",
-                                fontWeight: "600",
-                                textAlign: "center"
-                            }}
-                        >
-                            ✅ {message}
-                        </div>
-
-                    )
-                }
-
-                {
-                    errorMessage && (
-
-                        <div
-                            style={{
-                                background: "#fee2e2",
-                                color: "#991b1b",
-                                padding: "12px",
-                                borderRadius: "12px",
-                                marginBottom: "20px",
-                                fontWeight: "600",
-                                textAlign: "center"
-                            }}
-                        >
-                            ❌ {errorMessage}
-                        </div>
-
-                    )
-                }
-
-                <form onSubmit={handleSubmit}>
-
-                    <div
-                        style={{
-                            marginBottom: "20px"
-                        }}
-                    >
-
-                        <label
-                            style={{
-                                display: "block",
-                                marginBottom: "8px",
-                                fontWeight: "600",
-                                color: "#334155"
-                            }}
-                        >
-                            New Password
-                        </label>
-
-                        <input
-                            type="password"
-                            placeholder="Enter new password"
-                            value={newPassword}
-                            onChange={(e) =>
-                                setNewPassword(
-                                    e.target.value
-                                )
-                            }
-
-                            required
-
-                            style={{
-                                width: "100%",
-                                padding: "14px",
-                                borderRadius: "14px",
-                                border:
-                                    "2px solid #e2e8f0",
-                                fontSize: "15px",
-                                boxSizing: "border-box"
-                            }}
-                        />
-
-                    </div>
-
-                    <div
-                        style={{
-                            marginBottom: "30px"
-                        }}
-                    >
-
-                        <label
-                            style={{
-                                display: "block",
-                                marginBottom: "8px",
-                                fontWeight: "600",
-                                color: "#334155"
-                            }}
-                        >
-                            Confirm Password
-                        </label>
-
-                        <input
-                            type="password"
-                            placeholder="Confirm password"
-                            value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(
-                                    e.target.value
-                                )
-                            }
-
-                            required
-
-                            style={{
-                                width: "100%",
-                                padding: "14px",
-                                borderRadius: "14px",
-                                border:
-                                    "2px solid #e2e8f0",
-                                fontSize: "15px",
-                                boxSizing: "border-box"
-                            }}
-                        />
-
-                    </div>
-
-                    <button
-                        type="submit"
-
-                        style={{
-                            width: "100%",
-                            padding: "15px",
-                            background: "#2563eb",
-                            color: "white",
-                            border: "none",
-                            borderRadius: "14px",
-                            fontSize: "16px",
-                            fontWeight: "600",
-                            cursor: "pointer"
-                        }}
-                    >
-                        Update Password
-                    </button>
-
-                </form>
-
-            </div>
-
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "15px",
+            }}
+          >
+            Please change your temporary password to continue.
+          </p>
         </div>
 
-    );
+        <form onSubmit={handleSubmit}>
+          <div
+            style={{
+              marginBottom: "20px",
+            }}
+          >
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: "600",
+                color: "#334155",
+              }}
+            >
+              New Password
+            </label>
+
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <FiLock
+                size={18}
+                color="#64748b"
+                style={{
+                  position: "absolute",
+                  left: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              />
+
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+
+                  padding: "14px 50px 14px 45px",
+
+                  borderRadius: "14px",
+
+                  border: "2px solid #e2e8f0",
+
+                  fontSize: "15px",
+
+                  boxSizing: "border-box",
+                }}
+              />
+
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                style={{
+                  position: "absolute",
+                  right: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+
+                  cursor: "pointer",
+                }}
+              >
+                {showPassword ? <FiEyeOff /> : <FiEye />}
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              marginBottom: "30px",
+            }}
+          >
+            <label
+              style={{
+                display: "block",
+                marginBottom: "8px",
+                fontWeight: "600",
+                color: "#334155",
+              }}
+            >
+              Confirm Password
+            </label>
+
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <FiLock
+                size={18}
+                color="#64748b"
+                style={{
+                  position: "absolute",
+                  left: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+              />
+
+              <input
+                type={showConfirmPassword ? "text" : "password"}
+                placeholder="Confirm password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                style={{
+                  width: "100%",
+
+                  padding: "14px 50px 14px 45px",
+
+                  borderRadius: "14px",
+
+                  border: "2px solid #e2e8f0",
+
+                  fontSize: "15px",
+
+                  boxSizing: "border-box",
+
+                  transition: "all 0.3s ease",
+                }}
+              />
+
+              <div
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                style={{
+                  position: "absolute",
+                  right: "15px",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+
+                  cursor: "pointer",
+
+                  color: "#64748b",
+                }}
+              >
+                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+            style={{
+              width: "100%",
+
+              padding: "15px",
+
+              background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+
+              color: "white",
+
+              border: "none",
+
+              borderRadius: "14px",
+
+              fontSize: "16px",
+
+              fontWeight: "600",
+
+              cursor: "pointer",
+
+              boxShadow: "0 12px 25px rgba(37,99,235,0.3)",
+
+              transition: "all 0.3s ease",
+            }}
+          >
+            Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default ChangePassword;

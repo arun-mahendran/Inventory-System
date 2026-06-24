@@ -5,7 +5,6 @@ import {
     FiPackage,
     FiMapPin,
     FiClock,
-    FiLogOut
 } from "react-icons/fi";
 
 import { FaUserCircle } from "react-icons/fa";
@@ -133,25 +132,6 @@ function AgentSidebar({
                 {
                     sidebarOpen &&
                     "History"
-                }
-
-            </NavLink>
-
-
-            <NavLink
-                to="/login"
-                className="sidebar-link"
-                onClick={() => {
-
-                    localStorage.clear();
-
-                }}
-            >
-                <FiLogOut size={20} />
-
-                {
-                    sidebarOpen &&
-                    "Logout"
                 }
 
             </NavLink>
