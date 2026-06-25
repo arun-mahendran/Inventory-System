@@ -1,17 +1,42 @@
 from fastapi import APIRouter, Depends
-
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from app.database import get_db
-
 from app.models.parcel import Parcel
 from app.models.customer import Customer
+from sqlalchemy import func
 
 router = APIRouter(
     prefix="/analytics",
     tags=["Analytics"]
 )
+
+
+@router.get("/summary")
+def analytics_summary(
+    db: Session = Depends(get_db)
+):
+
+    total_parcels = db.query(Parcel).count()
+
+    delivered = db.query(Parcel).filter(
+        Parcel.status == "Delivered"
+    ).count()
+
+    failed = db.query(Parcel).filter(
+        Parcel.status == "FailedDelivery"
+    ).count()
+
+    active_zones = db.query(
+        Customer.pincode
+    ).distinct().count()
+
+    return {
+        "totalParcels": total_parcels,
+        "delivered": delivered,
+        "failed": failed,
+        "activeZones": active_zones
+    }
 
 
 @router.get("/top-zones")
@@ -23,7 +48,7 @@ def get_top_zones(
 
         db.query(
             Customer.pincode,
-            func.count(Parcel.id)
+            func.count(Parcel.id).label("parcels")
         )
 
         .join(
@@ -31,7 +56,9 @@ def get_top_zones(
             Parcel.customer_id == Customer.id
         )
 
-        .group_by(Customer.pincode)
+        .group_by(
+            Customer.pincode
+        )
 
         .order_by(
             func.count(Parcel.id).desc()
@@ -40,14 +67,16 @@ def get_top_zones(
         .limit(5)
 
         .all()
+
     )
 
     return [
 
         {
-            "pincode": zone[0],
-            "parcels": zone[1]
+            "pincode": zone.pincode,
+            "parcels": zone.parcels
         }
 
         for zone in zones
+
     ]
