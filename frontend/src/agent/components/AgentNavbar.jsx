@@ -207,72 +207,149 @@ function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
         {/* Notification Dropdown */}
 
         {showNotifications && (
-          <div
-            onClick={(e) => e.stopPropagation()}
+        <>
+            {/* Blur Overlay */}
+
+            <div
             style={{
-              position: "absolute",
+                position: "fixed",
 
-              top: "60px",
-              right: "70px",
+                top: 0,
+                left: 0,
 
-              width: "320px",
+                width: "100vw",
+                height: "100vh",
 
-              background: "white",
+                backdropFilter: "blur(6px)",
 
-              borderRadius: "18px",
+                background:
+                "rgba(15,23,42,0.08)",
 
-              padding: "20px",
-
-              boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-
-              zIndex: 999,
+                zIndex: 998,
             }}
-          >
-            <h3
-              style={{
-                marginBottom: "15px",
-              }}
+            />
+
+            {/* Dropdown */}
+
+            <div
+            onClick={(e) =>
+                e.stopPropagation()
+            }
+
+            style={{
+                position: "absolute",
+
+                top: "60px",
+                right: "70px",
+
+                width: "340px",
+
+                background:
+                "rgba(255,255,255,0.92)",
+
+                backdropFilter:
+                "blur(20px)",
+
+                border:
+                "1px solid rgba(255,255,255,0.3)",
+
+                borderRadius: "22px",
+
+                padding: "22px",
+
+                boxShadow:
+                "0 20px 40px rgba(0,0,0,0.12)",
+
+                zIndex: 999,
+            }}
             >
-              Notifications
+            <h3
+                style={{
+                marginBottom: "18px",
+
+                fontSize: "20px",
+
+                color: "#0f172a",
+                }}
+            >
+                🔔 Notifications
             </h3>
 
             {notifications.length === 0 ? (
-              <p>No Notifications</p>
-            ) : (
-              notifications.map((notification) => (
+
                 <div
-                  key={notification.id}
-                  style={{
-                    padding: "12px",
+                style={{
+                    textAlign: "center",
 
-                    borderBottom: "1px solid #e2e8f0",
-                  }}
+                    padding: "25px",
+
+                    color: "#64748b",
+                }}
                 >
-                  <div
+                No Notifications
+                </div>
+
+            ) : (
+
+                notifications.map(
+                (notification) => (
+
+                    <div
+                    key={notification.id}
+
                     style={{
+                        padding: "14px",
+
+                        marginBottom: "12px",
+
+                        borderRadius: "14px",
+
+                        background:
+                        "rgba(248,250,252,0.8)",
+
+                        border:
+                        "1px solid #e2e8f0",
+
+                        transition:
+                        "all 0.3s ease",
+                    }}
+                    >
+                    <div
+                        style={{
                         fontSize: "14px",
-                        color: "#334155",
-                        lineHeight: "1.6"
-                    }}
-                >
-                    🔔 {notification.message}
-                </div>
 
-                <p
-                    style={{
+                        color: "#334155",
+
+                        lineHeight: "1.7",
+
+                        fontWeight: "500",
+                        }}
+                    >
+                        🔔 {notification.message}
+                    </div>
+
+                    <p
+                        style={{
                         fontSize: "12px",
+
                         color: "#94a3b8",
-                        marginTop: "6px"
-                    }}
-                >
-                    {new Date(
+
+                        marginTop: "8px",
+
+                        marginBottom: 0,
+                        }}
+                    >
+                        {new Date(
                         notification.created_at
-                    ).toLocaleString()}
-                </p>
-                </div>
-              ))
+                        ).toLocaleString()}
+                    </p>
+                    </div>
+                )
+                )
+
             )}
-          </div>
+            </div>
+        </>
         )}
 
         {/* Logout Button */}
