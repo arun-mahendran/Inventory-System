@@ -20,6 +20,7 @@ import {
   Legend,
   LineChart,
   Line,
+  Area,
 } from "recharts";
 
 import {
@@ -347,6 +348,29 @@ function Analytics() {
 
   <ResponsiveContainer width="100%" height={350}>
     <LineChart data={trendData}>
+
+        <defs>
+  <linearGradient
+    id="trendGradient"
+    x1="0"
+    y1="0"
+    x2="0"
+    y2="1"
+  >
+    <stop
+      offset="5%"
+      stopColor="#2563eb"
+      stopOpacity={0.3}
+    />
+
+    <stop
+      offset="95%"
+      stopColor="#2563eb"
+      stopOpacity={0}
+    />
+  </linearGradient>
+</defs>
+
       <CartesianGrid
         stroke="#e2e8f0"
         vertical={false}
@@ -363,15 +387,70 @@ function Analytics() {
         tickLine={false}
       />
 
-      <Tooltip />
+      <Area
+  type="monotone"
+  dataKey="parcels"
+  stroke="none"
+  fill="url(#trendGradient)"
+/>
+
+      <Tooltip
+  formatter={(value) => `${value} Parcels`}
+  labelFormatter={(label) => `Date: ${label}`}
+
+  content={({ active, payload, label }) => {
+
+    if (active && payload && payload.length) {
+
+      return (
+        <div
+          style={{
+            background: "white",
+            padding: "12px",
+            borderRadius: "12px",
+            boxShadow:
+              "0 10px 25px rgba(0,0,0,0.12)"
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              fontWeight: "600"
+            }}
+          >
+            Date: {label}
+          </p>
+
+          <p
+            style={{
+              marginTop: "8px",
+              color: "#2563eb"
+            }}
+          >
+            Delivered: {payload[0].value} Parcels
+          </p>
+        </div>
+      );
+    }
+
+    return null;
+  }}
+/>
 
       <Line
-        type="monotone"
-        dataKey="parcels"
-        stroke="#2563eb"
-        strokeWidth={4}
-        dot={{ r: 6 }}
-      />
+  type="monotone"
+  dataKey="parcels"
+  stroke="#2563eb"
+  strokeWidth={5}
+  dot={{
+    r: 7,
+    strokeWidth: 3,
+    fill: "white"
+  }}
+  activeDot={{
+    r: 9
+  }}
+/>
     </LineChart>
   </ResponsiveContainer>
 </div>

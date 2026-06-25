@@ -165,19 +165,31 @@ def delivery_trend(db: Session = Depends(get_db)):
         .group_by(
             func.date(Parcel.created_at)
         )
-        .order_by(
-            func.date(Parcel.created_at)
-        )
         .all()
     )
 
-    trend = []
+    # Convert DB results into dictionary
+    parcel_data = {}
 
     for row in results:
 
+        parcel_data[row.date.strftime("%d %b")] = row.count
+
+    # Always return last 7 days
+    trend = []
+
+    for i in range(7):
+
+        current_day = (
+            seven_days_ago + timedelta(days=i)
+        ).strftime("%d %b")
+
         trend.append({
-            "date": row.date.strftime("%d %b"),
-            "parcels": row.count
+            "date": current_day,
+            "parcels": parcel_data.get(
+                current_day,
+                0
+            )
         })
 
     return trend
