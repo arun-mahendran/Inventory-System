@@ -6,6 +6,7 @@ from app.models.delivery_agent import DeliveryAgent
 from app.models.parcel_assignment_history import (
     ParcelAssignmentHistory
 )
+from app.models.notification_model import Notification
 
 
 def auto_assign_parcel(
@@ -47,6 +48,13 @@ def auto_assign_parcel(
 
     parcel.assigned_agent_id = agent.id
     parcel.status = "Assigned"
+
+    notification = Notification(
+        agent_id=agent.id,
+        message=f"New Parcel Assigned: {parcel.tracking_number}"
+    )
+
+    db.add(notification)
 
     history = ParcelAssignmentHistory(
         parcel_id=parcel.id,

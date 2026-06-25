@@ -3,10 +3,15 @@ import {
 } from "react-icons/hi";
 
 import {
-    FiLogOut
+    FiLogOut,
+    FiBell
 } from "react-icons/fi";
 
 import { useNavigate } from "react-router-dom";
+
+import { useState, useEffect } from "react";
+
+import api from "../../api/axios";
 
 
 function AgentNavbar({
@@ -15,6 +20,49 @@ function AgentNavbar({
 }) {
 
     const navigate = useNavigate();
+
+    const [notifications,
+        setNotifications] =
+        useState([]);
+
+    const [showNotifications,
+        setShowNotifications] =
+        useState(false);
+    
+    const fetchNotifications =
+    async () => {
+
+        try {
+
+            const agentId =
+                localStorage.getItem(
+                    "delivery_agent_id"
+                );
+
+            const response =
+                await api.get(
+                    `/notifications/${agentId}`
+                );
+
+            setNotifications(
+                response.data
+            );
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+        }
+
+    };
+
+    useEffect(() => {
+
+        fetchNotifications();
+
+    }, []);
 
     return (
 
@@ -77,63 +125,233 @@ function AgentNavbar({
 
             </div>
 
-            <button
-    onClick={() => {
-
-        localStorage.clear();
-
-        navigate("/login");
-
-    }}
-
+            <div
     style={{
-        border: "none",
-
-        background: "#0f172a",
-
-        color: "white",
-
-        padding: "10px 16px",
-
-        borderRadius: "12px",
-
-        cursor: "pointer",
-
         display: "flex",
         alignItems: "center",
-        gap: "8px",
-
-        fontWeight: "600",
-
-        transition: "all 0.3s ease"
-    }}
-
-    onMouseEnter={(e) => {
-
-        e.currentTarget.style.background =
-            "#ef4444";
-
-        e.currentTarget.style.transform =
-            "translateY(-2px)";
-
-    }}
-
-    onMouseLeave={(e) => {
-
-        e.currentTarget.style.background =
-            "#0f172a";
-
-        e.currentTarget.style.transform =
-            "translateY(0)";
-
+        gap: "15px",
+        position: "relative"
     }}
 >
 
-    <FiLogOut size={18} />
+    {/* Notification Bell */}
 
-    Logout
+    <button
 
-</button>
+        onClick={() =>
+            setShowNotifications(
+                !showNotifications
+            )
+        }
+
+        style={{
+            border: "none",
+
+            background: "white",
+
+            width: "50px",
+            height: "50px",
+
+            borderRadius: "50%",
+
+            cursor: "pointer",
+
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+
+            position: "relative",
+
+            boxShadow:
+                "0 5px 15px rgba(0,0,0,0.08)"
+        }}
+    >
+
+        <FiBell size={22} />
+
+        {
+
+            notifications.length > 0 && (
+
+                <span
+                    style={{
+                        position: "absolute",
+
+                        top: "4px",
+                        right: "4px",
+
+                        width: "20px",
+                        height: "20px",
+
+                        borderRadius: "50%",
+
+                        background: "#ef4444",
+
+                        color: "white",
+
+                        fontSize: "12px",
+
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center"
+                    }}
+                >
+                    {notifications.length}
+                </span>
+
+            )
+
+        }
+
+    </button>
+
+    {/* Notification Dropdown */}
+
+    {
+
+        showNotifications && (
+
+            <div
+                style={{
+                    position: "absolute",
+
+                    top: "60px",
+                    right: "70px",
+
+                    width: "320px",
+
+                    background: "white",
+
+                    borderRadius: "18px",
+
+                    padding: "20px",
+
+                    boxShadow:
+                        "0 10px 30px rgba(0,0,0,0.12)",
+
+                    zIndex: 999
+                }}
+            >
+
+                <h3
+                    style={{
+                        marginBottom: "15px"
+                    }}
+                >
+                    Notifications
+                </h3>
+
+                {
+
+                    notifications.length === 0
+
+                        ?
+
+                        <p>
+                            No Notifications
+                        </p>
+
+                        :
+
+                        notifications.map(
+                            (notification) => (
+
+                                <div
+
+                                    key={
+                                        notification.id
+                                    }
+
+                                    style={{
+                                        padding: "12px",
+
+                                        borderBottom:
+                                            "1px solid #e2e8f0"
+                                    }}
+                                >
+
+                                    <div>
+
+                                        {
+                                            notification.message
+                                        }
+
+                                    </div>
+
+                                </div>
+
+                            )
+                        )
+
+                }
+
+            </div>
+
+        )
+
+    }
+
+    {/* Logout Button */}
+
+    <button
+        onClick={() => {
+
+            localStorage.clear();
+
+            navigate("/login");
+
+        }}
+
+        style={{
+            border: "none",
+
+            background: "#0f172a",
+
+            color: "white",
+
+            padding: "10px 16px",
+
+            borderRadius: "12px",
+
+            cursor: "pointer",
+
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+
+            fontWeight: "600",
+
+            transition: "all 0.3s ease"
+        }}
+
+        onMouseEnter={(e) => {
+
+            e.currentTarget.style.background =
+                "#ef4444";
+
+            e.currentTarget.style.transform =
+                "translateY(-2px)";
+
+        }}
+
+        onMouseLeave={(e) => {
+
+            e.currentTarget.style.background =
+                "#0f172a";
+
+            e.currentTarget.style.transform =
+                "translateY(0)";
+
+        }}
+    >
+
+        <FiLogOut size={18} />
+
+        Logout
+
+    </button>
+
+</div>
 
         </div>
 

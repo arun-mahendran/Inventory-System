@@ -18,6 +18,7 @@ from app.routers.parcel_router import (
 from app.routers.dashboard_router import (
     router as dashboard_router
 )
+from app.models.notification_model import Notification
 from app.models.parcel_assignment_history import (
     ParcelAssignmentHistory
 )
@@ -26,6 +27,7 @@ from app.utils.auth import get_current_user
 from app.utils.roles import require_admin
 from app.routers import ai_router
 from app.routers import analytics_router
+from app.routers import notification_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -56,6 +58,7 @@ app.include_router(parcel_router)
 app.include_router(dashboard_router)
 app.include_router(ai_router.router)
 app.include_router(analytics_router.router)
+app.include_router(notification_router.router)
 
 
 # Protected Route
