@@ -110,7 +110,7 @@ function Navbar({
                 onMouseEnter={(e) => {
 
                     e.currentTarget.style.background =
-                        "#1e293b";
+                        "#ef4444";
 
                     e.currentTarget.style.transform =
                         "translateY(-2px)";
@@ -120,7 +120,7 @@ function Navbar({
                 onMouseLeave={(e) => {
 
                     e.currentTarget.style.background =
-                        "#ef4444";
+                        "#0f172a";
 
                     e.currentTarget.style.transform =
                         "translateY(0)";

@@ -439,21 +439,37 @@ function AgentTracking() {
                                             background:
                                                 parcel.status === "Delivered"
                                                     ? "#dcfce7"
+
+                                                    : parcel.status === "FailedDelivery"
+                                                    ? "#fee2e2"
+
                                                     : "#fef3c7",
 
                                             color:
                                                 parcel.status === "Delivered"
                                                     ? "#166534"
+
+                                                    : parcel.status === "FailedDelivery"
+                                                    ? "#991b1b"
+
                                                     : "#92400e",
 
                                             fontWeight: "600"
                                         }}
                                     >
+
                                         {
                                             parcel.status === "Delivered"
+
                                                 ? "Delivered"
+
+                                                : parcel.status === "FailedDelivery"
+
+                                                ? "Delivery Failed"
+
                                                 : "Arriving Today"
                                         }
+
                                     </span>
 
                                 </div>
