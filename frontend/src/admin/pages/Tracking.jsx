@@ -2,7 +2,12 @@ import { useState } from "react";
 import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 
-import { FiClock, FiCheck, FiFileText } from "react-icons/fi";
+import {
+  FiClock,
+  FiCheck,
+  FiFileText,
+  FiPackage
+} from "react-icons/fi";
 
 function Tracking() {
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -24,7 +29,27 @@ function Tracking() {
   return (
     <>
       <MainLayout>
-        <h1>Parcel Tracking</h1>
+        <div
+    style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        marginBottom: "20px"
+    }}
+>
+    <FiPackage
+        size={36}
+        color="#2563eb"
+    />
+
+    <h1
+        style={{
+            margin: 0
+        }}
+    >
+        Parcel Tracking
+    </h1>
+</div>
 
         <div
           style={{
@@ -78,14 +103,41 @@ function Tracking() {
                 boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
               }}
             >
-              <h2
+              <div
                 style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "12px",
                   marginBottom: "25px",
-                  color: "#0f172a",
                 }}
               >
-                📦 Tracking Result
-              </h2>
+                <div
+                  style={{
+                    width: "52px",
+                    height: "52px",
+                    borderRadius: "14px",
+                    background: "#dbeafe",
+
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <FiPackage
+                    size={26}
+                    color="#2563eb"
+                  />
+                </div>
+
+                <h2
+                  style={{
+                    margin: 0,
+                    color: "#0f172a",
+                  }}
+                >
+                  Tracking Result
+                </h2>
+              </div>
 
               <div
                 style={{
