@@ -48,6 +48,9 @@ from "./agent/pages/AgentTracking";
 import AgentDeliveryHistory
 from "./agent/pages/AgentDeliveryHistory";
 
+import AIAssistant
+from "./admin/pages/AIAssistant";
+
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -82,6 +85,17 @@ function App() {
                     <ProtectedRoute>
 
                         <Dashboard />
+
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/ai-assistant"
+                element={
+                    <ProtectedRoute>
+
+                        <AIAssistant />
 
                     </ProtectedRoute>
                 }

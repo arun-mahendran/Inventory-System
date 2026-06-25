@@ -8,6 +8,7 @@ import {
     FiMapPin,
     FiBarChart2,
     //FiMoon,
+    FiCpu,
     FiFileText
 } from "react-icons/fi";
 
@@ -225,6 +226,29 @@ function Sidebar({
 
             </NavLink>
 
+            <NavLink
+                to="/ai-assistant"
+
+                title={!sidebarOpen
+                    ? "AI Assistant"
+                    : ""}
+
+                className={({ isActive }) =>
+                    isActive
+                        ? "sidebar-link active-link"
+                        : "sidebar-link"
+                }
+            >
+
+                <FiCpu size={22} />
+
+                {sidebarOpen && (
+                    <span>
+                        AI Assistant
+                    </span>
+                )}
+
+            </NavLink>
 
             <NavLink
                 to="/reports"
