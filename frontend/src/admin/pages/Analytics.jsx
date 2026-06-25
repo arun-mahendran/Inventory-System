@@ -64,6 +64,13 @@ function Analytics() {
     }
   };
 
+  const [insights, setInsights] = useState({
+    success_rate: 0,
+    top_zone: "",
+    failure_reason: "",
+    pending: 0,
+  });
+
   const fetchSummary = async () => {
     try {
       const response = await api.get("/analytics/summary");
@@ -74,9 +81,22 @@ function Analytics() {
     }
   };
 
+  const fetchInsights = async () => {
+    try {
+      const response = await api.get("/analytics/insights");
+
+      setInsights(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchSummary();
+
     fetchTopZones();
+
+    fetchInsights();
   }, []);
 
   return (
@@ -430,19 +450,32 @@ function Analytics() {
           <h2>⭐ AI Business Insights</h2>
 
           <ul
-            style={{
-              marginTop: "20px",
-              lineHeight: "2",
-              paddingLeft: "20px",
-            }}
-          >
-            <li>Delivery success rate is 92%.</li>
+  style={{
+    marginTop: "30px",
+    paddingLeft: "28px",
+    lineHeight: "2.5",
+    fontSize: "18px",
+  }}
+>
+            <li>
+  Delivery success rate is{" "}
+  {insights.success_rate}%.
+</li>
 
-            <li>Kovilpatti is the most active delivery zone.</li>
+<li>
+  {insights.top_zone}{" "}
+  is the most active delivery zone.
+</li>
 
-            <li>Customer unavailability is the major failure reason.</li>
+<li>
+  {insights.failure_reason}{" "}
+  is the major failure reason.
+</li>
 
-            <li>12 parcels require immediate attention.</li>
+<li>
+  {insights.pending}{" "}
+  parcels require immediate attention.
+</li>
           </ul>
         </div>
       </div>
