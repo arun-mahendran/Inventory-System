@@ -5,6 +5,7 @@ from app.database import get_db
 from app.models.parcel import Parcel
 from app.models.customer import Customer
 from sqlalchemy import func
+from datetime import datetime, timedelta
 
 router = APIRouter(
     prefix="/analytics",
@@ -146,3 +147,37 @@ def get_insights(db: Session = Depends(get_db)):
         "pending":
             pending
     }
+
+
+@router.get("/delivery-trend")
+def delivery_trend(db: Session = Depends(get_db)):
+
+    seven_days_ago = datetime.now() - timedelta(days=6)
+
+    results = (
+        db.query(
+            func.date(Parcel.created_at).label("date"),
+            func.count(Parcel.id).label("count")
+        )
+        .filter(
+            Parcel.created_at >= seven_days_ago
+        )
+        .group_by(
+            func.date(Parcel.created_at)
+        )
+        .order_by(
+            func.date(Parcel.created_at)
+        )
+        .all()
+    )
+
+    trend = []
+
+    for row in results:
+
+        trend.append({
+            "date": row.date.strftime("%d %b"),
+            "parcels": row.count
+        })
+
+    return trend

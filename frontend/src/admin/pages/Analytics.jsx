@@ -18,6 +18,8 @@ import {
   Pie,
   Cell,
   Legend,
+  LineChart,
+  Line,
 } from "recharts";
 
 import {
@@ -27,8 +29,12 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 
+
 function Analytics() {
   const [topZones, setTopZones] = useState([]);
+
+  const [trendData, setTrendData] =
+    useState([]);
 
   const [stats, setStats] = useState({
     totalParcels: 0,
@@ -91,12 +97,34 @@ function Analytics() {
     }
   };
 
+  const fetchTrend = async () => {
+
+    try {
+
+        const response =
+            await api.get(
+                "/analytics/delivery-trend"
+            );
+
+        setTrendData(
+            response.data
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+    }
+
+};
+
   useEffect(() => {
     fetchSummary();
-
     fetchTopZones();
-
     fetchInsights();
+    fetchTrend();
   }, []);
 
   return (
@@ -270,6 +298,7 @@ function Analytics() {
               <FiMapPin size={30} color="#d97706" />
             </div>
 
+
             <h3
               style={{
                 color: "#64748b",
@@ -295,6 +324,59 @@ function Analytics() {
         </div>
 
         <div
+  style={{
+    background: "white",
+    padding: "35px",
+    borderRadius: "28px",
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 15px 35px rgba(0,0,0,0.06)",
+    marginBottom: "30px",
+  }}
+>
+  <h2>📈 Delivery Trend (Last 7 Days)</h2>
+
+  <p
+    style={{
+      color: "#64748b",
+      marginTop: "10px",
+      marginBottom: "20px",
+    }}
+  >
+    Daily parcel volume over the past week.
+  </p>
+
+  <ResponsiveContainer width="100%" height={350}>
+    <LineChart data={trendData}>
+      <CartesianGrid
+        stroke="#e2e8f0"
+        vertical={false}
+      />
+
+      <XAxis
+        dataKey="date"
+        axisLine={false}
+        tickLine={false}
+      />
+
+      <YAxis
+        axisLine={false}
+        tickLine={false}
+      />
+
+      <Tooltip />
+
+      <Line
+        type="monotone"
+        dataKey="parcels"
+        stroke="#2563eb"
+        strokeWidth={4}
+        dot={{ r: 6 }}
+      />
+    </LineChart>
+  </ResponsiveContainer>
+</div>
+
+        <div
           style={{
             display: "grid",
             gridTemplateColumns: "2fr 1fr",
@@ -302,6 +384,8 @@ function Analytics() {
             marginTop: "30px",
           }}
         >
+
+        
           {/* Top Delivery Zones */}
 
           <div
