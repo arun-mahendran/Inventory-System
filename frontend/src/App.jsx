@@ -51,6 +51,8 @@ from "./agent/pages/AgentDeliveryHistory";
 import AIAssistant
 from "./admin/pages/AIAssistant";
 
+import Analytics from "./admin/pages/Analytics";
+
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -250,6 +252,17 @@ function App() {
                         }
                     >
                         <AgentDeliveryHistory />
+                    </ProtectedRoute>
+                }
+            />
+
+            <Route
+                path="/analytics"
+                element={
+                    <ProtectedRoute>
+
+                        <Analytics />
+
                     </ProtectedRoute>
                 }
             />

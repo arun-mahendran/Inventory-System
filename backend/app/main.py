@@ -25,6 +25,7 @@ from app.models.parcel_assignment_history import (
 from app.utils.auth import get_current_user
 from app.utils.roles import require_admin
 from app.routers import ai_router
+from app.routers import analytics_router
 
 
 Base.metadata.create_all(bind=engine)
@@ -54,6 +55,7 @@ app.include_router(delivery_agent_router)
 app.include_router(parcel_router)
 app.include_router(dashboard_router)
 app.include_router(ai_router.router)
+app.include_router(analytics_router.router)
 
 
 # Protected Route
