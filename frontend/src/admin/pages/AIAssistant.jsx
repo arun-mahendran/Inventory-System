@@ -21,9 +21,11 @@ function AIAssistant() {
 
         if (!question.trim()) return;
 
+        const currentQuestion = question;
+
         const userMessage = {
             role: "user",
-            text: question
+            text: currentQuestion
         };
 
         setMessages(prev => [
@@ -31,52 +33,41 @@ function AIAssistant() {
             userMessage
         ]);
 
+        // Clear textarea immediately
+        setQuestion("");
+
         setLoading(true);
 
         try {
 
-            const response =
-                await api.post(
-                    "/ai/ask",
-                    {
-                        question
-                    }
-                );
+            const response = await api.post(
+                "/ai/ask",
+                {
+                    question: currentQuestion
+                }
+            );
 
             setMessages(prev => [
-
                 ...prev,
-
                 {
                     role: "assistant",
-                    text:
-                        response.data.answer
+                    text: response.data.answer
                 }
+            ]);
 
+        } catch (error) {
+
+            setMessages(prev => [
+                ...prev,
+                {
+                    role: "assistant",
+                    text: "Unable to connect to AI Assistant."
+                }
             ]);
 
         }
-
-        catch (error) {
-
-            setMessages(prev => [
-
-                ...prev,
-
-                {
-                    role: "assistant",
-                    text:
-                        "Unable to connect to AI Assistant."
-                }
-
-            ]);
-
-        }
-
-        setQuestion("");
 
         setLoading(false);
-
     };
 
     return (
@@ -97,15 +88,12 @@ function AIAssistant() {
                 <div
                     style={{
                         background: "white",
-
                         borderRadius: "20px",
-
                         padding: "20px",
-
                         marginTop: "30px",
-
-                        minHeight: "500px",
-
+                        height: "calc(100vh - 180px)",
+                        display: "flex",
+                        flexDirection: "column",
                         boxShadow:
                             "0 10px 30px rgba(0,0,0,0.08)"
                     }}
@@ -113,15 +101,12 @@ function AIAssistant() {
 
                     <div
                         style={{
-                            height: "400px",
-
+                            flex: 1,
                             overflowY: "auto",
-
                             display: "flex",
-
                             flexDirection: "column",
-
-                            gap: "15px"
+                            gap: "15px",
+                            paddingRight: "10px"
                         }}
                     >
 
@@ -136,34 +121,24 @@ function AIAssistant() {
                                         key={index}
 
                                         style={{
-
                                             alignSelf:
                                                 message.role === "user"
                                                     ? "flex-end"
                                                     : "flex-start",
-
                                             background:
                                                 message.role === "user"
                                                     ? "#2563eb"
                                                     : "#f1f5f9",
-
                                             color:
                                                 message.role === "user"
                                                     ? "white"
                                                     : "#0f172a",
-
                                             padding: "14px 18px",
-
                                             borderRadius: "18px",
-
                                             maxWidth: "45%",
-
                                             wordBreak: "break-word",
-
                                             lineHeight: "1.6",
-
                                             fontSize: "15px",
-
                                             boxShadow:
                                                 "0 4px 12px rgba(0,0,0,0.06)"
                                         }}
@@ -210,30 +185,41 @@ function AIAssistant() {
                         }}
                     >
 
-                        <input
-
-                            type="text"
-
+                        <textarea
                             value={question}
 
                             onChange={(e) =>
-                                setQuestion(
-                                    e.target.value
-                                )
+                                setQuestion(e.target.value)
                             }
 
-                            placeholder=
-                                "Ask something about deliveries..."
+                            onKeyDown={(e) => {
+
+                                // Send message when Enter is pressed
+                                if (e.key === "Enter" && !e.shiftKey) {
+
+                                    e.preventDefault();
+
+                                    askAI();
+                                }
+
+                                // Shift + Enter automatically creates new line
+                            }}
+
+                            placeholder="Ask something about deliveries..."
+                            rows={1}
 
                             style={{
                                 flex: 1,
-
                                 padding: "15px",
-
                                 borderRadius: "14px",
-
-                                border:
-                                    "2px solid #e2e8f0"
+                                border: "2px solid #e2e8f0",
+                                resize: "none",
+                                fontSize: "15px",
+                                fontFamily: "inherit",
+                                outline: "none",
+                                minHeight: "56px",
+                                maxHeight: "150px",
+                                overflowY: "auto"
                             }}
                         />
 
