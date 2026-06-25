@@ -30,6 +30,16 @@ import {
   FiMapPin,
 } from "react-icons/fi";
 
+import {
+  FiTrendingUp,
+  FiPieChart,
+  FiStar,
+} from "react-icons/fi";
+
+import {
+  MdOutlineAnalytics
+} from "react-icons/md";
+
 
 function Analytics() {
   const [topZones, setTopZones] = useState([]);
@@ -136,16 +146,30 @@ function Analytics() {
             marginBottom: "35px",
           }}
         >
-          <h1
-            style={{
-              fontSize: "42px",
-              fontWeight: "700",
-              color: "#0f172a",
-              marginBottom: "10px",
-            }}
-          >
-            📊 Delivery Analytics
-          </h1>
+          <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "10px",
+  }}
+>
+  <MdOutlineAnalytics
+    size={42}
+    color="#2563eb"
+  />
+
+  <h1
+    style={{
+      fontSize: "42px",
+      fontWeight: "700",
+      color: "#0f172a",
+      margin: 0,
+    }}
+  >
+    Delivery Analytics
+  </h1>
+</div>
 
           <p
             style={{
@@ -334,7 +358,23 @@ function Analytics() {
     marginBottom: "30px",
   }}
 >
-  <h2>📈 Delivery Trend (Last 7 Days)</h2>
+  <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "15px",
+  }}
+>
+  <FiTrendingUp
+    size={26}
+    color="#2563eb"
+  />
+
+  <h2 style={{ margin: 0 }}>
+    Delivery Trend (Last 7 Days)
+  </h2>
+</div>
 
   <p
     style={{
@@ -476,7 +516,23 @@ function Analytics() {
               boxShadow: "0 15px 35px rgba(0,0,0,0.06)",
             }}
           >
-            <h2 style={{ marginBottom: "25px" }}>📍 Top Delivery Zones</h2>
+            <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "25px",
+  }}
+>
+  <FiMapPin
+    size={24}
+    color="#d97706"
+  />
+
+  <h2 style={{ margin: 0 }}>
+    Top Delivery Zones
+  </h2>
+</div>
 
             <p
               style={{
@@ -557,7 +613,23 @@ function Analytics() {
               boxShadow: "0 15px 35px rgba(0,0,0,0.06)",
             }}
           >
-            <h2>🥧 Delivery Status</h2>
+            <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "15px",
+  }}
+>
+  <FiPieChart
+    size={24}
+    color="#22c55e"
+  />
+
+  <h2 style={{ margin: 0 }}>
+    Delivery Status
+  </h2>
+</div>
 
             <p
               style={{
@@ -610,7 +682,23 @@ function Analytics() {
             boxShadow: "0 20px 40px rgba(15,23,42,0.3)",
           }}
         >
-          <h2>⭐ AI Business Insights</h2>
+          <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "15px",
+  }}
+>
+  <FiStar
+    size={24}
+    color="#facc15"
+  />
+
+  <h2 style={{ margin: 0 }}>
+    AI Business Insights
+  </h2>
+</div>
 
           <ul
   style={{
