@@ -5,15 +5,11 @@ import api from "../../api/axios";
 
 import MainLayout from "../components/MainLayout";
 
+import { toast } from "react-toastify";
+
 function CreateParcel() {
 
     const navigate = useNavigate();
-
-    const [successMessage, setSuccessMessage] =
-        useState("");
-
-    const [errorMessage, setErrorMessage] =
-    useState("");
 
     const [formData, setFormData] = useState({
         tracking_number: "",
@@ -35,8 +31,6 @@ function CreateParcel() {
     const handleSubmit = async (e) => {
 
         e.preventDefault();
-
-        setErrorMessage("");
 
         const paymentStatus =
             formData.payment_method ===
@@ -66,8 +60,8 @@ function CreateParcel() {
                 }
             );
 
-            setSuccessMessage(
-                "Parcel Created Successfully ✅"
+            toast.success(
+                "Parcel Created Successfully"
             );
 
             setTimeout(() => {
@@ -81,7 +75,7 @@ function CreateParcel() {
                 error
             );
 
-            setErrorMessage(
+            toast.error(
                 error.response?.data?.detail ||
                 "Failed to create parcel"
             );
@@ -98,45 +92,6 @@ function CreateParcel() {
                         Create Parcel
                     </h1>
 
-                    {
-                        successMessage && (
-
-                            <div
-                                style={{
-                                    background: "#dcfce7",
-                                    color: "#15803d",
-                                    padding: "14px",
-                                    borderRadius: "10px",
-                                    marginTop: "20px",
-                                    marginBottom: "20px",
-                                    fontWeight: "600"
-                                }}
-                            >
-                                {successMessage}
-                            </div>
-
-                        )
-                    }
-
-                    {
-                        errorMessage && (
-
-                            <div
-                                style={{
-                                    background: "#fee2e2",
-                                    color: "#b91c1c",
-                                    padding: "14px",
-                                    borderRadius: "10px",
-                                    marginTop: "20px",
-                                    marginBottom: "20px",
-                                    fontWeight: "600"
-                                }}
-                            >
-                                ❌ {errorMessage}
-                            </div>
-
-                        )
-                    }
 
                     <form
                         onSubmit={handleSubmit}

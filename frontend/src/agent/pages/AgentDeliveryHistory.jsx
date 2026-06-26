@@ -31,14 +31,32 @@ function AgentDeliveryHistory() {
                     );
 
                 const completedParcels =
-                    response.data.filter(
-                        parcel =>
-                            parcel.status ===
-                            "Delivered"
-                            ||
-                            parcel.status ===
-                            "FailedDelivery"
-                    );
+                    response.data
+                        .filter(
+                            parcel =>
+                                parcel.status ===
+                                "Delivered"
+                                ||
+                                parcel.status ===
+                                "FailedDelivery"
+                        )
+                        .sort((a, b) => {
+
+                            const dateA =
+                                new Date(
+                                    a.delivered_at ||
+                                    a.failed_at
+                                );
+
+                            const dateB =
+                                new Date(
+                                    b.delivered_at ||
+                                    b.failed_at
+                                );
+
+                            return dateB - dateA;
+
+                        });
 
                 setHistory(
                     completedParcels
