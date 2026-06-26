@@ -53,6 +53,8 @@ from "./admin/pages/AIAssistant";
 
 import Analytics from "./admin/pages/Analytics";
 
+import Reports from "./admin/pages/Reports";
+
 import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
@@ -265,6 +267,11 @@ function App() {
 
                     </ProtectedRoute>
                 }
+            />
+
+            <Route
+                path="/reports"
+                element={<Reports />}
             />
 
         </Routes>

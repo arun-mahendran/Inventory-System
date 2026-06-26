@@ -6,6 +6,8 @@ import api from "../../api/axios";
 
 import { FiSend } from "react-icons/fi";
 
+import { BsRobot } from "react-icons/bs";
+
 function AIAssistant() {
 
     const [question, setQuestion] =
@@ -81,8 +83,22 @@ function AIAssistant() {
                 }}
             >
 
-                <h1>
-                    🤖 AI Delivery Intelligence Assistant
+                <h1
+                    style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "14px",
+                        fontSize: "36px",
+                        fontWeight: "700",
+                        color: "#0f172a"
+                    }}
+                >
+                    <BsRobot
+                        size={42}
+                        color="#2563eb"
+                    />
+
+                    AI Delivery Intelligence Assistant
                 </h1>
 
                 <div

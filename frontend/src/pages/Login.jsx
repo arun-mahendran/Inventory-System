@@ -62,6 +62,14 @@ function Login() {
                 response.data.delivery_agent_id
             );
 
+            console.log("Complete Login Response:");
+            console.log(response.data);
+
+            console.log(
+                "Delivery Agent ID:",
+                response.data.delivery_agent_id
+            );
+
             localStorage.setItem(
                 "change_password", 
                 response.data.change_password

@@ -16,16 +16,39 @@ function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
   const [showNotifications, setShowNotifications] = useState(false);
 
   const fetchNotifications = async () => {
-    try {
-      const agentId = localStorage.getItem("delivery_agent_id");
 
-      const response = await api.get(`/notifications/${agentId}`);
+    const agentId =
+        localStorage.getItem(
+            "delivery_agent_id"
+        );
 
-      setNotifications(response.data);
-    } catch (error) {
-      console.log(error);
+    if (
+        !agentId ||
+        agentId === "null"
+    ) {
+        return;
     }
-  };
+
+    try {
+
+        const response =
+            await api.get(
+                `/notifications/${agentId}`
+            );
+
+        setNotifications(
+            response.data
+        );
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+    }
+
+};
 
   useEffect(() => {
     const handleClickOutside = () => {
