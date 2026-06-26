@@ -20,13 +20,23 @@ function ChangePassword() {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const [passwordError, setPasswordError] = useState("");
+
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Minimum password length validation
+    if (newPassword.length < 8) {
+      setPasswordError("Password must contain at least 8 characters");
+
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       toast.error("Passwords do not match");
+
       return;
     }
 
@@ -162,7 +172,19 @@ function ChangePassword() {
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter new password"
                 value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                onChange={(e) => {
+                  const password = e.target.value;
+
+                  setNewPassword(password);
+
+                  if (password.length > 0 && password.length < 8) {
+                    setPasswordError(
+                      "Password must contain at least 8 characters",
+                    );
+                  } else {
+                    setPasswordError("");
+                  }
+                }}
                 required
                 style={{
                   width: "100%",
@@ -171,11 +193,17 @@ function ChangePassword() {
 
                   borderRadius: "14px",
 
-                  border: "2px solid #e2e8f0",
+                  border: passwordError
+                    ? "2px solid #ef4444"
+                    : "2px solid #e2e8f0",
 
                   fontSize: "15px",
 
                   boxSizing: "border-box",
+
+                  outline: "none",
+
+                  transition: "all 0.3s ease",
                 }}
               />
 
@@ -188,11 +216,27 @@ function ChangePassword() {
                   transform: "translateY(-50%)",
 
                   cursor: "pointer",
+
+                  color: "#64748b",
                 }}
               >
                 {showPassword ? <FiEyeOff /> : <FiEye />}
               </div>
             </div>
+
+            {passwordError && (
+              <p
+                style={{
+                  color: "#ef4444",
+                  fontSize: "14px",
+                  marginTop: "8px",
+                  marginBottom: 0,
+                  fontWeight: "500",
+                }}
+              >
+                {passwordError}
+              </p>
+            )}
           </div>
 
           <div
