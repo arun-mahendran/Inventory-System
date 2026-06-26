@@ -2,223 +2,230 @@ import MainLayout from "../components/MainLayout";
 
 import api from "../../api/axios";
 
-import { FiDownload } from "react-icons/fi";
+import {
+  FiDownload,
+  FiFileText,
+  FiCalendar,
+  FiUser,
+  FiFile,
+} from "react-icons/fi";
 
 function Reports() {
+  const downloadPDF = async () => {
+    try {
+      const response = await api.get("/reports/download-pdf", {
+        responseType: "blob",
+      });
 
-    const downloadPDF = async () => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
 
-        try {
+      const link = document.createElement("a");
 
-            const response = await api.get(
-                "/reports/download-pdf",
-                {
-                    responseType: "blob"
-                }
-            );
+      link.href = url;
 
-            const url =
-                window.URL.createObjectURL(
-                    new Blob([response.data])
-                );
+      link.setAttribute("download", "delivery_report.pdf");
 
-            const link =
-                document.createElement("a");
+      document.body.appendChild(link);
 
-            link.href = url;
+      link.click();
 
-            link.setAttribute(
-                "download",
-                "delivery_report.pdf"
-            );
+      link.remove();
+    } catch (error) {
+      console.log(error);
 
-            document.body.appendChild(link);
+      alert("Unable to download report");
+    }
+  };
 
-            link.click();
+  return (
+    <MainLayout>
+      <div
+        style={{
+          maxWidth: "1000px",
+          margin: "0 auto",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            marginBottom: "20px",
+          }}
+        >
+          <FiFileText size={38} color="#2563eb" />
 
-            link.remove();
+          <div>
+            <h1
+              style={{
+                margin: 0,
+              }}
+            >
+              Reports Dashboard
+            </h1>
 
-        }
+            <p
+              style={{
+                color: "#64748b",
+                marginTop: "8px",
+              }}
+            >
+              Generate and download operational reports.
+            </p>
+          </div>
+        </div>
 
-        catch (error) {
+        <div
+          style={{
+            background: "white",
 
-            console.log(error);
+            padding: "40px",
 
-            alert(
-                "Unable to download report"
-            );
+            borderRadius: "20px",
 
-        }
+            marginTop: "30px",
 
-    };
+            boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
+          }}
+        >
+          <h2>Delivery Reports</h2>
 
-    return (
+          <p
+            style={{
+              color: "#64748b",
+              marginBottom: "30px",
+            }}
+          >
+            Download delivery analytics and operational reports.
+          </p>
 
-        <MainLayout>
+          <div
+            style={{
+              background: "#f8fafc",
+
+              padding: "25px",
+
+              borderRadius: "16px",
+
+              marginBottom: "30px",
+
+              border: "1px solid #e2e8f0",
+            }}
+          >
+            <h3
+              style={{
+                marginBottom: "20px",
+              }}
+            >
+              Report Information
+            </h3>
 
             <div
-                style={{
-                    maxWidth: "1000px",
-                    margin: "0 auto"
-                }}
+              style={{
+                display: "grid",
+
+                gridTemplateColumns: "repeat(auto-fit,minmax(250px,1fr))",
+
+                gap: "20px",
+              }}
             >
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  alignItems: "center",
+                }}
+              >
+                <FiFileText size={24} color="#2563eb" />
 
-                <h1>
-                    📊 Reports Dashboard
-                </h1>
+                <div>
+                  <strong>Report Type</strong>
 
-                <div
-                    style={{
-                        background: "white",
-
-                        padding: "40px",
-
-                        borderRadius: "20px",
-
-                        marginTop: "30px",
-
-                        boxShadow:
-                            "0 10px 30px rgba(0,0,0,0.08)"
-                    }}
-                >
-
-                    <h2>
-                        Delivery Reports
-                    </h2>
-
-                    <p
-                        style={{
-                            color: "#64748b",
-                            marginBottom: "30px"
-                        }}
-                    >
-                        Download delivery analytics
-                        and operational reports.
-                    </p>
-
-                    <div
-                        style={{
-                            background: "#f8fafc",
-
-                            padding: "25px",
-
-                            borderRadius: "16px",
-
-                            marginBottom: "30px",
-
-                            border: "1px solid #e2e8f0"
-                        }}
-                    >
-
-                        <h3
-                            style={{
-                                marginBottom: "20px"
-                            }}
-                        >
-                            Report Information
-                        </h3>
-
-                        <div
-                            style={{
-                                display: "grid",
-
-                                gridTemplateColumns:
-                                    "repeat(auto-fit,minmax(250px,1fr))",
-
-                                gap: "20px"
-                            }}
-                        >
-
-                            <div>
-                                <strong>
-                                    Report Type:
-                                </strong>
-
-                                <p>
-                                    Delivery Operations Report
-                                </p>
-                            </div>
-
-                            <div>
-                                <strong>
-                                    Format:
-                                </strong>
-
-                                <p>
-                                    PDF Document
-                                </p>
-                            </div>
-
-                            <div>
-                                <strong>
-                                    Generated By:
-                                </strong>
-
-                                <p>
-                                    Admin User
-                                </p>
-                            </div>
-
-                            <div>
-                                <strong>
-                                    Generated On:
-                                </strong>
-
-                                <p>
-                                    {
-                                        new Date()
-                                            .toLocaleString()
-                                    }
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <button
-
-                        onClick={downloadPDF}
-
-                        style={{
-                            background: "#2563eb",
-
-                            color: "white",
-
-                            border: "none",
-
-                            padding: "15px 28px",
-
-                            borderRadius: "14px",
-
-                            cursor: "pointer",
-
-                            display: "flex",
-
-                            alignItems: "center",
-
-                            gap: "10px",
-
-                            fontSize: "16px",
-
-                            fontWeight: "600"
-                        }}
-                    >
-
-                        <FiDownload size={20} />
-
-                        Download PDF Report
-
-                    </button>
-
+                  <p>Delivery Operations Report</p>
                 </div>
+              </div>
 
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  alignItems: "center",
+                }}
+              >
+                <FiFile size={24} color="#16a34a" />
+
+                <div>
+                  <strong>Format</strong>
+
+                  <p>PDF Document</p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  alignItems: "center",
+                }}
+              >
+                <FiUser size={24} color="#f59e0b" />
+
+                <div>
+                  <strong>Generated By</strong>
+
+                  <p>Admin User</p>
+                </div>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  gap: "12px",
+                  alignItems: "center",
+                }}
+              >
+                <FiCalendar size={24} color="#ef4444" />
+
+                <div>
+                  <strong>Generated On</strong>
+
+                  <p>{new Date().toLocaleString()}</p>
+                </div>
+              </div>
             </div>
+          </div>
 
-        </MainLayout>
-
-    );
-
+          <button
+            onClick={downloadPDF}
+            style={{
+              background: "#2563eb",
+              color: "white",
+              border: "none",
+              padding: "15px 28px",
+              borderRadius: "14px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              fontSize: "16px",
+              fontWeight: "600",
+              transition: "all 0.3s ease",
+              boxShadow: "0 8px 20px rgba(37,99,235,0.3)",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "translateY(-3px)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+            }}
+          >
+            <FiDownload size={20} />
+            Download PDF Report
+          </button>
+        </div>
+      </div>
+    </MainLayout>
+  );
 }
 
 export default Reports;
