@@ -314,8 +314,15 @@ function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
 
             ) : (
 
-                notifications.map(
-                (notification) => (
+                notifications
+                .sort(
+                    (a, b) =>
+                        new Date(b.created_at) -
+                        new Date(a.created_at)
+                )
+                .slice(0, 3)
+                .map(
+                    (notification) => (
 
                     <div
                     key={notification.id}
@@ -348,7 +355,7 @@ function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
                         fontWeight: "500",
                         }}
                     >
-                        🔔 {notification.message}
+                        {notification.message}
                     </div>
 
                     <p
@@ -371,6 +378,24 @@ function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
                 )
 
             )}
+
+            {
+              notifications.length > 3 && (
+
+                  <p
+                      style={{
+                          textAlign: "center",
+                          color: "#64748b",
+                          fontSize: "13px",
+                          marginTop: "10px",
+                          marginBottom: 0
+                      }}
+                  >
+                      Showing latest 3 notifications
+                  </p>
+
+              )
+          }
             </div>
         </>
         )}

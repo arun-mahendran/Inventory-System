@@ -103,59 +103,69 @@ function MyParcels() {
     }
 ];
 
-    useEffect(() => {
+    const fetchParcels = async () => {
+        try {
 
-        const fetchParcels =
-            async () => {
+            const agentId =
+                localStorage.getItem(
+                    "delivery_agent_id"
+                );
 
-                try {
+            const response =
+                await api.get(
+                    `/delivery-agents/${agentId}/parcels`
+                );
 
-                    const agentId =
-                        localStorage.getItem(
-                            "delivery_agent_id"
-                        );
-
-                    const response =
-                        await api.get(
-                            `/delivery-agents/${agentId}/parcels`
-                        );
-
-                    setParcels(
-                        response.data
-                    );
-
-                } catch (error) {
-
-                    console.error(
-                        error
-                    );
-
-                }
-
+            const statusOrder = {
+                Assigned: 1,
+                OutForDelivery: 2,
+                FailedDelivery: 3,
+                Delivered: 4
             };
+
+            const sortedParcels =
+                response.data.sort(
+                    (a, b) =>
+                        statusOrder[a.status] -
+                        statusOrder[b.status]
+                );
+
+            setParcels(
+                sortedParcels
+            );
+
+        } catch (error) {
+
+            console.error(error);
+
+        }
+
+    };
+
+    useEffect(() => {
 
         fetchParcels();
 
     }, []);
 
     const startDelivery =
-    async (parcelId) => {
+async (parcelId) => {
 
-        try {
+    try {
 
-            await api.patch(
-                `/parcels/${parcelId}/out-for-delivery`
-            );
+        await api.patch(
+            `/parcels/${parcelId}/out-for-delivery`
+        );
 
-            window.location.reload();
+        fetchParcels();
 
-        } catch (error) {
+    } catch (error) {
 
-            console.log(error);
+        console.log(error);
 
-        }
+    }
 
-    };
+};
 
     const markDelivered =
     async (parcelId) => {
@@ -166,7 +176,11 @@ function MyParcels() {
                 `/parcels/${parcelId}/delivered`
             );
 
-            window.location.reload();
+            toast.success(
+                "Parcel Delivered Successfully"
+            );
+
+            fetchParcels();
 
         } catch (error) {
 
@@ -177,34 +191,43 @@ function MyParcels() {
     };
 
     const collectPayment = async (
-        parcelId
-    ) => {
+    parcelId
+) => {
 
-        try {
+    try {
 
-            await api.patch(
-                `/parcels/${parcelId}/collect-payment`
-            );
+        await api.patch(
+            `/parcels/${parcelId}/collect-payment`
+        );
 
-            toast.success(
-                "Payment Collected Successfully"
-            );
+        toast.success(
+            "Payment Collected Successfully ✅"
+        );
 
-            window.location.reload();
+        setParcels((prev) =>
+            prev.map((parcel) =>
+                parcel.id === parcelId
+                    ? {
+                          ...parcel,
+                          payment_status: "Paid"
+                      }
+                    : parcel
+            )
+        );
 
-        }
+    }
 
-        catch (error) {
+    catch (error) {
 
-            console.log(error);
+        console.log(error);
 
-            toast.error(
-                "Unable to collect payment"
-            );
+        toast.error(
+            "Unable to collect payment"
+        );
 
-        }
+    }
 
-    };
+};
 
     const reportFailure =
         (parcelId) => {
@@ -253,7 +276,11 @@ function MyParcels() {
                         ""
                     );
 
-                    window.location.reload();
+                    toast.error(
+                        "Parcel Marked as Failed"
+                    );
+
+                    fetchParcels();
 
                 } catch (error) {
 
@@ -768,41 +795,43 @@ function MyParcels() {
                                             {
                                                 parcel.payment_method === "Prepaid" ? (
 
-                                                    <button
-                                                        disabled
+                                                <button
+                                                    disabled
+                                                    style={{
+                                                        padding: "6px 10px",
+                                                        border: "none",
+                                                        borderRadius: "6px",
+                                                        background: "#22c55e",
+                                                        color: "white",
+                                                        cursor: "not-allowed",
+                                                        opacity: 0.8,
+                                                        fontWeight: "600"
+                                                    }}
+                                                >
+                                                    Paid
+                                                </button>
 
-                                                        style={{
+                                            ) : parcel.payment_status === "Pending" ? (
+
+                                                <button
+
+                                                    disabled={
+                                                        parcel.status !==
+                                                        "OutForDelivery"
+                                                    }
+
+                                                    onClick={() =>
+                                                        collectPayment(parcel.id)
+                                                    }
+
+                                                    style={
+                                                        parcel.status ===
+                                                        "OutForDelivery"
+
+                                                        ? {
+
                                                             padding: "6px 10px",
                                                             border: "none",
-                                                            borderRadius: "6px",
-
-                                                            background: "#22c55e",
-
-                                                            color: "white",
-
-                                                            cursor: "not-allowed",
-
-                                                            opacity: 0.8,
-
-                                                            fontWeight: "600"
-                                                        }}
-                                                    >
-                                                        Paid
-                                                    </button>
-
-                                                ) : parcel.payment_status === "Pending" ? (
-
-                                                    <button
-
-                                                        onClick={() =>
-                                                            collectPayment(parcel.id)
-                                                        }
-
-                                                        style={{
-                                                            padding: "6px 10px",
-
-                                                            border: "none",
-
                                                             borderRadius: "6px",
 
                                                             background: "#8b5cf6",
@@ -812,38 +841,33 @@ function MyParcels() {
                                                             cursor: "pointer",
 
                                                             fontWeight: "600"
-                                                        }}
-                                                    >
-                                                        Collect ₹{parcel.amount}
-                                                    </button>
+                                                        }
 
-                                                ) : (
+                                                        : disabledButton
+                                                    }
+                                                >
+                                                    Collect ₹{parcel.amount}
+                                                </button>
 
-                                                    <button
-                                                        disabled
+                                            ) : (
 
-                                                        style={{
-                                                            padding: "6px 10px",
+                                                <button
+                                                    disabled
+                                                    style={{
+                                                        padding: "6px 10px",
+                                                        border: "none",
+                                                        borderRadius: "6px",
+                                                        background: "#22c55e",
+                                                        color: "white",
+                                                        cursor: "not-allowed",
+                                                        opacity: 0.8,
+                                                        fontWeight: "600"
+                                                    }}
+                                                >
+                                                    Paid
+                                                </button>
 
-                                                            border: "none",
-
-                                                            borderRadius: "6px",
-
-                                                            background: "#22c55e",
-
-                                                            color: "white",
-
-                                                            cursor: "not-allowed",
-
-                                                            opacity: 0.8,
-
-                                                            fontWeight: "600"
-                                                        }}
-                                                    >
-                                                        Paid
-                                                    </button>
-
-                                                )
+                                            )
                                             }
 
                                         </td>
