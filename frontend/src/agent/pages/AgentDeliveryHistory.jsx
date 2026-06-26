@@ -7,6 +7,8 @@ import AgentLayout
 
 import "../../styles/agent-history.css";
 
+import { MdHistory } from "react-icons/md";
+
 function AgentDeliveryHistory() {
 
     const [history, setHistory] =
@@ -62,8 +64,18 @@ function AgentDeliveryHistory() {
 
                 <div className="history-header">
 
-                    <h1>
-                        <span>📜</span>
+                    <h1
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px"
+                        }}
+                    >
+                        <MdHistory
+                            size={38}
+                            color="#2563eb"
+                        />
+
                         Delivery History
                     </h1>
 
