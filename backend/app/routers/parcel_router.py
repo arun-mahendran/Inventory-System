@@ -31,6 +31,10 @@ from app.services.parcel_service import (
 
 from app.utils.dependencies import get_db
 
+from app.services.parcel_service import (
+    collect_payment
+)
+
 
 
 router = APIRouter(
@@ -247,3 +251,17 @@ def reassign_parcel(
             status_code=400,
             detail=str(e)
         )
+
+
+@router.patch(
+    "/{parcel_id}/collect-payment"
+)
+def collect_parcel_payment(
+    parcel_id: int,
+    db: Session = Depends(get_db)
+):
+
+    return collect_payment(
+        db,
+        parcel_id
+    )

@@ -34,7 +34,10 @@ def create_parcel(
 
     db_parcel = Parcel(
         tracking_number=parcel.tracking_number,
-        customer_id=parcel.customer_id
+        customer_id=parcel.customer_id,
+        amount=parcel.amount,
+        payment_method=parcel.payment_method,
+        payment_status=parcel.payment_status
     )
 
     try:
@@ -411,3 +414,26 @@ def get_parcel_history(
     ).order_by(
         ParcelAssignmentHistory.assigned_at
     ).all()
+
+
+def collect_payment(
+    db: Session,
+    parcel_id: int
+):
+
+    parcel = db.query(Parcel).filter(
+        Parcel.id == parcel_id
+    ).first()
+
+    if not parcel:
+        raise ValueError(
+            "Parcel not found"
+        )
+
+    parcel.payment_status = "Paid"
+
+    db.commit()
+
+    db.refresh(parcel)
+
+    return parcel

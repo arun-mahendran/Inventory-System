@@ -17,7 +17,10 @@ function CreateParcel() {
 
     const [formData, setFormData] = useState({
         tracking_number: "",
-        customer_id: ""
+        customer_id: "",
+        amount: "",
+        payment_method: "Prepaid",
+        payment_status: "Pending"
     });
 
     const handleChange = (e) => {
@@ -35,6 +38,12 @@ function CreateParcel() {
 
         setErrorMessage("");
 
+        const paymentStatus =
+            formData.payment_method ===
+            "Prepaid"
+                ? "Paid"
+                : "Pending";
+
         try {
 
             await api.post(
@@ -44,7 +53,16 @@ function CreateParcel() {
                         formData.tracking_number,
 
                     customer_id:
-                        Number(formData.customer_id)
+                        Number(formData.customer_id),
+
+                    amount:
+                        Number(formData.amount),
+
+                    payment_method:
+                        formData.payment_method,
+
+                    payment_status:
+                        paymentStatus
                 }
             );
 
@@ -180,6 +198,61 @@ function CreateParcel() {
                                     marginTop: "8px"
                                 }}
                             />
+
+                        </div>
+
+                        <div
+                            style={{
+                                marginBottom: "20px"
+                            }}
+                        >
+                            <label>
+                                Amount (₹)
+                            </label>
+
+                            <input
+                                type="number"
+                                name="amount"
+                                value={formData.amount}
+                                onChange={handleChange}
+                                required
+                                style={{
+                                    width: "100%",
+                                    padding: "12px",
+                                    marginTop: "8px"
+                                }}
+                            />
+                        </div>
+
+                        <div
+                            style={{
+                                marginBottom: "20px"
+                            }}
+                        >
+                            <label>
+                                Payment Method
+                            </label>
+
+                            <select
+                                name="payment_method"
+                                value={formData.payment_method}
+                                onChange={handleChange}
+                                style={{
+                                    width: "100%",
+                                    padding: "12px",
+                                    marginTop: "8px"
+                                }}
+                            >
+
+                                <option value="Prepaid">
+                                    Prepaid
+                                </option>
+
+                                <option value="CashOnDelivery">
+                                    Cash On Delivery
+                                </option>
+
+                            </select>
                         </div>
 
                         <button

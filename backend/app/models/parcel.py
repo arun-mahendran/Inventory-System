@@ -10,6 +10,8 @@ from sqlalchemy.sql import func
 
 from sqlalchemy.orm import relationship
 
+from sqlalchemy import Float
+
 from app.database import Base
 
 
@@ -46,6 +48,22 @@ class Parcel(Base):
         default="Received"
     )
 
+    payment_method = Column(
+        String,
+        default="Prepaid"
+    )
+
+    payment_status = Column(
+        String,
+        default="Pending"
+    )
+
+    amount = Column(
+        Float,
+        nullable=False,
+        default=0
+    )
+
     failure_reason = Column(
         String(255),
         nullable=True
@@ -71,5 +89,4 @@ class Parcel(Base):
         server_default=func.now()
     )
 
-    # Relationship
     customer = relationship("Customer")

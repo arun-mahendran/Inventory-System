@@ -8,7 +8,16 @@ import {
 import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
-import { FiPackage } from "react-icons/fi";
+//import { FiPackage } from "react-icons/fi";
+
+import {
+    FiPackage,
+    FiTruck,
+    FiCheckCircle,
+    FiXCircle
+} from "react-icons/fi";
+
+import { FaBoxesStacked } from "react-icons/fa6";
 
 function Parcels() {
 
@@ -243,28 +252,44 @@ const viewParcelDetails = async (
 
 const filters = [
     {
-        label: "📦 All Parcels",
+        label: (
+            <>
+                <FaBoxesStacked /> All Parcels
+            </>
+        ),
         value: "All"
     },
     {
-        label: "🟡 Assigned",
+        label: (
+            <>
+                <FiPackage /> Assigned
+            </>
+        ),
         value: "Assigned"
     },
     {
-        label: "🚚 Out For Delivery",
+        label: (
+            <>
+                <FiTruck /> Out For Delivery
+            </>
+        ),
         value: "OutForDelivery"
     },
     {
-        label: "✅ Delivered",
+        label: (
+            <>
+                <FiCheckCircle /> Delivered
+            </>
+        ),
         value: "Delivered"
     },
     {
-        label: "❌ Failed Delivery",
+        label: (
+            <>
+                <FiXCircle /> Failed Delivery
+            </>
+        ),
         value: "FailedDelivery"
-    },
-    {
-        label: "🔄 Reassigned",
-        value: "Reassigned"
     }
 ];
 
@@ -454,39 +479,80 @@ const filters = [
                                             filters.map((filter) => (
 
                                                 <div
-                                                    key={filter.value}
+    key={filter.value}
 
-                                                    onClick={() => {
+    onClick={() => {
 
-                                                        setSelectedFilter(
-                                                            filter.value
-                                                        );
+        setSelectedFilter(
+            filter.value
+        );
 
-                                                        setShowFilterDropdown(
-                                                            false
-                                                        );
+        setShowFilterDropdown(
+            false
+        );
 
-                                                    }}
+    }}
 
-                                                    style={{
-                                                        padding: "12px 18px",
-                                                        cursor: "pointer",
-                                                        fontWeight: "500",
-                                                        fontSize: "15px",
+    onMouseEnter={(e) => {
 
-                                                        background:
-                                                            selectedFilter === filter.value
-                                                                ? "#eff6ff"
-                                                                : "white",
+        if (
+            selectedFilter !== filter.value
+        ) {
 
-                                                        transition: "all 0.2s ease",
+            e.currentTarget.style.background =
+                "#f8fafc";
 
-                                                        borderBottom:
-                                                            filter.value !== "Reassigned"
-                                                                ? "1px solid #f1f5f9"
-                                                                : "none"
-                                                    }}
-                                                >
+        }
+
+        e.currentTarget.style.transform =
+            "translateX(5px)";
+
+    }}
+
+    onMouseLeave={(e) => {
+
+        if (
+            selectedFilter !== filter.value
+        ) {
+
+            e.currentTarget.style.background =
+                "white";
+
+        }
+
+        e.currentTarget.style.transform =
+            "translateX(0)";
+
+    }}
+
+    style={{
+        padding: "14px 18px",
+
+        cursor: "pointer",
+
+        fontWeight: "500",
+
+        fontSize: "15px",
+
+        display: "flex",
+
+        alignItems: "center",
+
+        gap: "10px",
+
+        transition: "all 0.3s ease",
+
+        background:
+            selectedFilter === filter.value
+                ? "#eff6ff"
+                : "white",
+
+        borderBottom:
+            filter.value !== "FailedDelivery"
+                ? "1px solid #f1f5f9"
+                : "none"
+    }}
+>
 
                                                     {filter.label}
 

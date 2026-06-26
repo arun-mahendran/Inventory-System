@@ -5,8 +5,7 @@ import api from "../../api/axios";
 import AgentLayout
     from "../components/AgentLayout";
 
-import { FiPackage }
-    from "react-icons/fi";
+//import { FiPackage } from "react-icons/fi";
 
 // import {
 //     FiTruck,
@@ -17,6 +16,17 @@ import { FiPackage }
 import { FiFilter } from "react-icons/fi";
 
 import { FiMapPin } from "react-icons/fi";
+
+import { toast } from "react-toastify";
+
+import {
+    FiPackage,
+    FiTruck,
+    FiCheckCircle,
+    FiXCircle
+} from "react-icons/fi";
+
+import { FaBoxesStacked } from "react-icons/fa6";
 
 
 function MyParcels() {
@@ -52,23 +62,43 @@ function MyParcels() {
 
     const filters = [
     {
-        label: "📦 All Parcels",
+        label: (
+            <>
+                <FaBoxesStacked /> All Parcels
+            </>
+        ),
         value: "All"
     },
     {
-        label: "🟡 Assigned",
+        label: (
+            <>
+                <FiPackage /> Assigned
+            </>
+        ),
         value: "Assigned"
     },
     {
-        label: "🚚 Out For Delivery",
+        label: (
+            <>
+                <FiTruck /> Out For Delivery
+            </>
+        ),
         value: "OutForDelivery"
     },
     {
-        label: "✅ Delivered",
+        label: (
+            <>
+                <FiCheckCircle /> Delivered
+            </>
+        ),
         value: "Delivered"
     },
     {
-        label: "❌ Failed Delivery",
+        label: (
+            <>
+                <FiXCircle /> Failed Delivery
+            </>
+        ),
         value: "FailedDelivery"
     }
 ];
@@ -141,6 +171,36 @@ function MyParcels() {
         } catch (error) {
 
             console.log(error);
+
+        }
+
+    };
+
+    const collectPayment = async (
+        parcelId
+    ) => {
+
+        try {
+
+            await api.patch(
+                `/parcels/${parcelId}/collect-payment`
+            );
+
+            toast.success(
+                "Payment Collected Successfully"
+            );
+
+            window.location.reload();
+
+        }
+
+        catch (error) {
+
+            console.log(error);
+
+            toast.error(
+                "Unable to collect payment"
+            );
 
         }
 
@@ -397,10 +457,50 @@ function MyParcels() {
 
                                                 }}
 
+                                                onMouseEnter={(e) => {
+
+                                                    if (
+                                                        filterStatus !== filter.value
+                                                    ) {
+
+                                                        e.currentTarget.style.background =
+                                                            "#f8fafc";
+
+                                                    }
+
+                                                    e.currentTarget.style.transform =
+                                                        "translateX(5px)";
+
+                                                }}
+
+                                                onMouseLeave={(e) => {
+
+                                                    if (
+                                                        filterStatus !== filter.value
+                                                    ) {
+
+                                                        e.currentTarget.style.background =
+                                                            "white";
+
+                                                    }
+
+                                                    e.currentTarget.style.transform =
+                                                        "translateX(0)";
+
+                                                }}
+
                                                 style={{
-                                                    padding: "12px 18px",
+                                                    padding: "14px 18px",
+
                                                     cursor: "pointer",
+
                                                     fontWeight: "500",
+
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "10px",
+
+                                                    transition: "all 0.3s ease",
 
                                                     background:
                                                         filterStatus === filter.value
@@ -500,6 +600,18 @@ function MyParcels() {
                                 style={{
                                     padding: "18px",
                                     textAlign: "left",
+                                    borderBottom: "1px solid #e5e7eb",
+                                    color: "#0f172a",
+                                    fontWeight: "700"
+                                }}
+                            >
+                                Payment
+                            </th>
+
+                            <th
+                                style={{
+                                    padding: "18px",
+                                    textAlign: "left",
                                     borderBottom:
                                         "1px solid #e5e7eb",
                                     color: "#0f172a",
@@ -560,6 +672,7 @@ function MyParcels() {
                                         >
                                             {parcel.customer_id}
                                         </td>
+
 
                                         <td
                                             style={{
@@ -648,6 +761,96 @@ function MyParcels() {
                                         <td
                                             style={{
                                                 padding: "12px",
+                                                borderTop: "1px solid #e5e7eb"
+                                            }}
+                                        >
+
+                                            {
+                                                parcel.payment_method === "Prepaid" ? (
+
+                                                    <button
+                                                        disabled
+
+                                                        style={{
+                                                            padding: "6px 10px",
+                                                            border: "none",
+                                                            borderRadius: "6px",
+
+                                                            background: "#22c55e",
+
+                                                            color: "white",
+
+                                                            cursor: "not-allowed",
+
+                                                            opacity: 0.8,
+
+                                                            fontWeight: "600"
+                                                        }}
+                                                    >
+                                                        Paid
+                                                    </button>
+
+                                                ) : parcel.payment_status === "Pending" ? (
+
+                                                    <button
+
+                                                        onClick={() =>
+                                                            collectPayment(parcel.id)
+                                                        }
+
+                                                        style={{
+                                                            padding: "6px 10px",
+
+                                                            border: "none",
+
+                                                            borderRadius: "6px",
+
+                                                            background: "#8b5cf6",
+
+                                                            color: "white",
+
+                                                            cursor: "pointer",
+
+                                                            fontWeight: "600"
+                                                        }}
+                                                    >
+                                                        Collect ₹{parcel.amount}
+                                                    </button>
+
+                                                ) : (
+
+                                                    <button
+                                                        disabled
+
+                                                        style={{
+                                                            padding: "6px 10px",
+
+                                                            border: "none",
+
+                                                            borderRadius: "6px",
+
+                                                            background: "#22c55e",
+
+                                                            color: "white",
+
+                                                            cursor: "not-allowed",
+
+                                                            opacity: 0.8,
+
+                                                            fontWeight: "600"
+                                                        }}
+                                                    >
+                                                        Paid
+                                                    </button>
+
+                                                )
+                                            }
+
+                                        </td>
+
+                                        <td
+                                            style={{
+                                                padding: "12px",
                                                 borderTop: "1px solid #e5e7eb",
                                                 minWidth: "280px"
                                             }}
@@ -685,7 +888,20 @@ function MyParcels() {
                                                 <button
                                                     disabled={
                                                         parcel.status !==
-                                                        "OutForDelivery"
+                                                            "OutForDelivery"
+
+                                                        ||
+
+                                                        (
+                                                            parcel.payment_method ===
+                                                                "CashOnDelivery"
+
+                                                            &&
+
+                                                            parcel.payment_status ===
+                                                                "Paid"
+                                                        )
+
                                                     }
 
                                                     onClick={() =>
@@ -693,29 +909,58 @@ function MyParcels() {
                                                     }
 
                                                     style={
+
                                                         parcel.status ===
-                                                        "OutForDelivery"
+                                                            "OutForDelivery"
+
+                                                        &&
+
+                                                        !(
+                                                            parcel.payment_method ===
+                                                                "CashOnDelivery"
+
+                                                            &&
+
+                                                            parcel.payment_status ===
+                                                                "Paid"
+                                                        )
 
                                                         ? {
+
                                                             padding: "6px 10px",
                                                             border: "none",
                                                             borderRadius: "6px",
                                                             background: "#ef4444",
                                                             color: "white",
                                                             cursor: "pointer"
+
                                                         }
 
                                                         : disabledButton
+
                                                     }
                                                 >
                                                     Failed
                                                 </button>
 
+
                                                 <button
                                                     disabled={
-                                                        parcel.status !==
+                                                    parcel.status !==
                                                         "OutForDelivery"
-                                                    }
+
+                                                    ||
+
+                                                    (
+                                                        parcel.payment_method ===
+                                                            "CashOnDelivery"
+
+                                                        &&
+
+                                                        parcel.payment_status !==
+                                                            "Paid"
+                                                    )
+                                                }
 
                                                     onClick={() =>
                                                         markDelivered(parcel.id)
@@ -927,6 +1172,34 @@ function MyParcels() {
                                     </a>
 
                                 </div>
+
+
+                                <b>Amount :</b>
+
+                                <span>
+                                    ₹ {selectedParcel.amount}
+                                </span>
+
+                                <b>Payment Method :</b>
+
+                                <span>
+                                    {selectedParcel.payment_method}
+                                </span>
+
+                                <b>Payment Status :</b>
+
+                                <span
+                                    style={{
+                                        color:
+                                            selectedParcel.payment_status === "Paid"
+                                                ? "#16a34a"
+                                                : "#dc2626",
+
+                                        fontWeight: "600"
+                                    }}
+                                >
+                                    {selectedParcel.payment_status}
+                                </span>
 
                                 <b>Status :</b>
 
