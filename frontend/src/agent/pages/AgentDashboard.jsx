@@ -35,9 +35,6 @@ function AgentDashboard() {
 
     const navigate = useNavigate();
 
-    const [showAllActivities, setShowAllActivities] =
-        useState(false);
-
     const [showAllPending, setShowAllPending] =
         useState(false);
 
@@ -678,10 +675,9 @@ function AgentDashboard() {
                         </div>
 
                         {
-                            (showAllActivities
-                                ? parcels
-                                : parcels.slice(0, 5)
-                            ).map(parcel => (
+                            parcels
+                                .slice(0, 5)
+                                .map(parcel => (
 
                                     <div
                                         key={parcel.id}
@@ -711,49 +707,6 @@ function AgentDashboard() {
                         }
 
                     </div>
-                    {
-                        parcels.length > 5 && (
-
-                            <div
-                                style={{
-                                    marginTop: "20px",
-                                    textAlign: "center"
-                                }}
-                            >
-
-                                <button
-
-                                    onClick={() =>
-                                        setShowAllActivities(
-                                            !showAllActivities
-                                        )
-                                    }
-
-                                    style={{
-                                        border: "none",
-                                        background: "#2563eb",
-                                        color: "white",
-                                        padding: "12px 24px",
-                                        borderRadius: "12px",
-                                        cursor: "pointer",
-                                        fontWeight: "600"
-                                    }}
-                                >
-
-                                    {
-
-                                        showAllActivities
-                                            ? "View Less"
-                                            : "View More"
-
-                                    }
-
-                                </button>
-
-                            </div>
-
-                        )
-                    }
 
                 </div>
 
