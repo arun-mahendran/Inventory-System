@@ -3,10 +3,11 @@ import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 
 import {
-  FiClock,
-  FiCheck,
-  FiFileText,
-  FiPackage
+    FiClock,
+    FiCheck,
+    FiFileText,
+    FiPackage,
+    FiSearch
 } from "react-icons/fi";
 
 function Tracking() {
@@ -52,39 +53,99 @@ function Tracking() {
 </div>
 
         <div
-          style={{
-            marginTop: "20px",
+    style={{
+        background: "white",
+        padding: "35px",
+        borderRadius: "24px",
+        boxShadow:
+            "0 10px 25px rgba(0,0,0,0.06)",
+        marginTop: "30px"
+    }}
+>
+
+    <div
+        style={{
             display: "flex",
-            gap: "10px",
-          }}
-        >
-          <input
+            gap: "16px",
+            alignItems: "center"
+        }}
+    >
+
+        <input
             type="text"
             placeholder="Enter Tracking Number"
             value={trackingNumber}
-            onChange={(e) => setTrackingNumber(e.target.value)}
-            style={{
-              padding: "12px",
-              width: "300px",
-              borderRadius: "10px",
-              border: "1px solid #ccc",
-            }}
-          />
+            onChange={(e) =>
+                setTrackingNumber(
+                    e.target.value
+                )
+            }
 
-          <button
-            onClick={searchParcel}
-            style={{
-              background: "#2563eb",
-              color: "white",
-              border: "none",
-              padding: "12px 20px",
-              borderRadius: "10px",
-              cursor: "pointer",
+            onKeyDown={(e) => {
+
+                if (e.key === "Enter") {
+
+                    searchParcel();
+
+                }
+
             }}
-          >
+
+            style={{
+                flex: 1,
+
+                padding: "14px 18px",
+
+                borderRadius: "16px",
+
+                border: "2px solid #e2e8f0",
+
+                fontSize: "16px",
+
+                outline: "none",
+
+                transition: "0.3s ease"
+            }}
+        />
+
+        <button
+            onClick={searchParcel}
+
+            style={{
+                background:
+                    "linear-gradient(135deg,#2563eb,#3b82f6)",
+
+                color: "white",
+
+                border: "none",
+
+                padding: "14px 24px",
+
+                borderRadius: "18px",
+
+                cursor: "pointer",
+
+                display: "flex",
+
+                alignItems: "center",
+
+                gap: "10px",
+
+                fontSize: "16px",
+
+                fontWeight: "600"
+            }}
+        >
+
+            <FiSearch size={18} />
+
             Search
-          </button>
-        </div>
+
+        </button>
+
+    </div>
+
+</div>
 
         {parcel && (
           <div
