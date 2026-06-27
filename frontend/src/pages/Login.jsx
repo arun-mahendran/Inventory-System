@@ -7,7 +7,8 @@ import {
     FiMail,
     FiLock,
     FiEye,
-    FiEyeOff
+    FiEyeOff,
+    FiAlertCircle
 } from "react-icons/fi";
 
 import { FaTruckMoving }
@@ -27,9 +28,14 @@ function Login() {
     const [showPassword, setShowPassword] =
         useState(false);
 
+    const [loginError, setLoginError] =
+        useState("");
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
+
+        setLoginError("");
 
         try {
 
@@ -109,8 +115,9 @@ function Login() {
 
         } catch (error) {
 
-            alert(
-                error.response?.data?.detail
+            setLoginError(
+                error.response?.data?.detail ||
+                "Invalid email or password"
             );
 
         }
@@ -167,11 +174,13 @@ function Login() {
                                 type="email"
                                 placeholder="Enter email"
                                 value={email}
-                                onChange={(e) =>
-                                    setEmail(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => {
+
+                                    setEmail(e.target.value);
+
+                                    setLoginError("");
+
+                                }}
                                 required
                             />
 
@@ -191,11 +200,13 @@ function Login() {
                                 }
                                 placeholder="Password"
                                 value={password}
-                                onChange={(e) =>
-                                    setPassword(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => {
+
+                                    setPassword(e.target.value);
+
+                                    setLoginError("");
+
+                                }}
                                 required
                             />
 
@@ -219,6 +230,38 @@ function Login() {
                             </button>
 
                         </div>
+
+                        {
+                            loginError && (
+
+                                <div
+                                    style={{
+                                        background: "#fef2f2",
+                                        color: "#dc2626",
+                                        padding: "12px 16px",
+                                        borderRadius: "12px",
+                                        marginBottom: "18px",
+                                        border: "1px solid #fecaca",
+                                        fontSize: "14px",
+                                        fontWeight: "500",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "flex-start",
+                                        gap: "8px",
+                                        lineHeight: "1.5"
+                                    }}
+                                >
+                                    <FiAlertCircle
+                                        size={18}
+                                    />
+
+                                    <span>
+                                        {loginError}
+                                    </span>
+                                </div>
+
+                            )
+                        }
 
                         <button
                             className="login-btn"

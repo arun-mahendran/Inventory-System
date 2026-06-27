@@ -17,6 +17,8 @@ import {
     FiXCircle
 } from "react-icons/fi";
 
+import { FiMapPin } from "react-icons/fi";
+
 import { FaBoxesStacked } from "react-icons/fa6";
 
 function Parcels() {
@@ -877,7 +879,7 @@ const filters = [
                                 <div
                                     style={{
                                         background: "white",
-                                        width: "500px",
+                                        width: "580px",
                                         padding: "30px",
                                         borderRadius: "20px",
                                         boxShadow:
@@ -919,69 +921,184 @@ const filters = [
                                     </div>
 
                                     <div
-                                        style={{
-                                            display: "grid",
-                                            gridTemplateColumns: "170px 1fr",
-                                            rowGap: "10px",
-                                            marginTop: "20px"
-                                        }}
-                                    >
+    style={{
+        display: "grid",
+        gridTemplateColumns: "190px 1fr",
+        rowGap: "16px",
+        marginTop: "25px"
+    }}
+>
 
-                                        <b>Tracking Number :</b>
-                                        <span>
-                                            {selectedParcel.tracking_number}
-                                        </span>
+    <b>Tracking Number :</b>
+    <span>
+        {selectedParcel.tracking_number}
+    </span>
 
-                                        <b>Status :</b>
-                                        <span>
-                                            {selectedParcel.status}
-                                        </span>
+    <b>Customer Name :</b>
+    <span>
+        {selectedParcel.customer_name || "-"}
+    </span>
 
-                                        <b>Customer ID :</b>
-                                        <span>
-                                            {selectedParcel.customer_id}
-                                        </span>
+    <b>Customer ID :</b>
+    <span>
+        {selectedParcel.customer_id}
+    </span>
 
-                                        <b>Assigned Agent :</b>
-                                        <span>
-                                            {
-                                                selectedParcel.assigned_agent_id || "-"
-                                            }
-                                        </span>
+    <b>Phone Number :</b>
+    <span>
+        {selectedParcel.phone || "-"}
+    </span>
 
-                                        {
-                                            selectedParcel.failure_reason && (
+    <b>Delivery Address :</b>
 
-                                                <>
-                                                    <b>
-                                                        Failure Reason
-                                                    </b>
+    <div>
 
-                                                    <span
-                                                        style={{
-                                                            color: "#dc2626",
-                                                            fontWeight: "600"
-                                                        }}
-                                                    >
-                                                        {
-                                                            selectedParcel.failure_reason
-                                                        }
-                                                    </span>
-                                                </>
+        <p
+            style={{
+                margin: 0,
+                color: "#475569",
+                lineHeight: "1.8"
+            }}
+        >
+            {selectedParcel.address || "-"}
+        </p>
 
-                                            )
-                                        }
+        {
+            selectedParcel.address && (
 
-                                        <b>Created At</b>
-                                        <span>
-                                            {
-                                                new Date(
-                                                    selectedParcel.created_at
-                                                ).toLocaleString()
-                                            }
-                                        </span>
+                <a
+    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+        selectedParcel.address
+    )}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+        width: "fit-content",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "8px",
+        padding: "10px 16px",
+        background: "#eff6ff",
+        color: "#2563eb",
+        borderRadius: "12px",
+        textDecoration: "none",
+        fontSize: "14px",
+        fontWeight: "600"
+    }}
+>
+    <FiMapPin size={16} />
+    Open in Google Maps
+</a>
+            )
+        }
 
-                                    </div>
+    </div>
+
+    <b>Amount :</b>
+
+    <span>
+        ₹ {selectedParcel.amount}
+    </span>
+
+    <b>Payment Method :</b>
+
+    <span>
+        {selectedParcel.payment_method}
+    </span>
+
+    <b>Payment Status :</b>
+
+    <span
+        style={{
+            color:
+                selectedParcel.payment_status === "Paid"
+                    ? "#16a34a"
+                    : "#dc2626",
+
+            fontWeight: "700"
+        }}
+    >
+        {selectedParcel.payment_status}
+    </span>
+
+    <b>Status :</b>
+
+    <span>
+
+        <span
+            style={{
+                padding: "8px 16px",
+
+                borderRadius: "999px",
+
+                background:
+                    selectedParcel.status === "Delivered"
+                        ? "#dcfce7"
+
+                        : selectedParcel.status === "FailedDelivery"
+                        ? "#fee2e2"
+
+                        : "#fef3c7",
+
+                color:
+                    selectedParcel.status === "Delivered"
+                        ? "#16a34a"
+
+                        : selectedParcel.status === "FailedDelivery"
+                        ? "#b91c1c"
+
+                        : "#92400e",
+
+                fontWeight: "700"
+            }}
+        >
+            {selectedParcel.status}
+        </span>
+
+    </span>
+
+    {
+        selectedParcel.failure_reason && (
+
+            <>
+
+                <b>Failure Reason :</b>
+
+                <span
+                    style={{
+                        color: "#dc2626",
+                        fontWeight: "600"
+                    }}
+                >
+                    {selectedParcel.failure_reason}
+                </span>
+
+            </>
+
+        )
+    }
+
+    <b>Assigned Agent :</b>
+
+    <span>
+        {
+            selectedParcel.assigned_agent_id
+                ? `Agent ${selectedParcel.assigned_agent_id}`
+                : "-"
+        }
+    </span>
+
+    <b>Created At :</b>
+
+    <span>
+        {
+            new Date(
+                selectedParcel.created_at
+            ).toLocaleString()
+        }
+    </span>
+
+</div>
 
                                 </div>
 
