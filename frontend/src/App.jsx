@@ -59,6 +59,8 @@ import { ToastContainer } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 
+import SessionTimeout from "./components/SessionTimeout";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -67,6 +69,7 @@ function App() {
     return (
 
         <>
+        <SessionTimeout />
         <Routes>
 
             <Route
