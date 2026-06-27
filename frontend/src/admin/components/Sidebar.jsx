@@ -16,7 +16,6 @@ import {FaUserCircle} from "react-icons/fa";
 
 import "../../styles/sidebar.css";
 
-import { FiUploadCloud } from "react-icons/fi";
 
 function Sidebar({
     sidebarOpen
@@ -135,28 +134,6 @@ function Sidebar({
                 {sidebarOpen && (
                     <span>
                         Customers
-                    </span>
-                )}
-
-            </NavLink>
-
-            <NavLink
-                to="/bulk-import"
-
-                title={!sidebarOpen ? "Bulk Import" : ""}
-
-                className={({ isActive }) =>
-                    isActive
-                        ? "sidebar-link active-link"
-                        : "sidebar-link"
-                }
-            >
-
-                <FiUploadCloud size={22} />
-
-                {sidebarOpen && (
-                    <span>
-                        Bulk Import
                     </span>
                 )}
 

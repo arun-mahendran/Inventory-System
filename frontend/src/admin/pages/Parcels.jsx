@@ -7,7 +7,13 @@ import MainLayout from "../components/MainLayout";
 import { HiOutlineAdjustmentsHorizontal } from "react-icons/hi2";
 //import { FiPackage } from "react-icons/fi";
 
-import { FiPackage, FiTruck, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import {
+    FiPackage,
+    FiTruck,
+    FiCheckCircle,
+    FiXCircle,
+    FiUploadCloud
+} from "react-icons/fi";
 
 import { FiMapPin } from "react-icons/fi";
 
@@ -227,19 +233,59 @@ function Parcels() {
             </div>
           )}
 
-          <button
-            onClick={() => navigate("/create-parcel")}
+          <div
             style={{
-              background: "#2563eb",
-              color: "white",
-              border: "none",
-              padding: "12px 20px",
-              borderRadius: "10px",
-              cursor: "pointer",
+                display: "flex",
+                gap: "12px"
             }}
-          >
-            + Create Parcel
-          </button>
+        >
+
+            <button
+                onClick={() =>
+                    navigate("/create-parcel")
+                }
+
+                style={{
+                    background: "#2563eb",
+                    color: "white",
+                    border: "none",
+                    padding: "12px 20px",
+                    borderRadius: "10px",
+                    cursor: "pointer",
+                    fontWeight: "600"
+                }}
+            >
+                + Create Parcel
+            </button>
+
+            <button
+                onClick={() =>
+                    navigate("/bulk-import")
+                }
+
+                style={{
+                    background: "#0f172a",
+                    color: "white",
+                    border: "none",
+                    padding: "12px 20px",
+                    borderRadius: "10px",
+                    cursor: "pointer",
+
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+
+                    fontWeight: "600"
+                }}
+            >
+
+                <FiUploadCloud size={18} />
+
+                Bulk Import
+
+            </button>
+
+        </div>
         </div>
 
         <div

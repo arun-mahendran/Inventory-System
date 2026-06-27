@@ -63,9 +63,38 @@ function BulkImport() {
                 response.data
             );
 
-            toast.success(
-                "Bulk import completed successfully"
-            );
+            if (
+                response.data.imported > 0 &&
+                response.data.skipped === 0
+            ) {
+
+                toast.success(
+                    `Successfully imported ${response.data.imported} parcels`
+                );
+
+            }
+
+            else if (
+                response.data.imported > 0 &&
+                response.data.skipped > 0
+            ) {
+
+                toast.warning(
+                    `${response.data.imported} imported, ${response.data.skipped} skipped`
+                );
+
+            }
+
+            else if (
+                response.data.imported === 0 &&
+                response.data.skipped > 0
+            ) {
+
+                toast.error(
+                    `All rows skipped. Duplicate tracking numbers found`
+                );
+
+            }
 
         }
 
