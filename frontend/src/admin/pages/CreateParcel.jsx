@@ -12,11 +12,22 @@ function CreateParcel() {
     const navigate = useNavigate();
 
     const [formData, setFormData] = useState({
+
         tracking_number: "",
-        customer_id: "",
+
+        customer_name: "",
+
+        phone: "",
+
+        email: "",
+
+        address: "",
+
+        pincode: "",
+
         amount: "",
-        payment_method: "Prepaid",
-        payment_status: "Pending"
+
+        payment_method: "Prepaid"
     });
 
     const handleChange = (e) => {
@@ -41,24 +52,36 @@ function CreateParcel() {
         try {
 
             await api.post(
-                "/parcels/",
-                {
-                    tracking_number:
-                        formData.tracking_number,
+            "/parcels/",
+            {
+                tracking_number:
+                    formData.tracking_number,
 
-                    customer_id:
-                        Number(formData.customer_id),
+                customer_name:
+                    formData.customer_name,
 
-                    amount:
-                        Number(formData.amount),
+                phone:
+                    formData.phone,
 
-                    payment_method:
-                        formData.payment_method,
+                email:
+                    formData.email,
 
-                    payment_status:
-                        paymentStatus
-                }
-            );
+                address:
+                    formData.address,
+
+                pincode:
+                    formData.pincode,
+
+                amount:
+                    Number(formData.amount),
+
+                payment_method:
+                    formData.payment_method,
+
+                payment_status:
+                    paymentStatus
+            }
+        );
 
             toast.success(
                 "Parcel Created Successfully"
@@ -130,31 +153,100 @@ function CreateParcel() {
                             />
                         </div>
 
-                        <div
-                            style={{
-                                marginBottom: "20px"
-                            }}
-                        >
-                            <label>
-                                Customer ID
-                            </label>
+                        <div style={{ marginBottom: "20px" }}>
 
-                            <input
-                                type="number"
-                                name="customer_id"
-                                value={
-                                    formData.customer_id
-                                }
-                                onChange={handleChange}
-                                required
-                                style={{
-                                    width: "100%",
-                                    padding: "12px",
-                                    marginTop: "8px"
-                                }}
-                            />
+    <label>Customer Name</label>
 
-                        </div>
+    <input
+        type="text"
+        name="customer_name"
+        value={formData.customer_name}
+        onChange={handleChange}
+        required
+        style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "8px"
+        }}
+    />
+
+</div>
+
+<div style={{ marginBottom: "20px" }}>
+
+    <label>Phone</label>
+
+    <input
+        type="text"
+        name="phone"
+        value={formData.phone}
+        onChange={handleChange}
+        required
+        style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "8px"
+        }}
+    />
+
+</div>
+
+<div style={{ marginBottom: "20px" }}>
+
+    <label>Email</label>
+
+    <input
+        type="email"
+        name="email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+        style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "8px"
+        }}
+    />
+
+</div>
+
+<div style={{ marginBottom: "20px" }}>
+
+    <label>Address</label>
+
+    <textarea
+        name="address"
+        value={formData.address}
+        onChange={handleChange}
+        required
+        rows={3}
+        style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "8px"
+        }}
+    />
+
+</div>
+
+<div style={{ marginBottom: "20px" }}>
+
+    <label>Pincode</label>
+
+    <input
+        type="text"
+        name="pincode"
+        value={formData.pincode}
+        onChange={handleChange}
+        required
+        style={{
+            width: "100%",
+            padding: "12px",
+            marginTop: "8px"
+        }}
+    />
+
+</div>
 
                         <div
                             style={{

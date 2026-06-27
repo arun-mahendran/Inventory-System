@@ -4,7 +4,11 @@ from datetime import datetime
 
 class ParcelCreate(BaseModel):
     tracking_number: str
-    customer_id: int
+    customer_name: str
+    phone: str
+    email: str
+    address: str
+    pincode: str
     amount: float
     payment_method: str = "Prepaid"
     payment_status: str = "Pending"

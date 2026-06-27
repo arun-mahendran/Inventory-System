@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import or_
 from app.models.customer import Customer
 from app.schemas.customer import CustomerCreate
 
@@ -24,9 +24,36 @@ def create_customer(
     return db_customer
 
 
-def get_all_customers(db: Session):
+def get_all_customers(
+    db: Session,
+    search: str = None
+):
 
-    return db.query(Customer).all()
+    query = db.query(Customer)
+
+    if search:
+
+        query = query.filter(
+
+            or_(
+
+                Customer.customer_name.ilike(
+                    f"%{search}%"
+                ),
+
+                Customer.phone.ilike(
+                    f"%{search}%"
+                ),
+
+                Customer.email.ilike(
+                    f"%{search}%"
+                )
+
+            )
+
+        )
+
+    return query.all()
 
 
 def get_customer_by_id(

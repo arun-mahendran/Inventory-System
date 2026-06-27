@@ -61,6 +61,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 import SessionTimeout from "./components/SessionTimeout";
 
+import BulkImport from "./admin/pages/BulkImport";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -275,6 +277,11 @@ function App() {
             <Route
                 path="/reports"
                 element={<Reports />}
+            />
+
+            <Route
+                path="/bulk-import"
+                element={<BulkImport />}
             />
 
         </Routes>

@@ -30,6 +30,7 @@ from app.routers import analytics_router
 from app.routers import notification_router
 from app.routers import report_router
 from app.routers import (agent_report_router)
+from app.routers import (bulk_import_router)
 
 
 Base.metadata.create_all(bind=engine)
@@ -63,6 +64,7 @@ app.include_router(analytics_router.router)
 app.include_router(notification_router.router)
 app.include_router(report_router.router)
 app.include_router(agent_report_router.router)
+app.include_router(bulk_import_router.router)
 
 
 # Protected Route

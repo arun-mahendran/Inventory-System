@@ -3,21 +3,23 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 
 import MainLayout from "../components/MainLayout";
-import { useNavigate } from "react-router-dom";
-import { FiUsers } from "react-icons/fi";
+
+import { FiUsers, FiSearch } from "react-icons/fi";
 
 function Customers() {
 
-    const navigate = useNavigate();
-
     const [customers, setCustomers] = useState([]);
 
+    const [search, setSearch] = useState("");
+
     useEffect(() => {
+
     const fetchCustomers = async () => {
+
         try {
 
             const response = await api.get(
-                "/customers/"
+                `/customers/?search=${search}`
             );
 
             setCustomers(
@@ -37,7 +39,7 @@ function Customers() {
 
     fetchCustomers();
 
-}, []);
+}, [search]);
 
     return (
         <>
@@ -68,22 +70,53 @@ function Customers() {
 
                         </div>
 
-                        <button
-                            onClick={() =>
-                                navigate("/create-customer")
+                    </div>
+
+                    <div
+                        style={{
+                            marginBottom: "20px",
+                            position: "relative",
+                            width: "350px"
+                        }}
+                    >
+
+                        <FiSearch
+                            size={18}
+                            color="#64748b"
+
+                            style={{
+                                position: "absolute",
+                                top: "50%",
+                                left: "15px",
+                                transform: "translateY(-50%)"
+                            }}
+                        />
+
+                        <input
+                            type="text"
+
+                            placeholder="Search by name, phone or email..."
+
+                            value={search}
+
+                            onChange={(e) =>
+                                setSearch(
+                                    e.target.value
+                                )
                             }
 
                             style={{
-                                background: "#2563eb",
-                                color: "white",
-                                border: "none",
-                                padding: "12px 20px",
-                                borderRadius: "10px",
-                                cursor: "pointer"
+                                width: "100%",
+
+                                padding: "12px 18px 12px 45px",
+
+                                borderRadius: "12px",
+
+                                border: "1px solid #d1d5db",
+
+                                fontSize: "15px"
                             }}
-                        >
-                            + Add Customer
-                        </button>
+                        />
 
                     </div>
 

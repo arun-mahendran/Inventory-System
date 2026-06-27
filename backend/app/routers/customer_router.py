@@ -15,6 +15,7 @@ from app.services.customer_service import (
 
 from app.utils.dependencies import get_db
 
+from fastapi import APIRouter, Depends, Query
 
 
 router = APIRouter(
@@ -33,9 +34,13 @@ def create_new_customer(
 
 @router.get("/", response_model=list[CustomerResponse])
 def get_customers(
+    search: str = Query(None),
     db: Session = Depends(get_db),
 ):
-    return get_all_customers(db)
+    return get_all_customers(
+        db,
+        search
+    )
 
 
 @router.get(

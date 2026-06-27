@@ -24,17 +24,26 @@ def create_parcel(
 ):
 
     customer = db.query(Customer).filter(
-        Customer.id == parcel.customer_id
+        Customer.phone == parcel.phone
     ).first()
 
     if not customer:
-        raise ValueError(
-            "Customer not found"
+
+        customer = Customer(
+            customer_name=parcel.customer_name,
+            phone=parcel.phone,
+            email=parcel.email,
+            address=parcel.address,
+            pincode=parcel.pincode
         )
+
+        db.add(customer)
+
+        db.flush()
 
     db_parcel = Parcel(
         tracking_number=parcel.tracking_number,
-        customer_id=parcel.customer_id,
+        customer_id=customer.id,
         amount=parcel.amount,
         payment_method=parcel.payment_method,
         payment_status=parcel.payment_status
@@ -45,6 +54,8 @@ def create_parcel(
         db.add(db_parcel)
 
         db.commit()
+
+        db.refresh(customer)
 
         db.refresh(db_parcel)
 
