@@ -241,49 +241,81 @@ function Parcels() {
         >
 
             <button
-                onClick={() =>
-                    navigate("/create-parcel")
-                }
+              onClick={() =>
+                  navigate("/create-parcel")
+              }
 
-                style={{
-                    background: "#2563eb",
-                    color: "white",
-                    border: "none",
-                    padding: "12px 20px",
-                    borderRadius: "10px",
-                    cursor: "pointer",
-                    fontWeight: "600"
-                }}
-            >
-                + Create Parcel
-            </button>
+              onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                      "#1d4ed8";
+
+                  e.currentTarget.style.transform =
+                      "translateY(-2px)";
+              }}
+
+              onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                      "#2563eb";
+
+                  e.currentTarget.style.transform =
+                      "translateY(0)";
+              }}
+
+              style={{
+                  background: "#2563eb",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 20px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                  transition: "all 0.3s ease"
+              }}
+          >
+              + Create Parcel
+          </button>
 
             <button
-                onClick={() =>
-                    navigate("/bulk-import")
-                }
+              onClick={() =>
+                  navigate("/bulk-import")
+              }
 
-                style={{
-                    background: "#0f172a",
-                    color: "white",
-                    border: "none",
-                    padding: "12px 20px",
-                    borderRadius: "10px",
-                    cursor: "pointer",
+              onMouseEnter={(e) => {
+                  e.currentTarget.style.background =
+                      "#047857";
 
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
+                  e.currentTarget.style.transform =
+                      "translateY(-2px)";
+              }}
 
-                    fontWeight: "600"
-                }}
-            >
+              onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                      "#059669";
 
-                <FiUploadCloud size={18} />
+                  e.currentTarget.style.transform =
+                      "translateY(0)";
+              }}
 
-                Bulk Import
+              style={{
+                  background: "#059669",
+                  color: "white",
+                  border: "none",
+                  padding: "12px 20px",
+                  borderRadius: "10px",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  fontWeight: "600",
+                  transition: "all 0.3s ease"
+              }}
+          >
 
-            </button>
+              <FiUploadCloud size={18} />
+
+              Bulk Import
+
+          </button>
 
         </div>
         </div>
