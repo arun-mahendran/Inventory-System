@@ -1,721 +1,514 @@
-import { useEffect, useState }
-    from "react";
+import { useEffect, useState } from "react";
 
-import api
-    from "../../api/axios";
+import api from "../../api/axios";
 
-import AgentLayout
-    from "../components/AgentLayout";
+import AgentLayout from "../components/AgentLayout";
 
-import AgentStatCard
-    from "../components/AgentStatCard";
+import AgentStatCard from "../components/AgentStatCard";
 
-import { useNavigate }
-    from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
-    FiTruck,
-    //FiZap,
-    FiActivity,
-    //FiPackage,
-    //FiSearch,
-    //FiClock,
-    FiTrendingUp
+  FiTruck,
+  //FiZap,
+  FiActivity,
+  //FiPackage,
+  //FiSearch,
+  //FiClock,
+  FiTrendingUp,
 } from "react-icons/fi";
 
 import {
-    MdOutlineAssignment,
-    MdOutlineLocalShipping,
-    MdOutlineDoneAll,
-    MdOutlineCancel
+  MdOutlineAssignment,
+  MdOutlineLocalShipping,
+  MdOutlineDoneAll,
+  MdOutlineCancel,
 } from "react-icons/md";
 
-
 function AgentDashboard() {
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [showAllPending, setShowAllPending] = useState(false);
 
-    const [showAllPending, setShowAllPending] =
-        useState(false);
+  const fullName = localStorage.getItem("full_name");
 
-    const fullName =
-    localStorage.getItem(
-        "full_name"
-    );
+  const [summary, setSummary] = useState({
+    assigned: 0,
+    outForDelivery: 0,
+    delivered: 0,
+    failed: 0,
+  });
 
-    const [summary, setSummary] =
-        useState({
-            assigned: 0,
-            outForDelivery: 0,
-            delivered: 0,
-            failed: 0
+  const [parcels, setParcels] = useState([]);
+
+  useEffect(() => {
+    const fetchSummary = async () => {
+      try {
+        const agentId = localStorage.getItem("delivery_agent_id");
+
+        const response = await api.get(`/delivery-agents/${agentId}/parcels`);
+
+        const parcelData = response.data;
+
+        setParcels(parcelData);
+
+        const today = new Date().toDateString();
+
+        setSummary({
+          assigned: parcelData.filter((parcel) => parcel.status === "Assigned")
+            .length,
+
+          outForDelivery: parcelData.filter(
+            (parcel) => parcel.status === "OutForDelivery",
+          ).length,
+
+          delivered: parcelData.filter(
+            (parcel) =>
+              parcel.status === "Delivered" &&
+              parcel.delivered_at &&
+              new Date(parcel.delivered_at).toDateString() === today,
+          ).length,
+
+          failed: parcelData.filter(
+            (parcel) =>
+              parcel.status === "FailedDelivery" &&
+              parcel.failed_at &&
+              new Date(parcel.failed_at).toDateString() === today,
+          ).length,
         });
+      } catch (error) {
+        console.error("Agent Dashboard Error:", error);
+      }
+    };
 
-    const [parcels, setParcels] =
-        useState([]);
+    fetchSummary();
+  }, []);
 
-    useEffect(() => {
+  const totalCompleted = summary.delivered + summary.failed;
 
-        const fetchSummary =
-            async () => {
+  const successRate =
+    totalCompleted > 0
+      ? Math.round((summary.delivered / totalCompleted) * 100)
+      : 0;
 
-                try {
+  return (
+    <AgentLayout>
+      <div
+        style={{
+          marginBottom: "30px",
+        }}
+      >
+        <h1
+          style={{
+            fontSize: "36px",
+            fontWeight: "700",
+            marginBottom: "8px",
+            color: "#0f172a",
+          }}
+        >
+          👋 Welcome, {fullName}!
+        </h1>
 
-                    const agentId =
-                        localStorage.getItem(
-                            "delivery_agent_id"
-                        );
+        <p
+          style={{
+            fontSize: "18px",
+            color: "#64748b",
+            margin: 0,
+          }}
+        >
+          Here's your delivery overview for today.
+        </p>
+      </div>
 
-                    const response =
-                        await api.get(
-                            `/delivery-agents/${agentId}/parcels`
-                        );
+      <div className="cards">
+        <AgentStatCard
+          title="Assigned Parcels"
+          value={summary.assigned}
+          color="#2563eb"
+          icon={<MdOutlineAssignment size={28} />}
+        />
 
-                    const parcelData =
-                        response.data;
+        <AgentStatCard
+          title="Out For Delivery"
+          value={summary.outForDelivery}
+          color="#f59e0b"
+          icon={<MdOutlineLocalShipping size={28} />}
+        />
 
-                    setParcels(
-                        parcelData
-                    );
+        <AgentStatCard
+          title="Delivered Today"
+          value={summary.delivered}
+          color="#22c55e"
+          icon={<MdOutlineDoneAll size={28} />}
+        />
 
-                    const today =
-                        new Date().toDateString();
+        <AgentStatCard
+          title="Failed Deliveries"
+          value={summary.failed}
+          color="#ef4444"
+          icon={<MdOutlineCancel size={28} />}
+        />
+      </div>
 
-                    setSummary({
+      <div
+        style={{
+          marginTop: "35px",
+          background: "white",
+          padding: "30px",
+          borderRadius: "20px",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "15px",
+            marginBottom: "30px",
+          }}
+        >
+          <div
+            style={{
+              width: "60px",
+              height: "60px",
+              borderRadius: "16px",
+              background: "#eff6ff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <FiTrendingUp size={32} color="#2563eb" />
+          </div>
 
-                        assigned:
-                            parcelData.filter(
-                                parcel =>
-                                    parcel.status ===
-                                    "Assigned"
-                            ).length,
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "34px",
+              color: "#0f172a",
+            }}
+          >
+            Today's Performance
+          </h2>
+        </div>
 
-                        outForDelivery:
-                            parcelData.filter(
-                                parcel =>
-                                    parcel.status ===
-                                    "OutForDelivery"
-                            ).length,
-
-                        delivered:
-                            parcelData.filter(parcel =>
-
-                                parcel.status ===
-                                "Delivered"
-
-                                &&
-
-                                parcel.delivered_at
-
-                                &&
-
-                                new Date(
-                                    parcel.delivered_at
-                                ).toDateString() === today
-
-                            ).length,
-
-                        failed:
-                            parcelData.filter(parcel =>
-
-                                parcel.status ===
-                                "FailedDelivery"
-
-                                &&
-
-                                parcel.failed_at
-
-                                &&
-
-                                new Date(
-                                    parcel.failed_at
-                                ).toDateString() === today
-
-                            ).length
-
-                    });
-
-                } catch (error) {
-
-                    console.error(
-                        "Agent Dashboard Error:",
-                        error
-                    );
-
-                }
-
-            };
-
-        fetchSummary();
-
-    }, []);
-
-    const totalCompleted =
-        summary.delivered +
-        summary.failed;
-
-    const successRate =
-        totalCompleted > 0
-
-            ?
-
-            Math.round(
-                (
-                    summary.delivered /
-                    totalCompleted
-                ) * 100
-            )
-
-            : 0;
-
-    return (
-
-        <AgentLayout>
-
-            <div
-                style={{
-                    marginBottom: "30px"
-                }}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(4,1fr)",
+            gap: "20px",
+          }}
+        >
+          <div>
+            <h3
+              style={{
+                color: "#64748b",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
             >
+              Success Rate
+            </h3>
 
-                <h1
-                    style={{
-                        fontSize: "36px",
-                        fontWeight: "700",
-                        marginBottom: "8px",
-                        color: "#0f172a"
-                    }}
-                >
-                    👋 Welcome, {fullName}!
-                </h1>
-
-                <p
-                    style={{
-                        fontSize: "18px",
-                        color: "#64748b",
-                        margin: 0
-                    }}
-                >
-                    Here's your delivery overview for today.
-                </p>
-
-            </div>
-
-            <div className="cards">
-
-                <AgentStatCard
-                    title="Assigned Parcels"
-                    value={summary.assigned}
-                    color="#2563eb"
-                    icon={
-                        <MdOutlineAssignment
-                            size={28}
-                        />
-                    }
-                />
-
-                <AgentStatCard
-                    title="Out For Delivery"
-                    value={summary.outForDelivery}
-                    color="#f59e0b"
-                    icon={
-                        <MdOutlineLocalShipping
-                            size={28}
-                        />
-                    }
-                />
-
-                <AgentStatCard
-                    title="Delivered Today"
-                    value={summary.delivered}
-                    color="#22c55e"
-                    icon={
-                        <MdOutlineDoneAll
-                            size={28}
-                        />
-                    }
-                />
-
-                <AgentStatCard
-                    title="Failed Deliveries"
-                    value={summary.failed}
-                    color="#ef4444"
-                    icon={
-                        <MdOutlineCancel
-                            size={28}
-                        />
-                    }
-                />
-
-            </div>
-
-            <div
-                style={{
-                    marginTop: "35px",
-                    background: "white",
-                    padding: "30px",
-                    borderRadius: "20px",
-                    boxShadow:
-                        "0 10px 25px rgba(0,0,0,0.08)"
-                }}
+            <p
+              style={{
+                fontSize: "32px",
+                fontWeight: "700",
+                color: "#22c55e",
+              }}
             >
+              {successRate}%
+            </p>
+          </div>
 
-                <div
-                    style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "15px",
-                        marginBottom: "30px"
-                    }}
-                >
-
-                    <div
-                        style={{
-                            width: "60px",
-                            height: "60px",
-                            borderRadius: "16px",
-                            background: "#eff6ff",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center"
-                        }}
-                    >
-                        <FiTrendingUp
-                            size={32}
-                            color="#2563eb"
-                        />
-                    </div>
-
-                    <h2
-                        style={{
-                            margin: 0,
-                            fontSize: "34px",
-                            color: "#0f172a"
-                        }}
-                    >
-                        Today's Performance
-                    </h2>
-
-                </div>
-
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(4,1fr)",
-                        gap: "20px"
-                    }}
-                >
-
-                    <div>
-
-                        <h3
-                            style={{
-                                color: "#64748b",
-                                fontSize: "15px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            Success Rate
-                        </h3>
-
-                        <p
-                            style={{
-                                fontSize: "32px",
-                                fontWeight: "700",
-                                color: "#22c55e"
-                            }}
-                        >
-                            {successRate}%
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <h3
-                            style={{
-                                color: "#64748b",
-                                fontSize: "15px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            Delivered Today
-                        </h3>
-
-                        <p
-                            style={{
-                                fontSize: "32px",
-                                fontWeight: "700",
-                                color: "#2563eb"
-                            }}
-                        >
-                            {summary.delivered}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <h3
-                            style={{
-                                color: "#64748b",
-                                fontSize: "15px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            Failed Today
-                        </h3>
-
-                        <p
-                            style={{
-                                fontSize: "32px",
-                                fontWeight: "700",
-                                color: "#ef4444"
-                            }}
-                        >
-                            {summary.failed}
-                        </p>
-
-                    </div>
-
-                    <div>
-
-                        <h3
-                            style={{
-                                color: "#64748b",
-                                fontSize: "15px",
-                                marginBottom: "10px"
-                            }}
-                        >
-                            Total Completed
-                        </h3>
-
-                        <p
-                            style={{
-                                fontSize: "32px",
-                                fontWeight: "700",
-                                color: "#0f172a"
-                            }}
-                        >
-                            {totalCompleted}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "1.3fr 1fr",
-                    gap: "25px",
-                    marginTop: "35px"
-                }}
+          <div>
+            <h3
+              style={{
+                color: "#64748b",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
             >
+              Delivered Today
+            </h3>
 
-                {/* LEFT SIDE */}
+            <p
+              style={{
+                fontSize: "32px",
+                fontWeight: "700",
+                color: "#2563eb",
+              }}
+            >
+              {summary.delivered}
+            </p>
+          </div>
 
-                <div
-                    style={{
-                        background: "white",
-                        padding: "30px",
-                        borderRadius: "24px",
-                        boxShadow:
-                            "0 10px 25px rgba(0,0,0,0.08)"
-                    }}
+          <div>
+            <h3
+              style={{
+                color: "#64748b",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
+            >
+              Failed Today
+            </h3>
+
+            <p
+              style={{
+                fontSize: "32px",
+                fontWeight: "700",
+                color: "#ef4444",
+              }}
+            >
+              {summary.failed}
+            </p>
+          </div>
+
+          <div>
+            <h3
+              style={{
+                color: "#64748b",
+                fontSize: "15px",
+                marginBottom: "10px",
+              }}
+            >
+              Total Completed
+            </h3>
+
+            <p
+              style={{
+                fontSize: "32px",
+                fontWeight: "700",
+                color: "#0f172a",
+              }}
+            >
+              {totalCompleted}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "1.3fr 1fr",
+          gap: "25px",
+          marginTop: "35px",
+        }}
+      >
+        {/* LEFT SIDE */}
+
+        <div
+          style={{
+            background: "white",
+            padding: "30px",
+            borderRadius: "24px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px",
+              marginBottom: "25px",
+            }}
+          >
+            <FiTruck size={34} color="#2563eb" />
+
+            <h2
+              style={{
+                margin: 0,
+                fontSize: "34px",
+              }}
+            >
+              Pending Deliveries
+            </h2>
+          </div>
+
+          <table
+            style={{
+              width: "100%",
+              borderCollapse: "collapse",
+            }}
+          >
+            <thead>
+              <tr>
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "16px",
+                    color: "#64748b",
+                  }}
                 >
+                  Tracking Number
+                </th>
 
-                    <div
-                        style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "12px",
-                            marginBottom: "25px"
-                        }}
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "16px",
+                    color: "#64748b",
+                  }}
+                >
+                  Customer ID
+                </th>
+
+                <th
+                  style={{
+                    textAlign: "left",
+                    padding: "16px",
+                    color: "#64748b",
+                  }}
+                >
+                  Status
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {parcels
+                .filter(
+                  (parcel) =>
+                    parcel.status === "Assigned" ||
+                    parcel.status === "OutForDelivery",
+                )
+                .slice(0, showAllPending ? parcels.length : 5)
+
+                .map((parcel) => (
+                  <tr key={parcel.id}>
+                    <td
+                      style={{
+                        padding: "18px 16px",
+                        borderTop: "1px solid #e2e8f0",
+                      }}
                     >
+                      {parcel.tracking_number}
+                    </td>
 
-                        <FiTruck
-                            size={34}
-                            color="#2563eb"
-                        />
-
-                        <h2
-                            style={{
-                                margin: 0,
-                                fontSize: "34px"
-                            }}
-                        >
-                            Pending Deliveries
-                        </h2>
-
-                    </div>
-
-                    <table
-                        style={{
-                            width: "100%",
-                            borderCollapse: "collapse"
-                        }}
+                    <td
+                      style={{
+                        padding: "18px 16px",
+                        borderTop: "1px solid #e2e8f0",
+                      }}
                     >
+                      {parcel.customer_id}
+                    </td>
 
-                        <thead>
-
-                            <tr>
-
-                                <th
-                                    style={{
-                                        textAlign: "left",
-                                        padding: "16px",
-                                        color: "#64748b"
-                                    }}
-                                >
-                                    Tracking Number
-                                </th>
-
-                                <th
-                                    style={{
-                                        textAlign: "left",
-                                        padding: "16px",
-                                        color: "#64748b"
-                                    }}
-                                >
-                                    Customer ID
-                                </th>
-
-                                <th
-                                    style={{
-                                        textAlign: "left",
-                                        padding: "16px",
-                                        color: "#64748b"
-                                    }}
-                                >
-                                    Status
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {
-                                parcels
-                                    .filter(
-                                        parcel =>
-                                            parcel.status === "Assigned" ||
-                                            parcel.status === "OutForDelivery"
-                                    )
-                                    .slice(0,
-                                        showAllPending
-                                            ? parcels.length
-                                            : 5
-                                    )
-
-                                    .map(parcel => (
-
-                                        <tr key={parcel.id}>
-
-                                            <td
-                                                style={{
-                                                    padding: "18px 16px",
-                                                    borderTop:
-                                                        "1px solid #e2e8f0"
-                                                }}
-                                            >
-                                                {parcel.tracking_number}
-                                            </td>
-
-                                            <td
-                                                style={{
-                                                    padding: "18px 16px",
-                                                    borderTop:
-                                                        "1px solid #e2e8f0"
-                                                }}
-                                            >
-                                                {parcel.customer_id}
-                                            </td>
-
-                                            <td
-                                                style={{
-                                                    padding: "18px 16px",
-                                                    borderTop:
-                                                        "1px solid #e2e8f0"
-                                                }}
-                                            >
-
-                                                <span
-                                                    style={{
-                                                        padding: "8px 14px",
-                                                        borderRadius: "10px",
-
-                                                        background:
-                                                            parcel.status === "Assigned"
-                                                                ? "#dbeafe"
-                                                                : "#fef3c7",
-
-                                                        color:
-                                                            parcel.status === "Assigned"
-                                                                ? "#2563eb"
-                                                                : "#d97706"
-                                                    }}
-                                                >
-                                                    {parcel.status}
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-
-                                    ))
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                    {
-                        parcels.filter(
-                            parcel =>
-
-                                parcel.status === "Assigned"
-
-                                ||
-
-                                parcel.status === "OutForDelivery"
-
-                        ).length > 5 && (
-
-                            <div
-                                style={{
-                                    textAlign: "center",
-                                    marginTop: "20px"
-                                }}
-                            >
-
-                                <button
-
-                                    onClick={() =>
-                                        setShowAllPending(
-                                            !showAllPending
-                                        )
-                                    }
-
-                                    style={{
-                                        border: "none",
-                                        background: "#2563eb",
-                                        color: "white",
-                                        padding: "12px 24px",
-                                        borderRadius: "12px",
-                                        cursor: "pointer",
-                                        fontWeight: "600"
-                                    }}
-                                >
-
-                                    {
-
-                                        showAllPending
-                                            ? "View Less"
-                                            : "View More"
-
-                                    }
-
-                                </button>
-
-                            </div>
-
-                        )
-                    }
-
-                </div>
-
-
-                {/* RIGHT SIDE */}
-
-                <div>
-
-
-                    {/* RECENT ACTIVITIES */}
-
-                    <div
-                        style={{
-                            background: "white",
-                            padding: "30px",
-                            borderRadius: "24px",
-                            boxShadow:
-                                "0 10px 25px rgba(0,0,0,0.08)",
-                            height: "100%"
-                        }}
+                    <td
+                      style={{
+                        padding: "18px 16px",
+                        borderTop: "1px solid #e2e8f0",
+                      }}
                     >
+                      <span
+                        style={{
+                          padding: "8px 14px",
+                          borderRadius: "10px",
 
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "12px",
-                                marginBottom: "20px"
-                            }}
-                        >
+                          background:
+                            parcel.status === "Assigned"
+                              ? "#dbeafe"
+                              : "#fef3c7",
 
-                            <FiActivity
-                                size={30}
-                                color="#22c55e"
-                            />
+                          color:
+                            parcel.status === "Assigned"
+                              ? "#2563eb"
+                              : "#d97706",
+                        }}
+                      >
+                        {parcel.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
 
-                            <h2
-                                style={{
-                                    margin: 0,
-                                    fontSize: "30px"
-                                }}
-                            >
-                                Recent Activities
-                            </h2>
+          {parcels.filter(
+            (parcel) =>
+              parcel.status === "Assigned" ||
+              parcel.status === "OutForDelivery",
+          ).length > 5 && (
+            <div
+              style={{
+                textAlign: "center",
+                marginTop: "20px",
+              }}
+            >
+              <button
+                onClick={() => setShowAllPending(!showAllPending)}
+                style={{
+                  border: "none",
+                  background: "#2563eb",
+                  color: "white",
+                  padding: "12px 24px",
+                  borderRadius: "12px",
+                  cursor: "pointer",
+                  fontWeight: "600",
+                }}
+              >
+                {showAllPending ? "View Less" : "View More"}
+              </button>
+            </div>
+          )}
+        </div>
 
-                        </div>
+        {/* RIGHT SIDE */}
 
-                        {
-                            parcels
-                                .slice(0, 5)
-                                .map(parcel => (
+        <div>
+          {/* RECENT ACTIVITIES */}
 
-                                    <div
-                                        key={parcel.id}
+          <div
+            style={{
+              background: "white",
+              padding: "30px",
+              borderRadius: "24px",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+              height: "100%",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                marginBottom: "20px",
+              }}
+            >
+              <FiActivity size={30} color="#22c55e" />
 
-                                        style={{
-                                            padding: "16px 0",
-                                            borderBottom:
-                                                "1px solid #e2e8f0"
-                                        }}
-                                    >
-
-                                        {
-                                            parcel.status === "Delivered"
-
-                                                ? `✅ ${parcel.tracking_number} delivered successfully`
-
-                                                : parcel.status === "FailedDelivery"
-
-                                                    ? `❌ ${parcel.tracking_number} delivery failed`
-
-                                                    : `🚚 ${parcel.tracking_number} currently ${parcel.status}`
-                                        }
-
-                                    </div>
-
-                                ))
-                        }
-
-                    </div>
-
-                </div>
-
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: "30px",
+                }}
+              >
+                Recent Activities
+              </h2>
             </div>
 
-        </AgentLayout>
-
-    );
-
+            {parcels.slice(0, 5).map((parcel) => (
+              <div
+                key={parcel.id}
+                style={{
+                  padding: "16px 0",
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                {parcel.status === "Delivered"
+                  ? `✅ ${parcel.tracking_number} delivered successfully`
+                  : parcel.status === "FailedDelivery"
+                    ? `❌ ${parcel.tracking_number} delivery failed`
+                    : `🚚 ${parcel.tracking_number} currently ${parcel.status}`}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </AgentLayout>
+  );
 }
 
 export default AgentDashboard;

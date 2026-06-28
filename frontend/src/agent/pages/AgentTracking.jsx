@@ -117,55 +117,55 @@ function AgentTracking() {
         </div>
 
         {error && (
-  <div
-    style={{
-      marginTop: "30px",
-      background: "#f8fafc",
-      padding: "70px 30px",
-      borderRadius: "20px",
-      border: "1px solid #e2e8f0",
-      textAlign: "center",
-    }}
-  >
-    <FiSearch
-      size={70}
-      color="#ef4444"
-      style={{
-        marginBottom: "20px",
-      }}
-    />
+          <div
+            style={{
+              marginTop: "30px",
+              background: "#f8fafc",
+              padding: "70px 30px",
+              borderRadius: "20px",
+              border: "1px solid #e2e8f0",
+              textAlign: "center",
+            }}
+          >
+            <FiSearch
+              size={70}
+              color="#ef4444"
+              style={{
+                marginBottom: "20px",
+              }}
+            />
 
-    <h2
-      style={{
-        color: "#dc2626",
-        marginBottom: "15px",
-      }}
-    >
-      Parcel Not Found
-    </h2>
+            <h2
+              style={{
+                color: "#dc2626",
+                marginBottom: "15px",
+              }}
+            >
+              Parcel Not Found
+            </h2>
 
-    <p
-      style={{
-        color: "#64748b",
-        fontSize: "16px",
-        marginBottom: "10px",
-      }}
-    >
-      No parcel found with tracking number
-    </p>
+            <p
+              style={{
+                color: "#64748b",
+                fontSize: "16px",
+                marginBottom: "10px",
+              }}
+            >
+              No parcel found with tracking number
+            </p>
 
-    <p
-      style={{
-        color: "#2563eb",
-        fontWeight: "600",
-        fontSize: "18px",
-        margin: 0,
-      }}
-    >
-      {trackingNumber}
-    </p>
-  </div>
-)}
+            <p
+              style={{
+                color: "#2563eb",
+                fontWeight: "600",
+                fontSize: "18px",
+                margin: 0,
+              }}
+            >
+              {trackingNumber}
+            </p>
+          </div>
+        )}
 
         {parcel && (
           <div
