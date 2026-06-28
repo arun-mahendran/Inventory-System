@@ -50,9 +50,15 @@ def create_agent(
     response_model=list[DeliveryAgentResponse]
 )
 def get_agents(
+    search: str = None,
+    hub_id: int = None,
     db: Session = Depends(get_db)
 ):
-    return get_all_agents(db)
+    return get_all_agents(
+        db,
+        search,
+        hub_id
+    )
 
 
 @router.get(

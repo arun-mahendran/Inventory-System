@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import or_, String
 import random
 import string
 from app.models.user import User
@@ -107,16 +108,52 @@ def create_delivery_agent(
 
 
 def get_all_agents(
-    db: Session
+    db: Session,
+    search: str = None,
+    hub_id: int = None
 ):
 
-    agents = db.query(
+    query = db.query(
         DeliveryAgent
+    )
+
+    if search:
+
+        query = query.join(
+            User,
+            DeliveryAgent.user_id == User.id
+        ).filter(
+
+            or_(
+
+                User.full_name.ilike(
+                    f"%{search}%"
+                ),
+
+                DeliveryAgent.id.cast(
+                    String
+                ).ilike(
+                    f"%{search}%"
+                )
+
+            )
+
+        )
+
+    if hub_id:
+
+        query = query.filter(
+            DeliveryAgent.hub_id == hub_id
+        )
+
+    agents = query.order_by(
+        DeliveryAgent.id.desc()
     ).all()
 
     result = []
 
     for agent in agents:
+
         user = db.query(
             User
         ).filter(
@@ -126,25 +163,34 @@ def get_all_agents(
         result.append({
 
             "id": agent.id,
-            "user_id": agent.user_id,
+
+            "user_id":
+                agent.user_id,
+
             "agent_name":
                 user.full_name
                 if user else "N/A",
-            "hub_id": agent.hub_id,
+
+            "hub_id":
+                agent.hub_id,
+
             "vehicle_number":
                 agent.vehicle_number,
+
             "pincode":
                 agent.pincode,
+
             "current_parcel_count":
                 agent.current_parcel_count,
+
             "availability_status":
                 agent.availability_status,
+
             "created_at":
                 agent.created_at
         })
 
     return result
-
 
 def get_agent_by_id(
     db: Session,
