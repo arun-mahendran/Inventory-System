@@ -24,9 +24,12 @@ def import_parcels_from_excel(
 
     errors = []
 
-    for row in sheet.iter_rows(
-        min_row=2,
-        values_only=True
+    for row_number, row in enumerate(
+        sheet.iter_rows(
+            min_row=2,
+            values_only=True
+        ),
+        start=2
     ):
 
         try:
@@ -68,8 +71,9 @@ def import_parcels_from_excel(
             skipped += 1
 
             errors.append(
-                str(e)
-            )
+                f"Row {row_number}: {str(e)} "
+                f"(Pincode: {row[5]})"
+        )
 
     return {
 

@@ -27,19 +27,57 @@ def create_parcel(
         Customer.phone == parcel.phone
     ).first()
 
-    if not customer:
+    if customer:
 
-        customer = Customer(
-            customer_name=parcel.customer_name,
-            phone=parcel.phone,
-            email=parcel.email,
-            address=parcel.address,
-            pincode=parcel.pincode
+        customer.customer_name = (
+            parcel.customer_name
         )
 
-        db.add(customer)
+        customer.email = (
+            parcel.email
+        )
+
+        customer.address = (
+            parcel.address
+        )
+
+        customer.pincode = (
+            parcel.pincode
+        )
 
         db.flush()
+
+    customer_pincode = parcel.pincode
+
+    
+    agent = db.query(
+        DeliveryAgent
+    ).filter(
+        DeliveryAgent.pincode == customer_pincode,
+        DeliveryAgent.availability_status == "Available"
+    ).first()
+
+    if not agent:
+
+        raise HTTPException(
+            status_code=400,
+            detail="No delivery service available for this location"
+        )
+        
+        
+    if not customer:
+    
+            customer = Customer(
+                customer_name=parcel.customer_name,
+                phone=parcel.phone,
+                email=parcel.email,
+                address=parcel.address,
+                pincode=parcel.pincode
+            )
+    
+            db.add(customer)
+    
+            db.flush()
 
     db_parcel = Parcel(
         tracking_number=parcel.tracking_number,

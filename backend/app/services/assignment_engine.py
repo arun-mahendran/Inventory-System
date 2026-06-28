@@ -42,8 +42,9 @@ def auto_assign_parcel(
     ).first()
 
     if not agent:
+
         raise ValueError(
-            "No available delivery agent found"
+            "No delivery service available for this location"
         )
 
     parcel.assigned_agent_id = agent.id

@@ -376,17 +376,30 @@ function BulkImport() {
                   </h4>
                 </div>
 
-                {[...new Set(result.errors)].map((error, index) => (
-                  <p
-                    key={index}
-                    style={{
-                      color: "#64748b",
-                      marginBottom: "8px",
-                    }}
-                  >
-                    • {error}
-                  </p>
-                ))}
+                <div
+                  style={{
+                    maxHeight: "95px",
+                    overflowY: "auto",
+                    marginTop: "12px",
+                    paddingRight: "8px",
+                  }}
+                >
+                  {[...new Set(result.errors)].map(
+                    (error, index) => (
+                      <p
+                        key={index}
+                        style={{
+                          color: "#64748b",
+                          marginBottom: "10px",
+                          fontSize: "14px",
+                          lineHeight: "1.5",
+                        }}
+                      >
+                        • {error}
+                      </p>
+                    )
+                  )}
+                </div>
               </div>
             )}
 
