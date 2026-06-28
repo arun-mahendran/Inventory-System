@@ -20,6 +20,79 @@ router = APIRouter(
 
 class AIRequest(BaseModel):
     question: str
+    
+
+def preprocess_question(
+    question: str
+):
+
+    question = question.lower()
+
+    synonyms = {
+
+        "received parcels": [
+            "received",
+            "arrived",
+            "incoming",
+            "new parcels",
+            "orders received"
+        ],
+
+        "assigned parcels": [
+            "assigned",
+            "allocated",
+            "allocated parcels",
+            "agent assigned"
+        ],
+
+        "out for delivery parcels": [
+            "out for delivery",
+            "on the way",
+            "in transit",
+            "currently delivering",
+            "delivery in progress"
+        ],
+
+        "delivered parcels": [
+            "delivered",
+            "completed deliveries",
+            "successful deliveries",
+            "completed parcels"
+        ],
+
+        "failed deliveries": [
+            "failed",
+            "undelivered",
+            "delivery failures",
+            "failed attempts"
+        ],
+
+        "total customers": [
+            "customers",
+            "users",
+            "clients"
+        ],
+
+        "delivery agents": [
+            "agents",
+            "drivers",
+            "couriers"
+        ]
+    }
+
+    for canonical_term, words in synonyms.items():
+
+        for word in words:
+
+            if word in question:
+
+                question += (
+                    f" ({canonical_term})"
+                )
+
+                break
+
+    return question
 
 
 @router.post("/ask")
@@ -76,7 +149,7 @@ def ask_ai(
     )
 
     context = f"""
-    You are an AI assistant for a parcel delivery company.
+    You are an intelligent AI assistant for a parcel delivery company.
 
     Current Delivery Statistics:
 
@@ -100,12 +173,44 @@ def ask_ai(
 
     Status With Highest Parcels: {highest_status}
 
-    Answer professionally and use only the above statistics.
+    Instructions:
+
+    - Answer professionally and clearly.
+    - Use business-friendly language.
+    - Understand different ways users may ask the same question.
+    - Treat "arrived", "incoming", "new parcels", and "orders received" as Received Parcels.
+    - Treat "on the way", "in transit", and "delivery in progress" as Out For Delivery Parcels.
+    - Treat "successful deliveries" and "completed deliveries" as Delivered Parcels.
+    - Treat "failed attempts" and "undelivered parcels" as Failed Deliveries.
+    - Never invent data.
+    - Use only the statistics provided above.
+    - If information is unavailable, politely state that the data is not available in the current system.
+    - If users ask analytical questions, provide insights based on the statistics.
+
+    Examples:
+
+    User: How many parcels arrived today?
+    Assistant: There are currently {received} received parcels.
+
+    User: How many shipments are on the way?
+    Assistant: There are currently {out_for_delivery} parcels out for delivery.
+
+    User: Which status contains the most parcels?
+    Assistant: The status with the highest number of parcels is {highest_status}.
+
+    User: What is the delivery success rate?
+    Assistant: The current delivery success rate is {success_rate}%.
     """
+
+    processed_question = (
+        preprocess_question(
+            request.question
+        )
+    )
 
     answer = ask_delivery_ai(
         context,
-        request.question
+        processed_question
     )
 
     return {
