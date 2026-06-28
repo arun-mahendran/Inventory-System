@@ -3,11 +3,11 @@ import api from "../../api/axios";
 import MainLayout from "../components/MainLayout";
 
 import {
-    FiClock,
-    FiCheck,
-    FiFileText,
-    FiPackage,
-    FiSearch
+  FiClock,
+  FiCheck,
+  FiFileText,
+  FiPackage,
+  FiSearch,
 } from "react-icons/fi";
 
 function Tracking() {
@@ -15,15 +15,21 @@ function Tracking() {
 
   const [parcel, setParcel] = useState(null);
 
+  const [error, setError] = useState("");
+
   const searchParcel = async () => {
     try {
       const response = await api.get(`/parcels/tracking/${trackingNumber}`);
 
       setParcel(response.data);
+
+      setError("");
     } catch (error) {
       console.error("Tracking Error:", error);
 
-      alert("Parcel not found");
+      setParcel(null);
+
+      setError("Parcel not found");
     }
   };
 
@@ -31,121 +37,133 @@ function Tracking() {
     <>
       <MainLayout>
         <div
-    style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "12px",
-        marginBottom: "20px"
-    }}
->
-    <FiPackage
-        size={36}
-        color="#2563eb"
-    />
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            marginBottom: "20px",
+          }}
+        >
+          <FiPackage size={36} color="#2563eb" />
 
-    <h1
-        style={{
-            margin: 0
-        }}
-    >
-        Parcel Tracking
-    </h1>
-</div>
+          <h1
+            style={{
+              margin: 0,
+            }}
+          >
+            Parcel Tracking
+          </h1>
+        </div>
 
         <div
-    style={{
-        background: "white",
-        padding: "35px",
-        borderRadius: "24px",
-        boxShadow:
-            "0 10px 25px rgba(0,0,0,0.06)",
-        marginTop: "30px"
-    }}
->
-
-    <div
-        style={{
-            display: "flex",
-            gap: "16px",
-            alignItems: "center"
-        }}
-    >
-
-        <input
-            type="text"
-            placeholder="Enter Tracking Number"
-            value={trackingNumber}
-            onChange={(e) =>
-                setTrackingNumber(
-                    e.target.value
-                )
-            }
-
-            onKeyDown={(e) => {
-
-                if (e.key === "Enter") {
-
-                    searchParcel();
-
-                }
-
-            }}
-
-            style={{
-                flex: 1,
-
-                padding: "14px 18px",
-
-                borderRadius: "16px",
-
-                border: "2px solid #e2e8f0",
-
-                fontSize: "16px",
-
-                outline: "none",
-
-                transition: "0.3s ease"
-            }}
-        />
-
-        <button
-            onClick={searchParcel}
-
-            style={{
-                background:
-                    "linear-gradient(135deg,#2563eb,#3b82f6)",
-
-                color: "white",
-
-                border: "none",
-
-                padding: "14px 24px",
-
-                borderRadius: "18px",
-
-                cursor: "pointer",
-
-                display: "flex",
-
-                alignItems: "center",
-
-                gap: "10px",
-
-                fontSize: "16px",
-
-                fontWeight: "600"
-            }}
+          style={{
+            background: "white",
+            padding: "35px",
+            borderRadius: "24px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
+            marginTop: "30px",
+          }}
         >
+          <div
+            style={{
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Enter Tracking Number"
+              value={trackingNumber}
+              onChange={(e) => setTrackingNumber(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  searchParcel();
+                }
+              }}
+              style={{
+                flex: 1,
+                padding: "14px 18px",
+                borderRadius: "16px",
+                border: "2px solid #e2e8f0",
+                fontSize: "16px",
+                outline: "none",
+                transition: "0.3s ease",
+              }}
+            />
 
-            <FiSearch size={18} />
+            <button
+              onClick={searchParcel}
+              style={{
+                background: "linear-gradient(135deg,#2563eb,#3b82f6)",
+                color: "white",
+                border: "none",
+                padding: "14px 24px",
+                borderRadius: "18px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                fontSize: "16px",
+                fontWeight: "600",
+              }}
+            >
+              <FiSearch size={18} />
+              Search
+            </button>
+          </div>
+        </div>
 
-            Search
+        {error && (
+          <div
+            style={{
+              marginTop: "30px",
+              background: "white",
+              borderRadius: "20px",
+              padding: "50px 30px",
+              textAlign: "center",
+              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+            }}
+          >
+            <FiSearch
+              size={60}
+              color="#ef4444"
+              style={{
+                marginBottom: "20px",
+              }}
+            />
 
-        </button>
+            <h2
+              style={{
+                color: "#dc2626",
+                marginBottom: "10px",
+              }}
+            >
+              Parcel Not Found
+            </h2>
 
-    </div>
+            <p
+              style={{
+                color: "#64748b",
+                fontSize: "16px",
+                margin: 0,
+              }}
+            >
+              No parcel found with tracking number
+            </p>
 
-</div>
+            <p
+              style={{
+                color: "#2563eb",
+                fontWeight: "600",
+                fontSize: "18px",
+                marginTop: "10px",
+              }}
+            >
+              {trackingNumber}
+            </p>
+          </div>
+        )}
 
         {parcel && (
           <div
@@ -184,10 +202,7 @@ function Tracking() {
                     justifyContent: "center",
                   }}
                 >
-                  <FiPackage
-                    size={26}
-                    color="#2563eb"
-                  />
+                  <FiPackage size={26} color="#2563eb" />
                 </div>
 
                 <h2
@@ -238,15 +253,11 @@ function Tracking() {
                             : "#f59e0b",
                   }}
                 >
-                  {
-                    parcel.status === "OutForDelivery"
-                        ? "Out For Delivery"
-
-                        : parcel.status === "FailedDelivery"
-                        ? "Failed Delivery"
-
-                        : parcel.status
-                    }
+                  {parcel.status === "OutForDelivery"
+                    ? "Out For Delivery"
+                    : parcel.status === "FailedDelivery"
+                      ? "Failed Delivery"
+                      : parcel.status}
                 </span>
 
                 <b>Customer ID</b>
@@ -328,36 +339,26 @@ function Tracking() {
 
               <h2
                 style={{
-                    color:
+                  color:
                     parcel.status === "Delivered"
-                        ? "#16a34a"
-
-                        : parcel.status === "FailedDelivery"
+                      ? "#16a34a"
+                      : parcel.status === "FailedDelivery"
                         ? "#dc2626"
-
                         : "#2563eb",
 
-                    marginBottom: "20px",
+                  marginBottom: "20px",
                 }}
-                >
+              >
                 {parcel.status === "Delivered"
-
-                    ? "Parcel Delivered Successfully"
-
-                    : parcel.status === "FailedDelivery"
-
+                  ? "Parcel Delivered Successfully"
+                  : parcel.status === "FailedDelivery"
                     ? "Delivery Attempt Failed"
-
                     : parcel.status === "OutForDelivery"
-
-                    ? "Parcel is out for delivery"
-
-                    : parcel.status === "Assigned"
-
-                    ? "Parcel assigned to delivery agent"
-
-                    : "Parcel order has been created"}
-                </h2>
+                      ? "Parcel is out for delivery"
+                      : parcel.status === "Assigned"
+                        ? "Parcel assigned to delivery agent"
+                        : "Parcel order has been created"}
+              </h2>
 
               <div
                 style={{
@@ -368,72 +369,64 @@ function Tracking() {
                 }}
               >
                 <div
-    style={{
-        position: "absolute",
-        top: "28px",
-        left: "0",
-        right: "0",
-        height: "6px",
-        background: "#e2e8f0",
-        zIndex: 1
-    }}
-/>
+                  style={{
+                    position: "absolute",
+                    top: "28px",
+                    left: "0",
+                    right: "0",
+                    height: "6px",
+                    background: "#e2e8f0",
+                    zIndex: 1,
+                  }}
+                />
 
-<div
-    style={{
-        position: "absolute",
-        top: "28px",
-        left: "0",
-        height: "6px",
+                <div
+                  style={{
+                    position: "absolute",
+                    top: "28px",
+                    left: "0",
+                    height: "6px",
 
-        width:
-            parcel.status === "Delivered"
-                ? "100%"
+                    width:
+                      parcel.status === "Delivered"
+                        ? "100%"
+                        : parcel.status === "FailedDelivery"
+                          ? parcel.out_for_delivery_at
+                            ? "75%"
+                            : "50%"
+                          : parcel.status === "OutForDelivery"
+                            ? "75%"
+                            : parcel.status === "Assigned"
+                              ? "50%"
+                              : "25%",
 
-                : parcel.status === "FailedDelivery"
-                ? parcel.out_for_delivery_at
-                    ? "75%"
-                    : "50%"
+                    background: "#22c55e",
 
-                : parcel.status === "OutForDelivery"
-                ? "75%"
+                    zIndex: 2,
+                    transition: "0.4s ease",
+                  }}
+                />
 
-                : parcel.status === "Assigned"
-                ? "50%"
+                {parcel.status === "FailedDelivery" &&
+                  parcel.out_for_delivery_at && (
+                    <div
+                      style={{
+                        position: "absolute",
 
-                : "25%",
+                        top: "28px",
 
-        background: "#22c55e",
+                        left: "75%", // starts after Out For Delivery
 
-        zIndex: 2,
-        transition: "0.4s ease"
-    }}
-/>
+                        width: "25%", // goes till Delivered
 
-{
-    parcel.status === "FailedDelivery" &&
-    parcel.out_for_delivery_at && (
+                        height: "6px",
 
-        <div
-            style={{
-                position: "absolute",
+                        background: "#ef4444",
 
-                top: "28px",
-
-                left: "75%",   // starts after Out For Delivery
-
-                width: "25%",  // goes till Delivered
-
-                height: "6px",
-
-                background: "#ef4444",
-
-                zIndex: 3
-            }}
-        />
-
-    )
-}
+                        zIndex: 3,
+                      }}
+                    />
+                  )}
 
                 {[
                   {
@@ -470,21 +463,13 @@ function Tracking() {
                         borderRadius: "50%",
 
                         background:
-                            parcel.status === "FailedDelivery" &&
-                            index === 3
-
-                                ? "#ef4444"
-
-                                : parcel.status === "FailedDelivery" &&
-                                index === (
-                                    parcel.out_for_delivery_at ? 2 : 1
-                                )
-
+                          parcel.status === "FailedDelivery" && index === 3
+                            ? "#ef4444"
+                            : parcel.status === "FailedDelivery" &&
+                                index === (parcel.out_for_delivery_at ? 2 : 1)
+                              ? "#22c55e"
+                              : step.date
                                 ? "#22c55e"
-
-                                : step.date
-                                ? "#22c55e"
-
                                 : "#e2e8f0",
 
                         color: "white",
@@ -498,24 +483,16 @@ function Tracking() {
                         fontSize: "30px",
                       }}
                     >
-                      {
-                        parcel.status === "FailedDelivery" &&
-                        index === 3
-
-                            ? "✕"
-
-                            : parcel.status === "FailedDelivery" &&
-                            index === (
-                                parcel.out_for_delivery_at ? 2 : 1
-                            )
-
-                            ? <FiCheck />
-
-                            : step.date
-                            ? <FiCheck />
-
-                            : index + 1
-                    }
+                      {parcel.status === "FailedDelivery" && index === 3 ? (
+                        "✕"
+                      ) : parcel.status === "FailedDelivery" &&
+                        index === (parcel.out_for_delivery_at ? 2 : 1) ? (
+                        <FiCheck />
+                      ) : step.date ? (
+                        <FiCheck />
+                      ) : (
+                        index + 1
+                      )}
                     </div>
 
                     <h3>{step.title}</h3>
