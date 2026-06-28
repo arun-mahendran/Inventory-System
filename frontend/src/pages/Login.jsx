@@ -64,16 +64,16 @@ function Login() {
             );
 
             localStorage.setItem(
-                "delivery_agent_id",
-                response.data.delivery_agent_id
+                "user_id",
+                response.data.user_id
             );
 
             console.log("Complete Login Response:");
             console.log(response.data);
 
             console.log(
-                "Delivery Agent ID:",
-                response.data.delivery_agent_id
+                "User ID:",
+                response.data.user_id
             );
 
             localStorage.setItem(
