@@ -493,7 +493,7 @@ function Parcels() {
                     padding: "12px",
                   }}
                 >
-                  Agent
+                  Agent ID
                 </th>
 
                 <th
