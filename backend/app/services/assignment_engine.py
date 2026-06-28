@@ -65,7 +65,8 @@ def auto_assign_parcel(
     db.add(history)
 
     agent.current_parcel_count += 1
-    if agent.current_parcel_count >= 5:
+    
+    if agent.current_parcel_count >= 10:
         agent.availability_status = "Busy"
     else:
         agent.availability_status = "Available"
