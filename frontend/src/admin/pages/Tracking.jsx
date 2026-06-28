@@ -75,7 +75,12 @@ function Tracking() {
               type="text"
               placeholder="Enter Tracking Number"
               value={trackingNumber}
-              onChange={(e) => setTrackingNumber(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                setTrackingNumber(value);
+                setError("");
+                setParcel(null);
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   searchParcel();

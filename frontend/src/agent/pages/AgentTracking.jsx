@@ -22,7 +22,13 @@ function AgentTracking() {
   const [error, setError] = useState("");
 
   const searchParcel = async () => {
-    if (!trackingNumber) return;
+
+    if (!trackingNumber.trim()) {
+      setParcel(null);
+      setError("");
+
+      return;
+    }
 
     try {
       const response = await api.get(`/parcels/tracking/${trackingNumber}`);
@@ -73,7 +79,13 @@ function AgentTracking() {
             type="text"
             placeholder="Enter Tracking Number"
             value={trackingNumber}
-            onChange={(e) => setTrackingNumber(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              setTrackingNumber(value);
+              setError("");
+              setParcel(null);
+            }}
+            
             style={{
               flex: 1,
               padding: "14px 18px",
