@@ -68,8 +68,23 @@ function Login() {
                 response.data.user_id
             );
 
-            console.log("Complete Login Response:");
-            console.log(response.data);
+            localStorage.setItem(
+                "delivery_agent_id",
+                response.data.delivery_agent_id
+            );
+
+            console.log(
+                "Delivery Agent ID:",
+                response.data.delivery_agent_id
+            );
+
+            console.log(
+                JSON.stringify(
+                    response.data,
+                    null,
+                    2
+                )
+            );
 
             console.log(
                 "User ID:",

@@ -86,6 +86,11 @@ function MyParcels() {
     try {
       const agentId = localStorage.getItem("delivery_agent_id");
 
+      console.log(
+          "Delivery Agent ID:",
+          agentId
+      );
+
       const response = await api.get(`/delivery-agents/${agentId}/parcels`);
 
       const statusOrder = {
