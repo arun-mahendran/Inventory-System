@@ -43,7 +43,8 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "https://inventory-system-zyywmiod.onslate.in"
     ],
     allow_credentials=True,
     allow_methods=["*"],
