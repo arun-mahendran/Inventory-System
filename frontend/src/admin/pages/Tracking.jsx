@@ -268,7 +268,7 @@ function Tracking() {
                 <b>Customer ID</b>
                 <span>{parcel.customer_id}</span>
 
-                <b>Assigned Agent</b>
+                <b>Assigned Agent ID</b>
                 <span>{parcel.assigned_agent_id || "-"}</span>
 
                 {parcel.status === "FailedDelivery" &&
