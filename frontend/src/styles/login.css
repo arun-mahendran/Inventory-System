@@ -62,6 +62,10 @@
 }
 
 .login-card {
+
+    position: relative;
+    min-height: 520px;
+    
     background: white;
 
     padding: 60px 45px;

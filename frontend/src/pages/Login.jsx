@@ -285,6 +285,58 @@ function Login() {
                             Login
                         </button>
 
+                        <div
+    style={{
+        position: "absolute",
+
+        bottom: "30px",
+
+        left: "50%",
+
+        transform: "translateX(-50%)",
+
+        textAlign: "center",
+
+        width: "100%"
+    }}
+>
+  <p
+    style={{
+      margin: 0,
+      color: "#64748b",
+      fontSize: "14px",
+    }}
+  >
+    Interested in becoming a Delivery Agent?
+  </p>
+
+  <a
+    href="https://mail.google.com/mail/?view=cm&fs=1&to=finalmile.hr@gmail.com&su=Application%20for%20Delivery%20Agent%20Position&body=Dear%20HR,%0A%0AI%20am%20interested%20in%20joining%20Final%20Mile%20Delivery%20Hub%20as%20a%20Delivery%20Agent.%20Please%20find%20my%20details%20below:%0A%0AFull%20Name:%20%0AEmail:%20%0APhone%20Number:%20%0AAddress:%20%0APincode:%20%0APreferred%20Hub%20(Kovilpatti%20/%20Madurai%20/%20Sivakasi%20/%20Virudhunagar%20/%20Sattur):%20%0AVehicle%20Number:%20%0AYears%20of%20Delivery%20Experience:%20%0A%0AThank%20you."
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        marginTop: "10px",
+        color: "#2563eb",
+        textDecoration: "none",
+        fontSize: "14px",
+        fontWeight: "600",
+        transition: "0.3s ease",
+    }}
+    onMouseEnter={(e) => {
+        e.currentTarget.style.color = "#1d4ed8";
+    }}
+    onMouseLeave={(e) => {
+        e.currentTarget.style.color = "#2563eb";
+    }}
+>
+    <FiMail size={16} />
+    Contact HR
+</a>
+</div>
+
                     </form>
 
                 </div>
