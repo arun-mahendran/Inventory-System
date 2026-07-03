@@ -8,6 +8,10 @@ import AgentStatCard from "../components/AgentStatCard";
 
 import { useNavigate } from "react-router-dom";
 
+import { FaTruck } from "react-icons/fa";
+
+import "../../styles/agent-dashboard.css";
+
 import {
   FiTruck,
   //FiZap,
@@ -31,6 +35,8 @@ function AgentDashboard() {
   const [showAllPending, setShowAllPending] = useState(false);
 
   const fullName = localStorage.getItem("full_name");
+
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const [summary, setSummary] = useState({
     assigned: 0,
@@ -84,6 +90,14 @@ function AgentDashboard() {
     fetchSummary();
   }, []);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   const totalCompleted = summary.delivered + summary.failed;
 
   const successRate =
@@ -93,31 +107,89 @@ function AgentDashboard() {
 
   return (
     <AgentLayout>
-      <div
-        style={{
-          marginBottom: "30px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "36px",
-            fontWeight: "700",
-            marginBottom: "8px",
-            color: "#0f172a",
-          }}
-        >
-          👋 Welcome, {fullName}!
-        </h1>
+      <div className="agent-hero">
+        <div className="hero-decoration">
+          <span className="circle c1"></span>
 
-        <p
-          style={{
-            fontSize: "18px",
-            color: "#64748b",
-            margin: 0,
-          }}
-        >
-          Here's your delivery overview for today.
-        </p>
+          <span className="circle c2"></span>
+
+          <span className="circle c3"></span>
+        </div>
+
+        <div className="hero-left">
+          <div className="hero-status">
+            <span className="status-dot"></span>
+            ON DUTY
+          </div>
+
+          <h1>Welcome back, {fullName}</h1>
+
+          <p>Here's your delivery run for today.</p>
+        </div>
+
+        <div className="hero-right">
+          <div className="hero-time">
+            <h2>
+              {currentTime.toLocaleTimeString([], {
+                hour: "2-digit",
+
+                minute: "2-digit",
+              })}
+            </h2>
+
+            <p>
+              {currentTime.toLocaleDateString([], {
+                weekday: "short",
+
+                month: "short",
+
+                day: "numeric",
+              })}
+            </p>
+          </div>
+
+          <div className="hero-road">
+            <svg width="420" height="170" viewBox="0 0 420 170">
+              <path
+                d="
+          M20 125
+          C90 145
+          170 55
+          250 72
+
+          C300 82
+          340 95
+          375 82
+
+          C392 74
+          405 52
+          405 18
+          "
+                fill="none"
+                stroke="#ff7a1a"
+                strokeWidth="4"
+                strokeDasharray="8 8"
+                strokeLinecap="round"
+              />
+
+              <circle cx="15" cy="125" r="6" fill="white" />
+
+              <circle cx="405" cy="20" r="8" fill="#ff7a1a" />
+            </svg>
+
+            <div className="truck">
+              <FaTruck size={58} color="white" />
+            </div>
+
+            <div className="city">
+              <div className="building b1"></div>
+
+              <div className="building b2"></div>
+
+              <div className="building b3"></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="cards">
