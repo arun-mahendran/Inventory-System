@@ -8,8 +8,6 @@ import AgentStatCard from "../components/AgentStatCard";
 
 import { useNavigate } from "react-router-dom";
 
-import { FaTruck } from "react-icons/fa";
-
 import "../../styles/agent-dashboard.css";
 
 import {
@@ -128,68 +126,27 @@ function AgentDashboard() {
         </div>
 
         <div className="hero-right">
-          <div className="hero-time">
-            <h2>
-              {currentTime.toLocaleTimeString([], {
+
+    <div className="hero-time">
+
+        <h2>
+            {currentTime.toLocaleTimeString([], {
                 hour: "2-digit",
+                minute: "2-digit"
+            })}
+        </h2>
 
-                minute: "2-digit",
-              })}
-            </h2>
-
-            <p>
-              {currentTime.toLocaleDateString([], {
+        <p>
+            {currentTime.toLocaleDateString([], {
                 weekday: "short",
-
                 month: "short",
+                day: "numeric"
+            })}
+        </p>
 
-                day: "numeric",
-              })}
-            </p>
-          </div>
+    </div>
 
-          <div className="hero-road">
-            <svg width="420" height="170" viewBox="0 0 420 170">
-              <path
-                d="
-          M20 125
-          C90 145
-          170 55
-          250 72
-
-          C300 82
-          340 95
-          375 82
-
-          C392 74
-          405 52
-          405 18
-          "
-                fill="none"
-                stroke="#ff7a1a"
-                strokeWidth="4"
-                strokeDasharray="8 8"
-                strokeLinecap="round"
-              />
-
-              <circle cx="15" cy="125" r="6" fill="white" />
-
-              <circle cx="405" cy="20" r="8" fill="#ff7a1a" />
-            </svg>
-
-            <div className="truck">
-              <FaTruck size={58} color="white" />
-            </div>
-
-            <div className="city">
-              <div className="building b1"></div>
-
-              <div className="building b2"></div>
-
-              <div className="building b3"></div>
-            </div>
-          </div>
-        </div>
+</div>
       </div>
 
       <div className="cards">
