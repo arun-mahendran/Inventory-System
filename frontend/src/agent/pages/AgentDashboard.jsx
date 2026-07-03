@@ -149,7 +149,7 @@ function AgentDashboard() {
 </div>
       </div>
 
-      <div className="cards">
+      <div className="agent-cards">
         <AgentStatCard
           title="Assigned Parcels"
           value={summary.assigned}

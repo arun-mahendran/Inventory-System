@@ -1,4 +1,4 @@
-import "../../styles/dashboard.css";
+import "../../styles/agent-stat-card.css";
 
 function AgentStatCard({
     title,
@@ -9,23 +9,18 @@ function AgentStatCard({
 
     return (
 
-        <div
-            className="card"
+        <div className="agent-card"
             style={{
                 borderTop:
                     `5px solid ${color}`
             }}
         >
 
-            <div
-                className="card-title"
-            >
+            <div className="agent-card-title">
                 {icon} {title}
             </div>
 
-            <div
-                className="card-value"
-            >
+            <div className="agent-card-value">
                 {value}
             </div>
 
