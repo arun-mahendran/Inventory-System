@@ -14,10 +14,15 @@ function PendingDeliveries({
 
     const navigate = useNavigate();
 
-    const pendingDeliveries = parcels.filter(
+    const pendingDeliveries = parcels
+    .filter(
         (parcel) =>
             parcel.status === "Assigned" ||
             parcel.status === "OutForDelivery"
+    )
+    .sort(
+        (a, b) =>
+            new Date(b.created_at) - new Date(a.created_at)
     );
 
     return (

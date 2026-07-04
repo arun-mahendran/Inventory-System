@@ -107,9 +107,9 @@
 
 }
 
-.pending-list{
+.pending-page-list .pending-list{
 
-    border-top:1px solid #e2e8f0;
+    border-top:none;
 
 }
 
@@ -192,6 +192,10 @@
 
     align-items:center;
 
+    justify-content:flex-end;
+
+    width:250px;
+
     gap:18px;
 
     flex-shrink:0;
@@ -199,6 +203,10 @@
 }
 
 .tracking-number{
+
+    width:90px;
+
+    text-align:right;
 
     color:#2563eb;
 
@@ -211,6 +219,10 @@
 }
 
 .status-orange{
+
+    width:160px;
+
+    text-align:center;
 
     background:#fff2e8;
 
@@ -227,6 +239,10 @@
 }
 
 .status-blue{
+
+    width:160px;
+
+    text-align:center;
 
     background:#eef4ff;
 
