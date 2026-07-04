@@ -211,3 +211,185 @@
   right: 180px;
   bottom: -180px;
 }
+
+/* ============================
+   Today's Performance
+============================ */
+.performance-header{
+    margin-bottom:30px;
+}
+
+.performance-title{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+.performance-title h2{
+    margin:0;
+    font-size:24px;
+    font-weight:700;
+    color:#0f172a;
+}
+
+.performance-icon{
+    width:58px;
+    height:58px;
+    border-radius:16px;
+    background:#eef4ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.performance-image{
+    width: 250px;
+    max-width:100%;
+    object-fit:contain;
+
+}
+
+.performance-grid{
+    display:grid;
+    grid-template-columns:1fr auto 1fr auto 1fr auto 1fr;
+    align-items:center;
+    gap:24px;
+}
+
+.performance-divider{
+    width:1px;
+    height:90px;
+    background:#e5e7eb;
+}
+
+.performance-stat h4{
+    margin:0;
+    color:#64748b;
+    font-size:15px;
+    font-weight:600;
+}
+
+.performance-stat h2{
+    margin:16px 0 18px;
+    font-size:32px;
+    line-height:1;
+    font-weight:700;
+}
+
+.performance-stat .green{
+    color:#16a34a;
+}
+
+.performance-stat .blue{
+    color:#2563eb;
+}
+
+.performance-stat .red{
+    color:#ef4444;
+}
+
+.performance-stat .dark{
+    color:#0f172a;
+}
+
+.performance-badge{
+    display:inline-block;
+    padding:8px 14px;
+    font-size:12px;
+    border-radius:999px;
+    font-weight:600;
+}
+
+.performance-badge.success{
+    background:#eafaf0;
+    color:#16a34a;
+}
+
+.performance-badge.delivered{
+    background:#eef4ff;
+    color:#2563eb;
+}
+
+.performance-badge.failed{
+    background:#fdecec;
+    color:#ef4444;
+}
+
+.performance-badge.total{
+    background:#f1f5f9;
+    color:#475569;
+}
+
+.performance-card{
+    margin-top:30px;
+    background:#fff;
+    padding:24px;
+    border-radius:22px;
+    box-shadow:0 8px 22px rgba(0,0,0,.08);
+}
+
+.performance-content{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:40px;
+
+}
+
+.performance-left{
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.performance-right{
+
+    width:260px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+}
+
+@media (max-width:1200px){
+
+    .performance-content{
+
+        flex-direction:column;
+
+    }
+
+    .performance-right{
+
+        width:100%;
+
+    }
+
+    .performance-image{
+
+        width:180px;
+
+    }
+
+    .performance-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    .performance-divider{
+
+        display:none;
+
+    }
+
+}

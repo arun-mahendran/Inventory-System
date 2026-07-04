@@ -14,6 +14,8 @@ import "../../styles/agent-dashboard.css";
 
 import RecentActivities from "../components/RecentActivities";
 
+import deliveryRoute from "../../assets/delivery-route.png";
+
 import {
   //FiTruck,
   //FiZap,
@@ -177,144 +179,113 @@ function AgentDashboard() {
         />
       </div>
 
-      <div
-        style={{
-          marginTop: "35px",
-          background: "white",
-          padding: "30px",
-          borderRadius: "20px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "15px",
-            marginBottom: "30px",
-          }}
-        >
-          <div
-            style={{
-              width: "60px",
-              height: "60px",
-              borderRadius: "16px",
-              background: "#eff6ff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <FiTrendingUp size={32} color="#2563eb" />
+      <div className="performance-card">
+
+  <div className="performance-content">
+
+    {/* LEFT SIDE */}
+
+    <div className="performance-left">
+
+      <div className="performance-header">
+
+        <div className="performance-title">
+
+          <div className="performance-icon">
+            <FiTrendingUp size={24} color="#2563eb" />
           </div>
 
-          <h2
-            style={{
-              margin: 0,
-              fontSize: "34px",
-              color: "#0f172a",
-            }}
-          >
-            Today's Performance
-          </h2>
+          <div>
+            <h2>Today's Performance</h2>
+          </div>
+
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4,1fr)",
-            gap: "20px",
-          }}
-        >
-          <div>
-            <h3
-              style={{
-                color: "#64748b",
-                fontSize: "15px",
-                marginBottom: "10px",
-              }}
-            >
-              Success Rate
-            </h3>
-
-            <p
-              style={{
-                fontSize: "32px",
-                fontWeight: "700",
-                color: "#22c55e",
-              }}
-            >
-              {successRate}%
-            </p>
-          </div>
-
-          <div>
-            <h3
-              style={{
-                color: "#64748b",
-                fontSize: "15px",
-                marginBottom: "10px",
-              }}
-            >
-              Delivered Today
-            </h3>
-
-            <p
-              style={{
-                fontSize: "32px",
-                fontWeight: "700",
-                color: "#2563eb",
-              }}
-            >
-              {summary.delivered}
-            </p>
-          </div>
-
-          <div>
-            <h3
-              style={{
-                color: "#64748b",
-                fontSize: "15px",
-                marginBottom: "10px",
-              }}
-            >
-              Failed Today
-            </h3>
-
-            <p
-              style={{
-                fontSize: "32px",
-                fontWeight: "700",
-                color: "#ef4444",
-              }}
-            >
-              {summary.failed}
-            </p>
-          </div>
-
-          <div>
-            <h3
-              style={{
-                color: "#64748b",
-                fontSize: "15px",
-                marginBottom: "10px",
-              }}
-            >
-              Total Completed
-            </h3>
-
-            <p
-              style={{
-                fontSize: "32px",
-                fontWeight: "700",
-                color: "#0f172a",
-              }}
-            >
-              {totalCompleted}
-            </p>
-          </div>
-        </div>
       </div>
+
+      <div className="performance-grid">
+
+        <div className="performance-stat">
+
+          <h4>Success Rate</h4>
+
+          <h2 className="green">
+            {successRate}%
+          </h2>
+
+          <span className="performance-badge success">
+            Success Today
+          </span>
+
+        </div>
+
+        <div className="performance-divider"></div>
+
+        <div className="performance-stat">
+
+          <h4>Delivered Today</h4>
+
+          <h2 className="blue">
+            {summary.delivered}
+          </h2>
+
+          <span className="performance-badge delivered">
+            Completed
+          </span>
+
+        </div>
+
+        <div className="performance-divider"></div>
+
+        <div className="performance-stat">
+
+          <h4>Failed Today</h4>
+
+          <h2 className="red">
+            {summary.failed}
+          </h2>
+
+          <span className="performance-badge failed">
+            Failed Attempts
+          </span>
+
+        </div>
+
+        <div className="performance-divider"></div>
+
+        <div className="performance-stat">
+
+          <h4>Total Completed</h4>
+
+          <h2 className="dark">
+            {totalCompleted}
+          </h2>
+
+          <span className="performance-badge total">
+            Overall Today
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    {/* RIGHT SIDE */}
+
+    <div className="performance-right">
+
+      <img
+        src={deliveryRoute}
+        alt="Delivery Route"
+        className="performance-image"
+      />
+
+    </div>
+
+  </div>
+
+</div>
 
       <div
         style={{
