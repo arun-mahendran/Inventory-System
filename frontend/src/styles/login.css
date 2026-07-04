@@ -42,9 +42,10 @@
 
 .login-container {
     width: 100%;
-    max-width: 1080px;
+    max-width: 940px;
+    max-height: calc(100vh - 48px);
     display: grid;
-    grid-template-columns: 1fr 440px;
+    grid-template-columns: 1fr 400px;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 40px 80px rgba(0, 0, 0, 0.45);
@@ -56,11 +57,10 @@
 .login-left {
     position: relative;
     color: white;
-    padding: 64px 56px;
+    padding: 36px 44px 0;
     background: var(--ink-navy-2);
     display: flex;
     flex-direction: column;
-    justify-content: center;
     overflow: hidden;
     animation: fadeIn 0.6s ease both;
 }
@@ -77,125 +77,68 @@
     mask-image: radial-gradient(circle at 30% 30%, black, transparent 70%);
 }
 
-.login-eyebrow {
+/* ---------- header lockup ---------- */
+
+.login-header {
     position: relative;
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 8px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--signal-orange-2);
-    margin-bottom: 22px;
+    gap: 10px;
+    margin-bottom: 28px;
     opacity: 0;
     animation: fadeUp 0.6s ease 0.1s forwards;
 }
 
-.login-eyebrow::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--signal-orange);
-    box-shadow: 0 0 0 3px rgba(255, 90, 31, 0.25);
-}
-
-.login-logo-row {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    margin-bottom: 26px;
-    opacity: 0;
-    animation: fadeUp 0.6s ease 0.18s forwards;
-}
-
 .login-logo {
-    font-size: 40px;
+    font-size: 20px;
     color: var(--signal-orange);
     flex-shrink: 0;
 }
 
-.login-left h1 {
+.login-brand {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    color: white;
+}
+
+.login-brand span {
+    color: var(--signal-orange);
+}
+
+.login-heading {
     position: relative;
+    display: flex;
+    flex-direction: column;
     font-family: 'Big Shoulders Display', sans-serif;
     font-weight: 800;
-    font-size: 50px;
-    line-height: 0.98;
+    font-size: 42px;
+    line-height: 0.96;
     letter-spacing: 0.01em;
     text-transform: uppercase;
-    margin: 0 0 26px;
+    margin: 0 0 16px;
+}
+
+.login-heading span {
     opacity: 0;
-    animation: fadeUp 0.6s ease 0.24s forwards;
+    animation: fadeUp 0.6s ease forwards;
 }
 
-/* animated route line + moving truck */
-.route-line{
+.login-heading span:nth-child(1) { animation-delay: 0.18s; }
+.login-heading span:nth-child(2) { animation-delay: 0.26s; }
 
-    position:relative;
-
-    width:100%;
-
-    height:28px;
-
-    margin:28px 0;
-
-    overflow:hidden;
-
-}
-
-.route-line svg{
-
-    width:100%;
-
-    height:28px;
-
-    display:block;
-
-}
-
-.route-line .route-path {
-    stroke: var(--line-navy);
-    stroke-width: 2;
-    stroke-linecap: round;
-}
-
-.route-line .route-progress {
-    stroke: var(--signal-orange);
-    stroke-width: 2;
-    stroke-linecap: round;
-}
-
-.route-truck{
-
-    position:absolute;
-
-    top:50%;
-
-    left:0;
-
-    width:22px;
-
-    height:22px;
-
-    color:var(--signal-orange);
-
-    transform:translate(-50%, -73%);
-
-    animation:drive 4.5s linear infinite;
-
-    will-change: left, opacity;
-
+.login-heading .accent {
+    color: var(--signal-orange);
 }
 
 .login-left p.login-copy {
     position: relative;
-    font-size: 16px;
+    font-size: 14.5px;
     color: #b9c2d4;
-    line-height: 1.75;
+    line-height: 1.6;
     max-width: 40ch;
-    margin: 0 0 34px;
+    margin: 0 0 22px;
     opacity: 0;
     animation: fadeUp 0.6s ease 0.36s forwards;
 }
@@ -203,66 +146,76 @@
 .login-stats {
     position: relative;
     display: flex;
-    gap: 0;
+    gap: 12px;
+    margin-bottom: 20px;
     opacity: 0;
     animation: fadeUp 0.6s ease 0.42s forwards;
 }
 
-.login-stat{
-    padding:0 22px;
-    border-left:1px solid var(--line-navy);
-
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
+.login-stat {
+    flex: 1;
+    padding: 14px 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--line-navy);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-.feature-icon{
-    font-size:25px;
-    color:var(--signal-orange);
-    margin-bottom:16px;
-}
-
-.login-stat:first-child {
-    padding-left: 0;
-    border-left: none;
+.feature-icon {
+    font-size: 19px;
+    color: var(--signal-orange);
+    margin-bottom: 10px;
 }
 
 .login-stat .stat-value {
     display: block;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: white;
     font-family: 'Inter', sans-serif;
-    margin-top:2px;
 }
 
 .login-stat .stat-label {
     display: block;
-
     font-weight: 500;
-
-    margin-top:6px;
-
-    color:#b9c2d4;
-
-    font-size:14px;
+    margin-top: 3px;
+    color: #b9c2d4;
+    font-size: 12px;
 }
 
-/* ---------- RIGHT PANEL: MANIFEST TICKET ---------- */
+/* ---------- bottom illustration ---------- */
+
+.login-illustration {
+    position: relative;
+    margin: auto 0 22px;
+    width: 100%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
+}
+
+.login-illustration img {
+    width: 100%;
+    height: auto;
+    display: block;
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
+}
+
+/* ---------- RIGHT PANEL: LOGIN CARD ---------- */
 
 .login-card {
     position: relative;
-    min-height: 560px;
     background: var(--paper);
-    padding: 56px 44px 44px;
+    padding: 36px 40px 32px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     animation: fadeIn 0.6s ease 0.1s both;
 }
 
-/* perforated seam between left panel and ticket */
 .login-card::before,
 .login-card::after {
     content: "";
@@ -274,47 +227,44 @@
     background: var(--ink-navy-2);
 }
 
-.login-card::before {
-    top: -11px;
-}
-
-.login-card::after {
-    bottom: -11px;
-}
+.login-card::before { top: -11px; }
+.login-card::after { bottom: -11px; }
 
 .manifest-id {
     position: absolute;
-    top: 22px;
+    top: 24px;
     right: 28px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.06em;
-    color: var(--slate);
-}
-
-.manifest-id span {
     color: var(--signal-orange);
+    background: rgba(255, 90, 31, 0.12);
+    padding: 5px 12px;
+    border-radius: 999px;
 }
 
 .login-card h2 {
     font-family: 'Big Shoulders Display', sans-serif;
     font-weight: 700;
-    font-size: 32px;
+    font-size: 28px;
     text-transform: uppercase;
     letter-spacing: 0.01em;
     color: var(--slate-dark);
-    margin: 0 0 6px;
+    margin: 0 0 4px;
 }
 
 .login-card p.login-sub {
     color: var(--slate);
-    font-size: 14px;
-    margin: 0 0 30px;
+    font-size: 13.5px;
+    margin: 0 0 22px;
 }
+
+/* ---------- inputs with floating labels ---------- */
 
 .input-group {
     position: relative;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 .input-icon {
@@ -325,6 +275,7 @@
     color: var(--slate);
     font-size: 16px;
     transition: color 0.2s ease;
+    pointer-events: none;
 }
 
 .input-group input {
@@ -340,11 +291,26 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Firefox dims placeholder to ~54% opacity by default even with a color set —
-   force full opacity so the color below actually shows at full strength */
-.input-group input::placeholder {
+.input-group label {
+    position: absolute;
+    left: 46px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14.5px;
     color: var(--slate);
-    opacity: 1;
+    pointer-events: none;
+    transition: top 0.18s ease, font-size 0.18s ease, transform 0.18s ease, color 0.18s ease;
+}
+
+.input-group input:focus ~ label,
+.input-group input:not(:placeholder-shown) ~ label {
+    top: 34%;
+    font-size: 12.5px;
+    font-weight: 500;
+}
+
+.input-group input:focus ~ label {
+    color: var(--signal-orange);
 }
 
 .input-group input:focus {
@@ -375,6 +341,24 @@
     color: var(--signal-orange);
 }
 
+.icon-swap {
+    position: relative;
+    display: inline-flex;
+    width: 17px;
+    height: 17px;
+}
+
+.icon-swap .i-eye,
+.icon-swap .i-eye-off {
+    position: absolute;
+    inset: 0;
+    transition: opacity 0.15s ease;
+}
+
+.icon-swap .i-eye-off { opacity: 0; }
+.icon-swap.is-visible .i-eye { opacity: 0; }
+.icon-swap.is-visible .i-eye-off { opacity: 1; }
+
 .login-error {
     background: var(--danger-bg);
     color: var(--danger);
@@ -403,45 +387,83 @@
     letter-spacing: 0.04em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: box-shadow 0.2s ease; /* Changed: removed transform transition */
+    transition: box-shadow 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     margin-top: 6px;
 }
 
 .login-btn:hover {
-    /* Removed transform: translateY(-2px); */
     box-shadow: 0 12px 24px rgba(255, 90, 31, 0.3);
 }
 
 .login-btn:active {
-    transform: translateY(0); /* Keep this if you want the press effect, or remove it */
+    transform: translateY(0);
 }
 
-.agent-cta {
-    margin-top: 30px;
-    padding-top: 22px;
-    border-top: 1px dashed var(--paper-line);
-    text-align: center;
+.login-btn:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
 }
 
-.agent-cta p {
-    margin: 0;
+/* ---------- help box ---------- */
+
+.help-box {
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(100, 116, 139, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.help-icon {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(255, 90, 31, 0.12);
+    color: var(--signal-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+}
+
+.help-text {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.help-text strong {
+    font-size: 13.5px;
+    color: var(--slate-dark);
+}
+
+.help-text span {
+    font-size: 12.5px;
     color: var(--slate);
-    font-size: 13px;
+    margin-top: 2px;
 }
 
-.agent-cta a {
+.help-link {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    margin-top: 10px;
+    gap: 2px;
     color: var(--signal-orange);
     text-decoration: none;
-    font-size: 13.5px;
-    font-weight: 600;
-    transition: color 0.2s ease;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
 }
 
-.agent-cta a:hover {
+.help-link:hover {
     color: #c93d0d;
 }
 
@@ -468,34 +490,6 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 
-/* truck fades in at the left edge, travels smoothly to the right edge with
-   ease-in-out easing, fades out just before the loop resets — no visible snap */
-@keyframes drive{
-
-    0%{
-        left:10px;
-        opacity:.2;
-    }
-
-    5%{
-        opacity:1;
-    }
-
-    95%{
-        opacity:1;
-    }
-
-    100%{
-        left:490px;
-        opacity:.2;
-    }
-
-}
-
-/* @keyframes dash {
-    to { stroke-dashoffset: -490; }
-} */
-
 @media (max-width: 900px) {
     .login-container {
         grid-template-columns: 1fr;
@@ -506,5 +500,11 @@
     .login-card::before,
     .login-card::after {
         display: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-card {
+        padding: 32px 22px 28px;
     }
 }
