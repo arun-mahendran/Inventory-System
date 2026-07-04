@@ -8,7 +8,10 @@ import {
     FiLock,
     FiEye,
     FiEyeOff,
-    FiAlertCircle
+    FiAlertCircle,
+    FiPackage,
+    FiTruck,
+    FiMapPin
 } from "react-icons/fi";
 
 import { FaTruckMoving }
@@ -96,20 +99,20 @@ function Login() {
         el.style.setProperty("--spot-y", `${y}%`);
     };
 
-    const handleBtnMove = (e) => {
-        const el = btnRef.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
-        const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
-        el.style.transform = `translate(${x}px, ${y}px)`;
-    };
+    // const handleBtnMove = (e) => {
+    //     const el = btnRef.current;
+    //     if (!el) return;
+    //     const rect = el.getBoundingClientRect();
+    //     const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+    //     const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+    //     el.style.transform = `translate(${x}px, ${y}px)`;
+    // };
 
-    const handleBtnLeave = () => {
-        const el = btnRef.current;
-        if (!el) return;
-        el.style.transform = "translate(0, 0)";
-    };
+    // const handleBtnLeave = () => {
+    //     const el = btnRef.current;
+    //     if (!el) return;
+    //     el.style.transform = "translate(0, 0)";
+    // };
 
     const handleSubmit = async (e) => {
 
@@ -236,16 +239,36 @@ function Login() {
                     </h1>
 
                     <div className="route-line">
-                        <svg viewBox="0 0 320 28" preserveAspectRatio="none">
-                            <path
-                                className="route-path"
-                                d="M0,14 L320,14"
-                            />
-                            <path
-                                className="route-progress"
-                                d="M0,14 L320,14"
-                            />
-                        </svg>
+                        <svg
+    viewBox="0 0 500 28"
+    preserveAspectRatio="none"
+>
+
+    <path
+    className="route-path"
+    d="M10 16 L490 16"
+/>
+
+<path
+    className="route-progress"
+    d="M10 16 L490 16"
+/>
+
+    <circle
+    cx="10"
+    cy="16"
+    r="4"
+    fill="#ff5a1f"
+/>
+
+    <circle
+    cx="490"
+    cy="16"
+    r="4"
+    fill="#ff5a1f"
+/>
+
+</svg>
                         <FaTruckMoving className="route-truck" />
                     </div>
 
@@ -256,20 +279,50 @@ function Login() {
                     </p>
 
                     <div className="login-stats">
-                        <div className="login-stat">
-                            <span className="stat-value">Parcel</span>
-                            <span className="stat-label">Management</span>
-                        </div>
 
-                        <div className="login-stat">
-                            <span className="stat-value">Delivery</span>
-                            <span className="stat-label">Operations</span>
-                        </div>
-                        <div className="login-stat">
-                            <span className="stat-value">Live</span>
-                            <span className="stat-label">Tracking</span>
-                        </div>
-                    </div>
+    <div className="login-stat">
+
+        <FiPackage className="feature-icon" />
+
+        <span className="stat-value">
+            Parcel
+        </span>
+
+        <span className="stat-label">
+            Management
+        </span>
+
+    </div>
+
+    <div className="login-stat">
+
+        <FiTruck className="feature-icon" />
+
+        <span className="stat-value">
+            Delivery
+        </span>
+
+        <span className="stat-label">
+            Operations
+        </span>
+
+    </div>
+
+    <div className="login-stat">
+
+        <FiMapPin className="feature-icon" />
+
+        <span className="stat-value">
+            Live
+        </span>
+
+        <span className="stat-label">
+            Tracking
+        </span>
+
+    </div>
+
+</div>
 
                 </div>
 
@@ -282,7 +335,7 @@ function Login() {
                     <div className="card-spotlight" />
 
                     <div className="manifest-id">
-                        MANIFEST <span>#0192-A</span>
+                        FINAL MILE <span>v1.0</span>
                     </div>
 
                     <h2>
@@ -395,8 +448,8 @@ function Login() {
                             type="submit"
                             ref={btnRef}
                             disabled={isSubmitting}
-                            onMouseMove={handleBtnMove}
-                            onMouseLeave={handleBtnLeave}
+                            //onMouseMove={handleBtnMove}
+                            //onMouseLeave={handleBtnLeave}
                         >
                             {
                                 isSubmitting && (
