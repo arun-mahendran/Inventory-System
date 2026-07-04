@@ -44,20 +44,20 @@ function ChangePassword() {
     el.style.setProperty("--spot-y", `${y}%`);
   };
 
-  const handleBtnMove = (e) => {
-    const el = btnRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
-    const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
-    el.style.transform = `translate(${x}px, ${y}px)`;
-  };
+  // const handleBtnMove = (e) => {
+  //   const el = btnRef.current;
+  //   if (!el) return;
+  //   const rect = el.getBoundingClientRect();
+  //   const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+  //   const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+  //   el.style.transform = `translate(${x}px, ${y}px)`;
+  // };
 
-  const handleBtnLeave = () => {
-    const el = btnRef.current;
-    if (!el) return;
-    el.style.transform = "translate(0, 0)";
-  };
+  // const handleBtnLeave = () => {
+  //   const el = btnRef.current;
+  //   if (!el) return;
+  //   el.style.transform = "translate(0, 0)";
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -110,10 +110,6 @@ function ChangePassword() {
         onMouseMove={handleCardMove}
       >
         <div className="card-spotlight" />
-
-        <div className="cp-manifest-id">
-          SECURITY <span>#REQ-772</span>
-        </div>
 
         <div className="cp-header">
           <div className="cp-badge">
@@ -227,8 +223,8 @@ function ChangePassword() {
             className="cp-btn"
             ref={btnRef}
             disabled={isSubmitting}
-            onMouseMove={handleBtnMove}
-            onMouseLeave={handleBtnLeave}
+            // onMouseMove={handleBtnMove}
+            // onMouseLeave={handleBtnLeave}
           >
             {isSubmitting && <span className="btn-spinner" />}
             {isSubmitting ? "Updating..." : "Update Password"}
