@@ -62,7 +62,7 @@ function PendingDeliveries({
 
             <div className="pending-list">
 
-                {pendingDeliveries.slice(0, 5)
+                {pendingDeliveries.slice(0, 3)
                     .map((parcel) => (
 
                         <div

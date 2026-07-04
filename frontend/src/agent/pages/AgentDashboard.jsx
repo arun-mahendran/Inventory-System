@@ -213,57 +213,41 @@ function AgentDashboard() {
             {successRate}%
           </h2>
 
-          <span className="performance-badge success">
-            Success Today
-          </span>
-
         </div>
 
         <div className="performance-divider"></div>
 
         <div className="performance-stat">
 
-          <h4>Delivered Today</h4>
+          <h4>Delivered&nbsp;Today</h4>
 
           <h2 className="blue">
             {summary.delivered}
           </h2>
 
-          <span className="performance-badge delivered">
-            Completed
-          </span>
-
         </div>
 
         <div className="performance-divider"></div>
 
         <div className="performance-stat">
 
-          <h4>Failed Today</h4>
+          <h4>Failed&nbsp;Today</h4>
 
           <h2 className="red">
             {summary.failed}
           </h2>
 
-          <span className="performance-badge failed">
-            Failed Attempts
-          </span>
-
         </div>
 
         <div className="performance-divider"></div>
 
         <div className="performance-stat">
 
-          <h4>Total Completed</h4>
+          <h4>Total&nbsp;Completed</h4>
 
           <h2 className="dark">
             {totalCompleted}
           </h2>
-
-          <span className="performance-badge total">
-            Overall Today
-          </span>
 
         </div>
 

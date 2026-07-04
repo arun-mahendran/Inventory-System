@@ -23,7 +23,7 @@ function RecentActivities({ parcels }) {
             a.created_at
         )
     )
-    .slice(0, 5);
+    .slice(0, 3);
 
   return (
     <div className="activity-card">
