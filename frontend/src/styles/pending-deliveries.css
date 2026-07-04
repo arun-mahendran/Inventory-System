@@ -1,0 +1,317 @@
+.pending-card{
+
+    background:#ffffff;
+
+    border-radius:24px;
+
+    padding:28px;
+
+    box-shadow:
+        0 12px 35px rgba(15,23,42,.08);
+
+}
+
+.pending-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:24px;
+
+}
+
+.pending-title{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+}
+
+.pending-icon{
+
+    width:64px;
+
+    height:64px;
+
+    border-radius:18px;
+
+    background:#fff2eb;
+
+    color:#ff6b1a;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:32px;
+
+}
+
+.pending-title h2{
+
+    margin:0;
+
+    font-size:22px;
+
+    color:#0f172a;
+
+    font-weight:700;
+
+    line-height:1.15;
+
+}
+
+.pending-title p{
+
+    margin-top:6px;
+
+    color:#64748b;
+
+    font-size:14px;
+
+}
+
+.view-all-btn{
+
+    padding:12px 24px;
+
+    background:white;
+
+    border:1.5px solid #ff6b1a;
+
+    border-radius:12px;
+
+    color:#ff6b1a;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.view-all-btn:hover{
+
+    background:#ff6b1a;
+
+    color:white;
+
+}
+
+.pending-list{
+
+    border-top:1px solid #e2e8f0;
+
+}
+
+.pending-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:18px 0;
+
+    border-bottom:1px solid #eef2f7;
+
+}
+
+.pending-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    flex:1;
+
+    min-width:0;
+
+}
+
+.location-badge{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:50%;
+
+    background:#ff6b1a;
+
+    color:white;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:22px;
+
+}
+
+.pending-left h4{
+
+    margin:0;
+    font-size:14px;
+    color:#0f172a;
+    font-weight:600;
+    margin-bottom:2px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+
+}
+
+.pending-left p{
+
+    margin-top:4px;
+
+    color:#64748b;
+
+    font-size:12px;
+
+}
+
+.pending-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    flex-shrink:0;
+
+}
+
+.tracking-number{
+
+    color:#2563eb;
+
+    font-weight:700;
+
+    font-size:14px;
+
+    letter-spacing:.5px;
+
+}
+
+.status-orange{
+
+    background:#fff2e8;
+
+    color:#ff6b1a;
+
+    padding:8px 16px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.status-blue{
+
+    background:#eef4ff;
+
+    color:#2563eb;
+
+    padding:8px 16px;
+
+    border-radius:999px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.pending-footer{
+
+    text-align:center;
+
+    margin-top:26px;
+
+    color:#ff6b1a;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.pending-footer:hover{
+
+    transform:translateX(5px);
+
+}
+
+.tracking-number-mobile{
+
+    display:none;
+
+    color:#2563eb;
+
+    font-size:13px;
+
+    font-weight:700;
+
+    margin-top:6px;
+
+    letter-spacing:.4px;
+
+}
+
+@media (max-width: 1250px){
+
+    .pending-right{
+
+        gap:12px;
+
+    }
+
+    .tracking-number{
+
+        display:none;
+
+    }
+
+    .tracking-number-mobile{
+
+        display:block;
+
+    }
+
+    .pending-item{
+
+        align-items:flex-start;
+
+    }
+
+    .pending-right{
+
+        flex-direction:column;
+
+        align-items:flex-end;
+
+    }
+
+}

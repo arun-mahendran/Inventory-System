@@ -6,12 +6,14 @@ import AgentLayout from "../components/AgentLayout";
 
 import AgentStatCard from "../components/AgentStatCard";
 
+import PendingDeliveries from "../components/PendingDeliveries";
+
 import { useNavigate } from "react-router-dom";
 
 import "../../styles/agent-dashboard.css";
 
 import {
-  FiTruck,
+  //FiTruck,
   //FiZap,
   FiActivity,
   //FiPackage,
@@ -29,8 +31,6 @@ import {
 
 function AgentDashboard() {
   const navigate = useNavigate();
-
-  const [showAllPending, setShowAllPending] = useState(false);
 
   const fullName = localStorage.getItem("full_name");
 
@@ -126,27 +126,23 @@ function AgentDashboard() {
         </div>
 
         <div className="hero-right">
-
-    <div className="hero-time">
-
-        <h2>
-            {currentTime.toLocaleTimeString([], {
+          <div className="hero-time">
+            <h2>
+              {currentTime.toLocaleTimeString([], {
                 hour: "2-digit",
-                minute: "2-digit"
-            })}
-        </h2>
+                minute: "2-digit",
+              })}
+            </h2>
 
-        <p>
-            {currentTime.toLocaleDateString([], {
+            <p>
+              {currentTime.toLocaleDateString([], {
                 weekday: "short",
                 month: "short",
-                day: "numeric"
-            })}
-        </p>
-
-    </div>
-
-</div>
+                day: "numeric",
+              })}
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="agent-cards">
@@ -328,161 +324,7 @@ function AgentDashboard() {
       >
         {/* LEFT SIDE */}
 
-        <div
-          style={{
-            background: "white",
-            padding: "30px",
-            borderRadius: "24px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "25px",
-            }}
-          >
-            <FiTruck size={34} color="#2563eb" />
-
-            <h2
-              style={{
-                margin: 0,
-                fontSize: "34px",
-              }}
-            >
-              Pending Deliveries
-            </h2>
-          </div>
-
-          <table
-            style={{
-              width: "100%",
-              borderCollapse: "collapse",
-            }}
-          >
-            <thead>
-              <tr>
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "16px",
-                    color: "#64748b",
-                  }}
-                >
-                  Tracking Number
-                </th>
-
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "16px",
-                    color: "#64748b",
-                  }}
-                >
-                  Customer ID
-                </th>
-
-                <th
-                  style={{
-                    textAlign: "left",
-                    padding: "16px",
-                    color: "#64748b",
-                  }}
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {parcels
-                .filter(
-                  (parcel) =>
-                    parcel.status === "Assigned" ||
-                    parcel.status === "OutForDelivery",
-                )
-                .slice(0, showAllPending ? parcels.length : 5)
-
-                .map((parcel) => (
-                  <tr key={parcel.id}>
-                    <td
-                      style={{
-                        padding: "18px 16px",
-                        borderTop: "1px solid #e2e8f0",
-                      }}
-                    >
-                      {parcel.tracking_number}
-                    </td>
-
-                    <td
-                      style={{
-                        padding: "18px 16px",
-                        borderTop: "1px solid #e2e8f0",
-                      }}
-                    >
-                      {parcel.customer_id}
-                    </td>
-
-                    <td
-                      style={{
-                        padding: "18px 16px",
-                        borderTop: "1px solid #e2e8f0",
-                      }}
-                    >
-                      <span
-                        style={{
-                          padding: "8px 14px",
-                          borderRadius: "10px",
-
-                          background:
-                            parcel.status === "Assigned"
-                              ? "#dbeafe"
-                              : "#fef3c7",
-
-                          color:
-                            parcel.status === "Assigned"
-                              ? "#2563eb"
-                              : "#d97706",
-                        }}
-                      >
-                        {parcel.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-
-          {parcels.filter(
-            (parcel) =>
-              parcel.status === "Assigned" ||
-              parcel.status === "OutForDelivery",
-          ).length > 5 && (
-            <div
-              style={{
-                textAlign: "center",
-                marginTop: "20px",
-              }}
-            >
-              <button
-                onClick={() => setShowAllPending(!showAllPending)}
-                style={{
-                  border: "none",
-                  background: "#2563eb",
-                  color: "white",
-                  padding: "12px 24px",
-                  borderRadius: "12px",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                }}
-              >
-                {showAllPending ? "View Less" : "View More"}
-              </button>
-            </div>
-          )}
-        </div>
+        <PendingDeliveries parcels={parcels} />
 
         {/* RIGHT SIDE */}
 

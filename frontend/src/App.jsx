@@ -63,6 +63,8 @@ import SessionTimeout from "./components/SessionTimeout";
 
 import BulkImport from "./admin/pages/BulkImport";
 
+import PendingDeliveriesPage from "./agent/pages/PendingDeliveriesPage";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -282,6 +284,11 @@ function App() {
             <Route
                 path="/bulk-import"
                 element={<BulkImport />}
+            />
+
+            <Route
+                path="/agent/pending-deliveries"
+                element={<PendingDeliveriesPage />}
             />
 
         </Routes>
