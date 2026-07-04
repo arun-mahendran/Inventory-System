@@ -15,23 +15,17 @@ function PendingDeliveriesPage() {
 
   const pendingDeliveries = parcels
     .filter(
-        (parcel) =>
-            parcel.status === "Assigned" ||
-            parcel.status === "OutForDelivery"
+      (parcel) =>
+        parcel.status === "Assigned" || parcel.status === "OutForDelivery",
     )
-    .sort(
-        (a, b) =>
-            new Date(b.created_at) - new Date(a.created_at)
-    );
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
   useEffect(() => {
     const fetchParcels = async () => {
       try {
         const agentId = localStorage.getItem("delivery_agent_id");
 
-        const response = await api.get(
-          `/delivery-agents/${agentId}/parcels`,
-        );
+        const response = await api.get(`/delivery-agents/${agentId}/parcels`);
 
         setParcels(response.data);
       } catch (error) {
@@ -67,32 +61,26 @@ function PendingDeliveriesPage() {
           </div>
         </div>
 
-        {/* Pending Deliveries List */}
-        <div className="pending-page-list">
-          <div className="pending-list">
-            {pendingDeliveries.length === 0 ? (
-              <div className="pending-empty">
-                <FiTruck size={60} />
+        {pendingDeliveries.length === 0 ? (
+          <div className="pending-empty">
+            <FiTruck size={60} />
 
-                <h3>No Pending Deliveries</h3>
+            <h3>No Pending Deliveries</h3>
 
-                <p>You have completed all assigned deliveries.</p>
-              </div>
-            ) : (
-              pendingDeliveries.map((parcel) => (
-                <div
-                  key={parcel.id}
-                  className="pending-item"
-                >
+            <p>You have completed all assigned deliveries.</p>
+          </div>
+        ) : (
+          <div className="pending-page-list">
+            <div className="pending-list">
+              {pendingDeliveries.map((parcel) => (
+                <div key={parcel.id} className="pending-item">
                   <div className="pending-left">
                     <div className="location-badge">
                       <MdLocationOn />
                     </div>
 
                     <div className="customer-details">
-                      <h4>
-                        {parcel.customer_name || "Customer"}
-                      </h4>
+                      <h4>{parcel.customer_name || "Customer"}</h4>
 
                       <p>{parcel.address}</p>
 
@@ -120,10 +108,10 @@ function PendingDeliveriesPage() {
                     </span>
                   </div>
                 </div>
-              ))
-            )}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </AgentLayout>
   );
