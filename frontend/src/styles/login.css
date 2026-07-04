@@ -169,7 +169,7 @@
     font-size: 16px;
     color: var(--signal-orange);
     transform: translate(0, -50%);
-    animation: drive 3.2s linear infinite;
+    animation: drive 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
 }
 
 .login-left p.login-copy {
@@ -203,19 +203,18 @@
 
 .login-stat .stat-value {
     display: block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     color: white;
+    font-family: 'Inter', sans-serif;
 }
 
 .login-stat .stat-label {
     display: block;
-    font-size: 11px;
-    color: var(--slate);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    font-size: 13px;
+    color: #b9c2d4;
     margin-top: 4px;
+    font-weight: 500;
 }
 
 /* ---------- RIGHT PANEL: MANIFEST TICKET ---------- */
@@ -304,12 +303,16 @@
     outline: none;
     font-size: 14.5px;
     font-family: 'Inter', sans-serif;
+    color: var(--slate-dark);
     background: white;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
+/* Firefox dims placeholder to ~54% opacity by default even with a color set —
+   force full opacity so the color below actually shows at full strength */
 .input-group input::placeholder {
-    color: #a1a9b8;
+    color: var(--slate);
+    opacity: 1;
 }
 
 .input-group input:focus {
@@ -433,9 +436,13 @@
     100% { opacity: 1; transform: translateY(0); }
 }
 
+/* truck fades in at the left edge, travels smoothly to the right edge with
+   ease-in-out easing, fades out just before the loop resets — no visible snap */
 @keyframes drive {
-    0% { left: 0%; }
-    100% { left: calc(100% - 16px); }
+    0%   { left: 0%; opacity: 0; }
+    8%   { opacity: 1; }
+    92%  { opacity: 1; }
+    100% { left: calc(100% - 16px); opacity: 0; }
 }
 
 @keyframes dash {

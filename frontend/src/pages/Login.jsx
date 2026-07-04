@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import api from "../api/axios";
 import "../styles/login.css";
 import { useNavigate } from "react-router-dom";
@@ -31,11 +31,92 @@ function Login() {
     const [loginError, setLoginError] =
         useState("");
 
+    const [isSubmitting, setIsSubmitting] =
+        useState(false);
+
+    const leftPanelRef = useRef(null);
+    const cardRef = useRef(null);
+    const btnRef = useRef(null);
+
+    // const [hubCount, setHubCount] = useState(0);
+    // const [agentCount, setAgentCount] = useState(0);
+
+    useEffect(() => {
+
+        const duration = 1000;
+        const start = performance.now() + 400; // wait for panel fade-in
+
+        let frame;
+
+        const tick = (now) => {
+
+            const elapsed = now - start;
+            const progress = Math.min(Math.max(elapsed / duration, 0), 1);
+            //const eased = 1 - Math.pow(1 - progress, 3);
+
+            // setHubCount(Math.round(eased * 24));
+            // setAgentCount(Math.round(eased * 500));
+
+            if (progress < 1) {
+                frame = requestAnimationFrame(tick);
+            }
+
+        };
+
+        frame = requestAnimationFrame(tick);
+
+        return () => cancelAnimationFrame(frame);
+
+    }, []);
+
+    const handleLeftPanelMove = (e) => {
+        const el = leftPanelRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        el.style.setProperty("--tiltX", x.toFixed(3));
+        el.style.setProperty("--tiltY", y.toFixed(3));
+    };
+
+    const handleLeftPanelLeave = () => {
+        const el = leftPanelRef.current;
+        if (!el) return;
+        el.style.setProperty("--tiltX", 0);
+        el.style.setProperty("--tiltY", 0);
+    };
+
+    const handleCardMove = (e) => {
+        const el = cardRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        el.style.setProperty("--spot-x", `${x}%`);
+        el.style.setProperty("--spot-y", `${y}%`);
+    };
+
+    const handleBtnMove = (e) => {
+        const el = btnRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+        const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+        el.style.transform = `translate(${x}px, ${y}px)`;
+    };
+
+    const handleBtnLeave = () => {
+        const el = btnRef.current;
+        if (!el) return;
+        el.style.transform = "translate(0, 0)";
+    };
+
     const handleSubmit = async (e) => {
 
         e.preventDefault();
 
         setLoginError("");
+        setIsSubmitting(true);
 
         try {
 
@@ -117,6 +198,10 @@ function Login() {
                 "Invalid email or password"
             );
 
+        } finally {
+
+            setIsSubmitting(false);
+
         }
 
     };
@@ -127,7 +212,15 @@ function Login() {
 
             <div className="login-container">
 
-                <div className="login-left">
+                <div
+                    className="login-left"
+                    ref={leftPanelRef}
+                    onMouseMove={handleLeftPanelMove}
+                    onMouseLeave={handleLeftPanelLeave}
+                >
+
+                    <span className="ambient-dot d1" />
+                    <span className="ambient-dot d2" />
 
                     <div className="login-eyebrow">
                         Ops Console
@@ -164,12 +257,13 @@ function Login() {
 
                     <div className="login-stats">
                         <div className="login-stat">
-                            <span className="stat-value">24</span>
-                            <span className="stat-label">Hubs</span>
+                            <span className="stat-value">Parcel</span>
+                            <span className="stat-label">Management</span>
                         </div>
+
                         <div className="login-stat">
-                            <span className="stat-value">500+</span>
-                            <span className="stat-label">Agents</span>
+                            <span className="stat-value">Delivery</span>
+                            <span className="stat-label">Operations</span>
                         </div>
                         <div className="login-stat">
                             <span className="stat-value">Live</span>
@@ -179,7 +273,13 @@ function Login() {
 
                 </div>
 
-                <div className="login-card">
+                <div
+                    className="login-card"
+                    ref={cardRef}
+                    onMouseMove={handleCardMove}
+                >
+
+                    <div className="card-spotlight" />
 
                     <div className="manifest-id">
                         MANIFEST <span>#0192-A</span>
@@ -201,7 +301,7 @@ function Login() {
 
                             <input
                                 type="email"
-                                placeholder="Enter email"
+                                placeholder=" "
                                 value={email}
                                 onChange={(e) => {
 
@@ -212,6 +312,8 @@ function Login() {
                                 }}
                                 required
                             />
+
+                            <label>Email</label>
 
                             <FiMail
                                 className="input-icon"
@@ -227,7 +329,7 @@ function Login() {
                                         ? "text"
                                         : "password"
                                 }
-                                placeholder="Password"
+                                placeholder=" "
                                 value={password}
                                 onChange={(e) => {
 
@@ -239,6 +341,8 @@ function Login() {
                                 required
                             />
 
+                            <label>Password</label>
+
                             <FiLock
                                 className="input-icon"
                             />
@@ -246,6 +350,11 @@ function Login() {
                             <button
                                 type="button"
                                 className="password-toggle"
+                                aria-label={
+                                    showPassword
+                                        ? "Hide password"
+                                        : "Show password"
+                                }
 
                                 onClick={() =>
                                     setShowPassword(
@@ -254,11 +363,15 @@ function Login() {
                                 }
                             >
 
-                                {
-                                    showPassword
-                                        ? <FiEyeOff />
-                                        : <FiEye />
-                                }
+                                <span
+                                    className={
+                                        "icon-swap" +
+                                        (showPassword ? " is-visible" : "")
+                                    }
+                                >
+                                    <FiEye className="i-eye" />
+                                    <FiEyeOff className="i-eye-off" />
+                                </span>
 
                             </button>
 
@@ -280,8 +393,21 @@ function Login() {
                         <button
                             className="login-btn"
                             type="submit"
+                            ref={btnRef}
+                            disabled={isSubmitting}
+                            onMouseMove={handleBtnMove}
+                            onMouseLeave={handleBtnLeave}
                         >
-                            Login
+                            {
+                                isSubmitting && (
+                                    <span className="btn-spinner" />
+                                )
+                            }
+                            {
+                                isSubmitting
+                                    ? "Signing in..."
+                                    : "Login"
+                            }
                         </button>
 
                         <div className="agent-cta">
