@@ -12,10 +12,12 @@ import { useNavigate } from "react-router-dom";
 
 import "../../styles/agent-dashboard.css";
 
+import RecentActivities from "../components/RecentActivities";
+
 import {
   //FiTruck,
   //FiZap,
-  FiActivity,
+  //FiActivity,
   //FiPackage,
   //FiSearch,
   //FiClock,
@@ -328,55 +330,7 @@ function AgentDashboard() {
 
         {/* RIGHT SIDE */}
 
-        <div>
-          {/* RECENT ACTIVITIES */}
-
-          <div
-            style={{
-              background: "white",
-              padding: "30px",
-              borderRadius: "24px",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-              height: "100%",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "12px",
-                marginBottom: "20px",
-              }}
-            >
-              <FiActivity size={30} color="#22c55e" />
-
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: "30px",
-                }}
-              >
-                Recent Activities
-              </h2>
-            </div>
-
-            {parcels.slice(0, 5).map((parcel) => (
-              <div
-                key={parcel.id}
-                style={{
-                  padding: "16px 0",
-                  borderBottom: "1px solid #e2e8f0",
-                }}
-              >
-                {parcel.status === "Delivered"
-                  ? `✅ ${parcel.tracking_number} delivered successfully`
-                  : parcel.status === "FailedDelivery"
-                    ? `❌ ${parcel.tracking_number} delivery failed`
-                    : `🚚 ${parcel.tracking_number} currently ${parcel.status}`}
-              </div>
-            ))}
-          </div>
-        </div>
+        <RecentActivities parcels={parcels} />
       </div>
     </AgentLayout>
   );
