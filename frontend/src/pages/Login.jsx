@@ -229,7 +229,7 @@ function Login() {
               </span>
               <div className="help-text">
                 <strong>Need help?</strong>
-                <span>Contact our HR team for assistance.</span>
+                <span>Interested in becoming a Delivery Agent?</span>
               </div>
               <a
                 className="help-link"

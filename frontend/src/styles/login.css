@@ -189,19 +189,28 @@
 
 .login-illustration {
     position: relative;
-    margin: auto 0 22px;
-    width: 100%;
-    border-radius: 16px;
+    margin-top: auto;
+    margin-bottom: -1px;
+    width: calc(100% + 88px);
+    margin-left: -44px;
+    line-height: 0;
     overflow: hidden;
-    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.35);
 }
 
 .login-illustration img {
     width: 100%;
     height: auto;
     display: block;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
+}
+
+.login-illustration::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+        linear-gradient(to right, var(--ink-navy-2) 0%, transparent 14%, transparent 86%, var(--ink-navy-2) 100%),
+        linear-gradient(to bottom, var(--ink-navy-2) 0%, transparent 18%, transparent 82%, var(--ink-navy-2) 100%);
 }
 
 /* ---------- RIGHT PANEL: LOGIN CARD ---------- */
