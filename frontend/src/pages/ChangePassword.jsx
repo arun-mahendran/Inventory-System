@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import api from "../api/axios";
+import "../styles/change-password.css";
 
-import { FiLock, FiEye, FiEyeOff, FiShield } from "react-icons/fi";
+import { FiLock, FiEye, FiEyeOff, FiShield, FiCheck, FiAlertCircle } from "react-icons/fi";
 
 import { toast } from "react-toastify";
 
@@ -24,6 +25,40 @@ function ChangePassword() {
 
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const cardRef = useRef(null);
+  const btnRef = useRef(null);
+
+  const hasMinLength = newPassword.length >= 8;
+  const passwordsMatch =
+    confirmPassword.length > 0 && newPassword === confirmPassword;
+
+  const handleCardMove = (e) => {
+    const el = cardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    el.style.setProperty("--spot-x", `${x}%`);
+    el.style.setProperty("--spot-y", `${y}%`);
+  };
+
+  const handleBtnMove = (e) => {
+    const el = btnRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const x = (e.clientX - rect.left - rect.width / 2) * 0.25;
+    const y = (e.clientY - rect.top - rect.height / 2) * 0.4;
+    el.style.transform = `translate(${x}px, ${y}px)`;
+  };
+
+  const handleBtnLeave = () => {
+    const el = btnRef.current;
+    if (!el) return;
+    el.style.transform = "translate(0, 0)";
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -39,6 +74,8 @@ function ChangePassword() {
 
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       await api.patch(`/users/${userId}/change-password`, {
@@ -60,291 +97,141 @@ function ChangePassword() {
       }, 2000);
     } catch (error) {
       toast.error("Failed to change password");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background:
-          "linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #2563eb 100%)",
-      }}
-    >
+    <div className="cp-page">
       <div
-        style={{
-          width: "480px",
-
-          background: "rgba(255,255,255,0.95)",
-
-          backdropFilter: "blur(12px)",
-
-          padding: "45px",
-
-          borderRadius: "30px",
-
-          boxShadow: "0 25px 50px rgba(0,0,0,0.15)",
-
-          border: "1px solid rgba(255,255,255,0.4)",
-        }}
+        className="cp-card"
+        ref={cardRef}
+        onMouseMove={handleCardMove}
       >
-        <div
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-          }}
-        >
-          <div
-            style={{
-              width: "80px",
-              height: "80px",
+        <div className="card-spotlight" />
 
-              borderRadius: "50%",
+        <div className="cp-manifest-id">
+          SECURITY <span>#REQ-772</span>
+        </div>
 
-              background: "linear-gradient(135deg,#2563eb,#3b82f6)",
-
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-
-              margin: "0 auto 20px auto",
-            }}
-          >
-            <FiShield size={40} color="white" />
+        <div className="cp-header">
+          <div className="cp-badge">
+            <FiShield size={30} color="white" />
           </div>
 
-          <h1
-            style={{
-              marginBottom: "10px",
-              color: "#0f172a",
-            }}
-          >
-            Change Password
-          </h1>
+          <div className="cp-eyebrow">Account Security</div>
 
-          <p
-            style={{
-              color: "#64748b",
-              fontSize: "15px",
-            }}
-          >
+          <h1>Change Password</h1>
+
+          <p className="cp-sub">
             Please change your temporary password to continue.
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div
-            style={{
-              marginBottom: "20px",
-            }}
-          >
-            <label
-              style={{
-                display: "block",
-                marginBottom: "8px",
-                fontWeight: "600",
-                color: "#334155",
+          <div className="input-group">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder=" "
+              value={newPassword}
+              className={passwordError ? "has-error" : ""}
+              onChange={(e) => {
+                const password = e.target.value;
+
+                setNewPassword(password);
+
+                if (password.length > 0 && password.length < 8) {
+                  setPasswordError(
+                    "Password must contain at least 8 characters",
+                  );
+                } else {
+                  setPasswordError("");
+                }
               }}
+              required
+            />
+
+            <label>New Password</label>
+
+            <FiLock className="input-icon" />
+
+            <button
+              type="button"
+              className="password-toggle"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              onClick={() => setShowPassword(!showPassword)}
             >
-              New Password
-            </label>
-
-            <div
-              style={{
-                position: "relative",
-              }}
-            >
-              <FiLock
-                size={18}
-                color="#64748b"
-                style={{
-                  position: "absolute",
-                  left: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
-              />
-
-              <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => {
-                  const password = e.target.value;
-
-                  setNewPassword(password);
-
-                  if (password.length > 0 && password.length < 8) {
-                    setPasswordError(
-                      "Password must contain at least 8 characters",
-                    );
-                  } else {
-                    setPasswordError("");
-                  }
-                }}
-                required
-                style={{
-                  width: "100%",
-
-                  padding: "14px 50px 14px 45px",
-
-                  borderRadius: "14px",
-
-                  border: passwordError
-                    ? "2px solid #ef4444"
-                    : "2px solid #e2e8f0",
-
-                  fontSize: "15px",
-
-                  boxSizing: "border-box",
-
-                  outline: "none",
-
-                  transition: "all 0.3s ease",
-                }}
-              />
-
-              <div
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: "absolute",
-                  right: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-
-                  cursor: "pointer",
-
-                  color: "#64748b",
-                }}
-              >
-                {showPassword ? <FiEyeOff /> : <FiEye />}
-              </div>
-            </div>
-
-            {passwordError && (
-              <p
-                style={{
-                  color: "#ef4444",
-                  fontSize: "14px",
-                  marginTop: "8px",
-                  marginBottom: 0,
-                  fontWeight: "500",
-                }}
-              >
-                {passwordError}
-              </p>
-            )}
+              <span className={"icon-swap" + (showPassword ? " is-visible" : "")}>
+                <FiEye className="i-eye" />
+                <FiEyeOff className="i-eye-off" />
+              </span>
+            </button>
           </div>
 
-          <div
-            style={{
-              marginBottom: "30px",
-            }}
-          >
-            <label
-              style={{
-                display: "block",
-                marginBottom: "8px",
-                fontWeight: "600",
-                color: "#334155",
-              }}
+          {passwordError && (
+            <p className="field-error">
+              <FiAlertCircle size={14} />
+              {passwordError}
+            </p>
+          )}
+
+          <div className="input-group">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder=" "
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+
+            <label>Confirm Password</label>
+
+            <FiLock className="input-icon" />
+
+            <button
+              type="button"
+              className="password-toggle"
+              aria-label={
+                showConfirmPassword ? "Hide password" : "Show password"
+              }
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
-              Confirm Password
-            </label>
-
-            <div
-              style={{
-                position: "relative",
-              }}
-            >
-              <FiLock
-                size={18}
-                color="#64748b"
-                style={{
-                  position: "absolute",
-                  left: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
-              />
-
-              <input
-                type={showConfirmPassword ? "text" : "password"}
-                placeholder="Confirm password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                style={{
-                  width: "100%",
-
-                  padding: "14px 50px 14px 45px",
-
-                  borderRadius: "14px",
-
-                  border: "2px solid #e2e8f0",
-
-                  fontSize: "15px",
-
-                  boxSizing: "border-box",
-
-                  transition: "all 0.3s ease",
-                }}
-              />
-
-              <div
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                style={{
-                  position: "absolute",
-                  right: "15px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-
-                  cursor: "pointer",
-
-                  color: "#64748b",
-                }}
+              <span
+                className={"icon-swap" + (showConfirmPassword ? " is-visible" : "")}
               >
-                {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-              </div>
+                <FiEye className="i-eye" />
+                <FiEyeOff className="i-eye-off" />
+              </span>
+            </button>
+          </div>
+
+          <div className="cp-requirements">
+            <div className={"cp-req" + (hasMinLength ? " met" : "")}>
+              <span className="req-dot">
+                <FiCheck />
+              </span>
+              At least 8 characters
+            </div>
+
+            <div className={"cp-req" + (passwordsMatch ? " met" : "")}>
+              <span className="req-dot">
+                <FiCheck />
+              </span>
+              Passwords match
             </div>
           </div>
 
           <button
             type="submit"
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-            style={{
-              width: "100%",
-
-              padding: "15px",
-
-              background: "linear-gradient(135deg,#2563eb,#3b82f6)",
-
-              color: "white",
-
-              border: "none",
-
-              borderRadius: "14px",
-
-              fontSize: "16px",
-
-              fontWeight: "600",
-
-              cursor: "pointer",
-
-              boxShadow: "0 12px 25px rgba(37,99,235,0.3)",
-
-              transition: "all 0.3s ease",
-            }}
+            className="cp-btn"
+            ref={btnRef}
+            disabled={isSubmitting}
+            onMouseMove={handleBtnMove}
+            onMouseLeave={handleBtnLeave}
           >
-            Update Password
+            {isSubmitting && <span className="btn-spinner" />}
+            {isSubmitting ? "Updating..." : "Update Password"}
           </button>
         </form>
       </div>
