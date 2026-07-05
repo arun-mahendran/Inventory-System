@@ -30,6 +30,7 @@ import {
   FiChevronDown,
   FiBell,
   FiAlertTriangle,
+  FiInbox,
 } from "react-icons/fi";
 
 import { HiOutlineSparkles } from "react-icons/hi2";
@@ -73,6 +74,18 @@ const PIE_COLORS = { Delivered: "#22C55E", Pending: "#F59E0B", Failed: "#EF4444"
 
 function formatDateShort(date) {
   return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short" });
+}
+
+function EmptyState({ title, subtitle, height = 300 }) {
+  return (
+    <div style={{ ...styles.emptyStateBox, minHeight: height }}>
+      <div style={styles.emptyStateIconWrap}>
+        <FiInbox size={26} color="#94A3B8" />
+      </div>
+      <h3 style={styles.emptyStateTitle}>{title}</h3>
+      <p style={styles.emptyStateSubtitle}>{subtitle}</p>
+    </div>
+  );
 }
 
 function Analytics() {
@@ -209,6 +222,19 @@ function Analytics() {
 
   const maxZoneParcels = Math.max(1, ...topZones.map((z) => z.parcels || 0));
   const visibleZones = showAllZones ? topZones : topZones.slice(0, 5);
+
+  const hasTrendData =
+    trendData.length > 0 && trendData.some((d) => (d.parcels || 0) > 0);
+
+  const hasStatusData = stats.totalParcels > 0;
+
+  const hasZoneData = topZones.length > 0;
+
+  const isFiltered = Boolean(dateRange.start && dateRange.end);
+
+  const emptySubtitle = isFiltered
+    ? "There are no delivered parcels for the selected date range."
+    : "There are no delivered parcels to show yet.";
 
   const exportReport = () => {
     const rows = [
@@ -376,63 +402,67 @@ function Analytics() {
               </div>
             </div>
 
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={trendData}>
-                <defs>
-                  <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+            {hasTrendData ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={trendData}>
+                  <defs>
+                    <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#2563EB" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
 
-                <CartesianGrid stroke="#F1F5F9" vertical={false} />
+                  <CartesianGrid stroke="#F1F5F9" vertical={false} />
 
-                <XAxis
-                  dataKey="date"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#94A3B8", fontSize: 12.5 }}
-                />
+                  <XAxis
+                    dataKey="date"
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#94A3B8", fontSize: 12.5 }}
+                  />
 
-                <YAxis
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{ fill: "#94A3B8", fontSize: 12.5 }}
-                />
+                  <YAxis
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: "#94A3B8", fontSize: 12.5 }}
+                  />
 
-                <Area
-                  type="monotone"
-                  dataKey="parcels"
-                  stroke="none"
-                  fill="url(#trendGradient)"
-                />
+                  <Area
+                    type="monotone"
+                    dataKey="parcels"
+                    stroke="none"
+                    fill="url(#trendGradient)"
+                  />
 
-                <Tooltip
-                  content={({ active, payload, label }) => {
-                    if (active && payload && payload.length) {
-                      return (
-                        <div style={styles.tooltipCard}>
-                          <p style={styles.tooltipDate}>Date: {label}</p>
-                          <p style={styles.tooltipValue}>
-                            {payload[0].value} Parcels
-                          </p>
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                />
+                  <Tooltip
+                    content={({ active, payload, label }) => {
+                      if (active && payload && payload.length) {
+                        return (
+                          <div style={styles.tooltipCard}>
+                            <p style={styles.tooltipDate}>Date: {label}</p>
+                            <p style={styles.tooltipValue}>
+                              {payload[0].value} Parcels
+                            </p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
 
-                <Line
-                  type="monotone"
-                  dataKey="parcels"
-                  stroke="#2563EB"
-                  strokeWidth={3.5}
-                  dot={{ r: 5, strokeWidth: 2, fill: "white", stroke: "#2563EB" }}
-                  activeDot={{ r: 7 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+                  <Line
+                    type="monotone"
+                    dataKey="parcels"
+                    stroke="#2563EB"
+                    strokeWidth={3.5}
+                    dot={{ r: 5, strokeWidth: 2, fill: "white", stroke: "#2563EB" }}
+                    activeDot={{ r: 7 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <EmptyState title="No deliveries found" subtitle={emptySubtitle} />
+            )}
           </div>
 
           <div style={styles.card}>
@@ -443,54 +473,64 @@ function Analytics() {
               <h2 style={styles.cardTitle}>Delivery Status</h2>
             </div>
 
-            <div style={styles.donutWrap}>
-              <ResponsiveContainer width="100%" height={220}>
-                <PieChart>
-                  <Pie
-                    data={pieData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={95}
-                    paddingAngle={4}
-                    dataKey="value"
-                    stroke="none"
-                  >
-                    {pieData.map((entry) => (
-                      <Cell key={entry.name} fill={PIE_COLORS[entry.name]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+            {hasStatusData ? (
+              <>
+                <div style={styles.donutWrap}>
+                  <ResponsiveContainer width="100%" height={220}>
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={65}
+                        outerRadius={95}
+                        paddingAngle={4}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {pieData.map((entry) => (
+                          <Cell key={entry.name} fill={PIE_COLORS[entry.name]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
 
-              <div style={styles.donutCenter}>
-                <span style={styles.donutCenterValue}>
-                  {stats.totalParcels}
-                </span>
-                <span style={styles.donutCenterLabel}>Total</span>
-              </div>
-            </div>
-
-            <div style={styles.legendList}>
-              {pieData.map((entry) => (
-                <div key={entry.name} style={styles.legendRow}>
-                  <span style={styles.legendLeft}>
-                    <span
-                      style={{
-                        ...styles.legendDot,
-                        background: PIE_COLORS[entry.name],
-                      }}
-                    />
-                    {entry.name}
-                  </span>
-                  <span style={styles.legendValue}>
-                    {entry.value} (
-                    {((entry.value / pieTotal) * 100).toFixed(1)}%)
-                  </span>
+                  <div style={styles.donutCenter}>
+                    <span style={styles.donutCenterValue}>
+                      {stats.totalParcels}
+                    </span>
+                    <span style={styles.donutCenterLabel}>Total</span>
+                  </div>
                 </div>
-              ))}
-            </div>
+
+                <div style={styles.legendList}>
+                  {pieData.map((entry) => (
+                    <div key={entry.name} style={styles.legendRow}>
+                      <span style={styles.legendLeft}>
+                        <span
+                          style={{
+                            ...styles.legendDot,
+                            background: PIE_COLORS[entry.name],
+                          }}
+                        />
+                        {entry.name}
+                      </span>
+                      <span style={styles.legendValue}>
+                        {entry.value} (
+                        {((entry.value / pieTotal) * 100).toFixed(1)}%)
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </>
+            ) : (
+              <EmptyState
+                title="No deliveries found"
+                subtitle={emptySubtitle}
+                height={280}
+              />
+            )}
           </div>
         </div>
 
@@ -522,23 +562,33 @@ function Analytics() {
             </div>
 
             <div style={styles.zonesGrid}>
-              {visibleZones.map((zone) => (
-                <div key={zone.pincode} style={styles.zoneCard}>
-                  <span style={styles.zonePincode}>{zone.pincode}</span>
-                  <div style={styles.zoneBarTrack}>
-                    <div
-                      style={{
-                        ...styles.zoneBarFill,
-                        width: `${(zone.parcels / maxZoneParcels) * 100}%`,
-                      }}
-                    />
+              {hasZoneData ? (
+                visibleZones.map((zone) => (
+                  <div key={zone.pincode} style={styles.zoneCard}>
+                    <span style={styles.zonePincode}>{zone.pincode}</span>
+                    <div style={styles.zoneBarTrack}>
+                      <div
+                        style={{
+                          ...styles.zoneBarFill,
+                          width: `${(zone.parcels / maxZoneParcels) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span style={styles.zoneCount}>{zone.parcels}</span>
                   </div>
-                  <span style={styles.zoneCount}>{zone.parcels}</span>
+                ))
+              ) : (
+                <div style={{ gridColumn: "1 / -1" }}>
+                  <EmptyState
+                    title="No zone data found"
+                    subtitle={
+                      isFiltered
+                        ? "There are no delivery zones for the selected date range."
+                        : "There are no delivery zones to show yet."
+                    }
+                    height={200}
+                  />
                 </div>
-              ))}
-
-              {visibleZones.length === 0 && (
-                <p style={styles.emptyZonesText}>No zone data available.</p>
               )}
             </div>
           </div>
@@ -992,6 +1042,38 @@ const styles = {
     gridColumn: "1 / -1",
     textAlign: "center",
     padding: "20px 0",
+  },
+  emptyStateBox: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    textAlign: "center",
+    padding: "24px",
+    gap: "6px",
+  },
+  emptyStateIconWrap: {
+    width: "56px",
+    height: "56px",
+    borderRadius: "50%",
+    background: "#F1F5F9",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: "6px",
+  },
+  emptyStateTitle: {
+    margin: 0,
+    fontSize: "15px",
+    fontWeight: 700,
+    color: "#334155",
+  },
+  emptyStateSubtitle: {
+    margin: 0,
+    fontSize: "13px",
+    color: "#94A3B8",
+    maxWidth: "280px",
+    lineHeight: 1.5,
   },
   insightsCard: {
     background: "#FAF9FF",
