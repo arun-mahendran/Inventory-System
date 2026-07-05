@@ -8,7 +8,25 @@ import {
   FiFileText,
   FiPackage,
   FiSearch,
+  FiX,
 } from "react-icons/fi";
+
+const STATUS_BADGE = {
+  Delivered: { bg: "#DCFCE7", fg: "#15803D" },
+  FailedDelivery: { bg: "#FEE2E2", fg: "#B91C1C" },
+  OutForDelivery: { bg: "#EDE9FE", fg: "#6D28D9" },
+  Assigned: { bg: "#FEF3C7", fg: "#B45309" },
+  Received: { bg: "#FEF3C7", fg: "#B45309" },
+};
+
+const STATUS_LABEL = {
+  OutForDelivery: "Out For Delivery",
+  FailedDelivery: "Failed Delivery",
+};
+
+function getStatusBadge(status) {
+  return STATUS_BADGE[status] || STATUS_BADGE.Received;
+}
 
 function Tracking() {
   const [trackingNumber, setTrackingNumber] = useState("");
@@ -33,541 +51,670 @@ function Tracking() {
     }
   };
 
+  const badge = parcel ? getStatusBadge(parcel.status) : null;
+
+  const progressWidth = parcel
+    ? parcel.status === "Delivered"
+      ? "100%"
+      : parcel.status === "FailedDelivery"
+        ? parcel.out_for_delivery_at
+          ? "75%"
+          : "50%"
+        : parcel.status === "OutForDelivery"
+          ? "75%"
+          : parcel.status === "Assigned"
+            ? "50%"
+            : "25%"
+    : "0%";
+
   return (
     <>
       <MainLayout>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            marginBottom: "20px",
-          }}
-        >
-          <FiPackage size={36} color="#2563eb" />
-
-          <h1
-            style={{
-              margin: 0,
-            }}
-          >
-            Parcel Tracking
-          </h1>
-        </div>
-
-        <div
-          style={{
-            background: "white",
-            padding: "35px",
-            borderRadius: "24px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.06)",
-            marginTop: "30px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "16px",
-              alignItems: "center",
-            }}
-          >
-            <input
-              type="text"
-              placeholder="Enter Tracking Number"
-              value={trackingNumber}
-              onChange={(e) => {
-                const value = e.target.value;
-                setTrackingNumber(value);
-                setError("");
-                setParcel(null);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  searchParcel();
-                }
-              }}
-              style={{
-                flex: 1,
-                padding: "14px 18px",
-                borderRadius: "16px",
-                border: "2px solid #e2e8f0",
-                fontSize: "16px",
-                outline: "none",
-                transition: "0.3s ease",
-              }}
-            />
-
-            <button
-              onClick={searchParcel}
-              style={{
-                background: "linear-gradient(135deg,#2563eb,#3b82f6)",
-                color: "white",
-                border: "none",
-                padding: "14px 24px",
-                borderRadius: "18px",
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                fontSize: "16px",
-                fontWeight: "600",
-              }}
-            >
-              <FiSearch size={18} />
-              Search
-            </button>
+        <div style={styles.page}>
+          {/* Header */}
+          <div style={styles.headerRow}>
+            <div style={styles.headerIconBox}>
+              <FiPackage size={22} color="#2563EB" />
+            </div>
+            <h1 style={styles.title}>Parcel Tracking</h1>
           </div>
-        </div>
 
-        {error && (
-          <div
-            style={{
-              marginTop: "30px",
-              background: "white",
-              borderRadius: "20px",
-              padding: "50px 30px",
-              textAlign: "center",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-            }}
-          >
-            <FiSearch
-              size={60}
-              color="#ef4444"
-              style={{
-                marginBottom: "20px",
-              }}
-            />
-
-            <h2
-              style={{
-                color: "#dc2626",
-                marginBottom: "10px",
-              }}
-            >
-              Parcel Not Found
-            </h2>
-
-            <p
-              style={{
-                color: "#64748b",
-                fontSize: "16px",
-                margin: 0,
-              }}
-            >
-              No parcel found with tracking number
-            </p>
-
-            <p
-              style={{
-                color: "#2563eb",
-                fontWeight: "600",
-                fontSize: "18px",
-                marginTop: "10px",
-              }}
-            >
-              {trackingNumber}
-            </p>
-          </div>
-        )}
-
-        {parcel && (
-          <div
-            style={{
-              display: "grid",
-              gap: "25px",
-              marginTop: "30px",
-            }}
-          >
-            {/* TRACKING RESULT CARD */}
-            <div
-              style={{
-                background: "white",
-                padding: "30px",
-                borderRadius: "20px",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  marginBottom: "25px",
-                }}
-              >
-                <div
-                  style={{
-                    width: "52px",
-                    height: "52px",
-                    borderRadius: "14px",
-                    background: "#dbeafe",
-
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
+          {/* Search card */}
+          <div style={styles.searchCard}>
+            <div style={styles.searchRow}>
+              <div style={styles.searchInputWrap}>
+                <FiSearch size={18} color="#94A3B8" style={styles.searchIcon} />
+                <input
+                  type="text"
+                  placeholder="Enter Tracking Number"
+                  value={trackingNumber}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setTrackingNumber(value);
+                    setError("");
+                    setParcel(null);
                   }}
-                >
-                  <FiPackage size={26} color="#2563eb" />
-                </div>
-
-                <h2
-                  style={{
-                    margin: 0,
-                    color: "#0f172a",
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      searchParcel();
+                    }
                   }}
-                >
-                  Tracking Result
-                </h2>
+                  style={styles.searchInput}
+                />
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "220px 1fr",
-                  rowGap: "18px",
-                  fontSize: "17px",
-                  alignItems: "center",
-                }}
+              <button
+                onClick={searchParcel}
+                style={styles.searchButton}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.background = "#1D4ED8")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.background = "#2563EB")
+                }
               >
-                <b>Tracking Number</b>
-                <span
-                  style={{
-                    fontWeight: "600",
-                    color: "#2563eb",
-                  }}
-                >
-                  {parcel.tracking_number}
+                <FiSearch size={17} />
+                Search
+              </button>
+            </div>
+          </div>
+
+          {/* Not found */}
+          {error && (
+            <div style={styles.notFoundCard}>
+              <div style={styles.notFoundIconBox}>
+                <FiX size={32} color="#EF4444" />
+              </div>
+
+              <h2 style={styles.notFoundTitle}>Parcel Not Found</h2>
+
+              <p style={styles.notFoundText}>
+                No parcel found with tracking number
+              </p>
+
+              <p style={styles.notFoundTracking}>{trackingNumber}</p>
+            </div>
+          )}
+
+          {/* Empty state before any search */}
+          {!parcel && !error && (
+            <div style={styles.emptyCard}>
+              <div style={styles.emptyIconBox}>
+                <FiPackage size={40} color="#93C5FD" />
+              </div>
+
+              <h2 style={styles.emptyTitle}>Track a Parcel</h2>
+
+              <p style={styles.emptyText}>
+                Enter a tracking number above to view its live delivery
+                status, timeline, and agent details.
+              </p>
+
+              <div style={styles.emptyChipsRow}>
+                <span style={styles.emptyChip}>
+                  <FiSearch size={13} /> Search by tracking number
                 </span>
-
-                <b>Status</b>
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "fit-content",
-                    padding: "6px 14px",
-                    borderRadius: "999px",
-                    fontWeight: "600",
-                    color: "white",
-                    background:
-                      parcel.status === "Delivered"
-                        ? "#22c55e"
-                        : parcel.status === "FailedDelivery"
-                          ? "#ef4444"
-                          : parcel.status === "OutForDelivery"
-                            ? "#8b5cf6"
-                            : "#f59e0b",
-                  }}
-                >
-                  {parcel.status === "OutForDelivery"
-                    ? "Out For Delivery"
-                    : parcel.status === "FailedDelivery"
-                      ? "Failed Delivery"
-                      : parcel.status}
+                <span style={styles.emptyChip}>
+                  <FiClock size={13} /> View delivery timeline
                 </span>
-
-                <b>Customer ID</b>
-                <span>{parcel.customer_id}</span>
-
-                <b>Assigned Agent ID</b>
-                <span>{parcel.assigned_agent_id || "-"}</span>
-
-                {parcel.status === "FailedDelivery" &&
-                  parcel.failure_reason && (
-                    <>
-                      <b>Failure Reason</b>
-                      <span
-                        style={{
-                          color: "#dc2626",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {parcel.failure_reason}
-                      </span>
-                    </>
-                  )}
-
-                <b>Created At</b>
-                <span>{new Date(parcel.created_at).toLocaleString()}</span>
+                <span style={styles.emptyChip}>
+                  <FiFileText size={13} /> See delivery notes
+                </span>
               </div>
             </div>
+          )}
 
-            {/* DELIVERY PROGRESS CARD */}
-            <div
-              style={{
-                background: "white",
-                padding: "30px",
-                borderRadius: "20px",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  marginBottom: "35px",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "12px",
-                  }}
-                >
-                  <FiClock size={30} color="#f59e0b" />
-                  <h2 style={{ margin: 0 }}>Delivery Progress</h2>
+          {parcel && (
+            <div style={styles.resultsGrid}>
+              {/* TRACKING RESULT CARD */}
+              <div style={styles.card}>
+                <div style={styles.cardHeaderRow}>
+                  <div style={styles.cardIconBox}>
+                    <FiPackage size={24} color="#2563EB" />
+                  </div>
+                  <h2 style={styles.cardTitle}>Tracking Result</h2>
                 </div>
 
-                <span
+                <div style={styles.infoGrid}>
+                  <span style={styles.infoLabel}>Tracking Number</span>
+                  <span style={styles.trackingValue}>
+                    {parcel.tracking_number}
+                  </span>
+
+                  <span style={styles.infoLabel}>Status</span>
+                  <span
+                    style={{
+                      ...styles.statusPill,
+                      background: badge.bg,
+                      color: badge.fg,
+                    }}
+                  >
+                    {STATUS_LABEL[parcel.status] || parcel.status}
+                  </span>
+
+                  <span style={styles.infoLabel}>Customer ID</span>
+                  <span style={styles.infoValue}>{parcel.customer_id}</span>
+
+                  <span style={styles.infoLabel}>Assigned Agent ID</span>
+                  <span style={styles.infoValue}>
+                    {parcel.assigned_agent_id || "-"}
+                  </span>
+
+                  {parcel.status === "FailedDelivery" &&
+                    parcel.failure_reason && (
+                      <>
+                        <span style={styles.infoLabel}>Failure Reason</span>
+                        <span style={styles.failureValue}>
+                          {parcel.failure_reason}
+                        </span>
+                      </>
+                    )}
+
+                  <span style={styles.infoLabel}>Created At</span>
+                  <span style={styles.infoValue}>
+                    {new Date(parcel.created_at).toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* DELIVERY PROGRESS CARD */}
+              <div style={styles.card}>
+                <div style={styles.progressHeaderRow}>
+                  <div style={styles.progressHeaderLeft}>
+                    <div style={styles.progressIconBox}>
+                      <FiClock size={22} color="#B45309" />
+                    </div>
+                    <h2 style={styles.cardTitle}>Delivery Progress</h2>
+                  </div>
+
+                  <span
+                    style={{
+                      ...styles.statusPillLg,
+                      background: badge.bg,
+                      color: badge.fg,
+                    }}
+                  >
+                    {STATUS_LABEL[parcel.status] || parcel.status}
+                  </span>
+                </div>
+
+                <h3
                   style={{
-                    padding: "12px 24px",
-                    borderRadius: "999px",
-                    fontWeight: "600",
-                    background:
-                      parcel.status === "Delivered"
-                        ? "#dcfce7"
-                        : parcel.status === "FailedDelivery"
-                          ? "#fee2e2"
-                          : "#dbeafe",
+                    ...styles.progressHeadline,
                     color:
                       parcel.status === "Delivered"
-                        ? "#166534"
+                        ? "#16A34A"
                         : parcel.status === "FailedDelivery"
-                          ? "#991b1b"
-                          : "#1d4ed8",
+                          ? "#DC2626"
+                          : "#2563EB",
                   }}
                 >
-                  {parcel.status}
-                </span>
-              </div>
+                  {parcel.status === "Delivered"
+                    ? "Parcel Delivered Successfully"
+                    : parcel.status === "FailedDelivery"
+                      ? "Delivery Attempt Failed"
+                      : parcel.status === "OutForDelivery"
+                        ? "Parcel is out for delivery"
+                        : parcel.status === "Assigned"
+                          ? "Parcel assigned to delivery agent"
+                          : "Parcel order has been created"}
+                </h3>
 
-              <h2
-                style={{
-                  color:
-                    parcel.status === "Delivered"
-                      ? "#16a34a"
-                      : parcel.status === "FailedDelivery"
-                        ? "#dc2626"
-                        : "#2563eb",
+                <div style={styles.stepperWrap}>
+                  <div style={styles.stepperTrack} />
 
-                  marginBottom: "20px",
-                }}
-              >
-                {parcel.status === "Delivered"
-                  ? "Parcel Delivered Successfully"
-                  : parcel.status === "FailedDelivery"
-                    ? "Delivery Attempt Failed"
-                    : parcel.status === "OutForDelivery"
-                      ? "Parcel is out for delivery"
-                      : parcel.status === "Assigned"
-                        ? "Parcel assigned to delivery agent"
-                        : "Parcel order has been created"}
-              </h2>
-
-              <div
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  marginBottom: "50px",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "28px",
-                    left: "0",
-                    right: "0",
-                    height: "6px",
-                    background: "#e2e8f0",
-                    zIndex: 1,
-                  }}
-                />
-
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "28px",
-                    left: "0",
-                    height: "6px",
-
-                    width:
-                      parcel.status === "Delivered"
-                        ? "100%"
-                        : parcel.status === "FailedDelivery"
-                          ? parcel.out_for_delivery_at
-                            ? "75%"
-                            : "50%"
-                          : parcel.status === "OutForDelivery"
-                            ? "75%"
-                            : parcel.status === "Assigned"
-                              ? "50%"
-                              : "25%",
-
-                    background: "#22c55e",
-
-                    zIndex: 2,
-                    transition: "0.4s ease",
-                  }}
-                />
-
-                {parcel.status === "FailedDelivery" &&
-                  parcel.out_for_delivery_at && (
-                    <div
-                      style={{
-                        position: "absolute",
-
-                        top: "28px",
-
-                        left: "75%", // starts after Out For Delivery
-
-                        width: "25%", // goes till Delivered
-
-                        height: "6px",
-
-                        background: "#ef4444",
-
-                        zIndex: 3,
-                      }}
-                    />
-                  )}
-
-                {[
-                  {
-                    title: "Ordered",
-                    date: parcel.created_at,
-                  },
-                  {
-                    title: "Assigned",
-                    date: parcel.created_at,
-                  },
-                  {
-                    title: "Out For Delivery",
-                    date: parcel.out_for_delivery_at,
-                  },
-                  {
-                    title: "Delivered",
-                    date: parcel.delivered_at,
-                  },
-                ].map((step, index) => (
                   <div
-                    key={index}
                     style={{
-                      zIndex: 2,
-                      textAlign: "center",
-                      width: "180px",
-                      flex: 1,
+                      ...styles.stepperFill,
+                      width: progressWidth,
                     }}
-                  >
-                    <div
-                      style={{
-                        width: "56px",
-                        height: "56px",
-
-                        borderRadius: "50%",
-
-                        background:
-                          parcel.status === "FailedDelivery" && index === 3
-                            ? "#ef4444"
-                            : parcel.status === "FailedDelivery" &&
-                                index === (parcel.out_for_delivery_at ? 2 : 1)
-                              ? "#22c55e"
-                              : step.date
-                                ? "#22c55e"
-                                : "#e2e8f0",
-
-                        color: "white",
-
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-
-                        margin: "0 auto 20px",
-
-                        fontSize: "30px",
-                      }}
-                    >
-                      {parcel.status === "FailedDelivery" && index === 3 ? (
-                        "✕"
-                      ) : parcel.status === "FailedDelivery" &&
-                        index === (parcel.out_for_delivery_at ? 2 : 1) ? (
-                        <FiCheck />
-                      ) : step.date ? (
-                        <FiCheck />
-                      ) : (
-                        index + 1
-                      )}
-                    </div>
-
-                    <h3>{step.title}</h3>
-
-                    <p
-                      style={{
-                        color: "#64748b",
-                      }}
-                    >
-                      {step.date ? new Date(step.date).toLocaleString() : "-"}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div
-                style={{
-                  marginTop: "30px",
-
-                  padding: "20px",
-
-                  borderRadius: "16px",
-
-                  background: parcel.failure_reason ? "#fef2f2" : "#f0fdf4",
-
-                  border: parcel.failure_reason
-                    ? "1px solid #fecaca"
-                    : "1px solid #bbf7d0",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    marginBottom: "10px",
-                  }}
-                >
-                  <FiFileText
-                    size={22}
-                    color={parcel.failure_reason ? "#dc2626" : "#16a34a"}
                   />
 
-                  <h3
-                    style={{
-                      margin: 0,
-                    }}
-                  >
-                    Delivery Notes
-                  </h3>
+                  {parcel.status === "FailedDelivery" &&
+                    parcel.out_for_delivery_at && (
+                      <div style={styles.stepperFailedSegment} />
+                    )}
+
+                  {[
+                    { title: "Ordered", date: parcel.created_at },
+                    { title: "Assigned", date: parcel.created_at },
+                    {
+                      title: "Out For Delivery",
+                      date: parcel.out_for_delivery_at,
+                    },
+                    { title: "Delivered", date: parcel.delivered_at },
+                  ].map((step, index) => {
+                    const isFailedNode =
+                      parcel.status === "FailedDelivery" && index === 3;
+                    const isLastGoodNode =
+                      parcel.status === "FailedDelivery" &&
+                      index === (parcel.out_for_delivery_at ? 2 : 1);
+                    const isDone = isLastGoodNode || Boolean(step.date);
+
+                    return (
+                      <div key={index} style={styles.stepItem}>
+                        <div
+                          style={{
+                            ...styles.stepCircle,
+                            background: isFailedNode
+                              ? "#EF4444"
+                              : isDone
+                                ? "#22C55E"
+                                : "#E2E8F0",
+                            color: isDone || isFailedNode ? "white" : "#94A3B8",
+                          }}
+                        >
+                          {isFailedNode ? (
+                            <FiX size={20} />
+                          ) : isDone ? (
+                            <FiCheck size={20} />
+                          ) : (
+                            index + 1
+                          )}
+                        </div>
+
+                        <h3 style={styles.stepTitle}>{step.title}</h3>
+
+                        <p style={styles.stepDate}>
+                          {step.date
+                            ? new Date(step.date).toLocaleString()
+                            : "-"}
+                        </p>
+                      </div>
+                    );
+                  })}
                 </div>
 
-                <p
+                <div
                   style={{
-                    margin: 0,
-
-                    color: parcel.failure_reason ? "#991b1b" : "#166534",
+                    ...styles.notesCard,
+                    background: parcel.failure_reason ? "#FEF2F2" : "#F0FDF4",
+                    borderColor: parcel.failure_reason
+                      ? "#FECACA"
+                      : "#BBF7D0",
                   }}
                 >
-                  {parcel.failure_reason
-                    ? `Delivery Failed: ${parcel.failure_reason}`
-                    : "No delivery issues reported."}
-                </p>
+                  <div style={styles.notesHeader}>
+                    <FiFileText
+                      size={20}
+                      color={parcel.failure_reason ? "#DC2626" : "#16A34A"}
+                    />
+                    <h3 style={styles.notesTitle}>Delivery Notes</h3>
+                  </div>
+
+                  <p
+                    style={{
+                      ...styles.notesText,
+                      color: parcel.failure_reason ? "#991B1B" : "#166534",
+                    }}
+                  >
+                    {parcel.failure_reason
+                      ? `Delivery Failed: ${parcel.failure_reason}`
+                      : "No delivery issues reported."}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </MainLayout>
     </>
   );
 }
+
+const styles = {
+  page: {
+    fontFamily:
+      "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+  },
+  headerRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "14px",
+    marginBottom: "22px",
+  },
+  headerIconBox: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
+    background: "#EFF6FF",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  title: {
+    margin: 0,
+    fontSize: "24px",
+    fontWeight: 700,
+    color: "#0F172A",
+    letterSpacing: "-0.02em",
+  },
+  searchCard: {
+    background: "white",
+    padding: "20px",
+    borderRadius: "18px",
+    border: "1px solid #EEF2F6",
+    boxShadow: "0 10px 25px rgba(15, 23, 42, 0.04)",
+  },
+  searchRow: {
+    display: "flex",
+    gap: "14px",
+    alignItems: "center",
+    flexWrap: "wrap",
+  },
+  searchInputWrap: {
+    position: "relative",
+    flex: "1 1 320px",
+    minWidth: "240px",
+  },
+  searchIcon: {
+    position: "absolute",
+    left: "16px",
+    top: "50%",
+    transform: "translateY(-50%)",
+  },
+  searchInput: {
+    width: "100%",
+    padding: "13px 16px 13px 45px",
+    borderRadius: "12px",
+    border: "1px solid #E2E8F0",
+    fontSize: "15px",
+    outline: "none",
+    boxSizing: "border-box",
+    background: "#F8FAFC",
+  },
+  searchButton: {
+    display: "flex",
+    alignItems: "center",
+    gap: "9px",
+    background: "#2563EB",
+    color: "white",
+    border: "none",
+    padding: "13px 24px",
+    borderRadius: "12px",
+    cursor: "pointer",
+    fontSize: "15px",
+    fontWeight: 600,
+    boxShadow: "0 8px 20px rgba(37, 99, 235, 0.25)",
+    transition: "background 0.2s ease",
+  },
+  notFoundCard: {
+    marginTop: "20px",
+    background: "white",
+    borderRadius: "18px",
+    padding: "48px 30px",
+    textAlign: "center",
+    border: "1px solid #EEF2F6",
+    boxShadow: "0 10px 25px rgba(15, 23, 42, 0.04)",
+  },
+  notFoundIconBox: {
+    width: "64px",
+    height: "64px",
+    borderRadius: "50%",
+    background: "#FEE2E2",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 20px",
+  },
+  notFoundTitle: {
+    color: "#DC2626",
+    marginBottom: "8px",
+    fontSize: "20px",
+  },
+  notFoundText: {
+    color: "#64748B",
+    fontSize: "15px",
+    margin: 0,
+  },
+  notFoundTracking: {
+    color: "#2563EB",
+    fontWeight: 700,
+    fontSize: "17px",
+    marginTop: "8px",
+  },
+  emptyCard: {
+    marginTop: "20px",
+    background: "white",
+    borderRadius: "18px",
+    padding: "64px 30px",
+    textAlign: "center",
+    border: "1px solid #EEF2F6",
+    boxShadow: "0 10px 25px rgba(15, 23, 42, 0.04)",
+  },
+  emptyIconBox: {
+    width: "84px",
+    height: "84px",
+    borderRadius: "22px",
+    background: "#EFF6FF",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 22px",
+  },
+  emptyTitle: {
+    margin: "0 0 10px",
+    fontSize: "20px",
+    fontWeight: 700,
+    color: "#0F172A",
+  },
+  emptyText: {
+    margin: "0 auto",
+    maxWidth: "440px",
+    color: "#64748B",
+    fontSize: "14.5px",
+    lineHeight: "1.6",
+  },
+  emptyChipsRow: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: "10px",
+    marginTop: "26px",
+  },
+  emptyChip: {
+    display: "inline-flex",
+    alignItems: "center",
+    gap: "7px",
+    padding: "9px 16px",
+    borderRadius: "999px",
+    background: "#F8FAFC",
+    border: "1px solid #E2E8F0",
+    color: "#475569",
+    fontSize: "13px",
+    fontWeight: 600,
+  },
+  resultsGrid: {
+    display: "grid",
+    gap: "20px",
+    marginTop: "20px",
+  },
+  card: {
+    background: "white",
+    padding: "28px",
+    borderRadius: "18px",
+    border: "1px solid #EEF2F6",
+    boxShadow: "0 10px 25px rgba(15, 23, 42, 0.04)",
+  },
+  cardHeaderRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+    marginBottom: "22px",
+  },
+  cardIconBox: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
+    background: "#EFF6FF",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  cardTitle: {
+    margin: 0,
+    fontSize: "18.5px",
+    fontWeight: 700,
+    color: "#0F172A",
+  },
+  infoGrid: {
+    display: "grid",
+    gridTemplateColumns: "200px 1fr",
+    rowGap: "16px",
+    fontSize: "14.5px",
+    alignItems: "center",
+  },
+  infoLabel: {
+    fontWeight: 600,
+    color: "#64748B",
+    fontSize: "13.5px",
+    textTransform: "uppercase",
+    letterSpacing: "0.03em",
+  },
+  infoValue: {
+    color: "#0F172A",
+    fontWeight: 500,
+  },
+  trackingValue: {
+    fontWeight: 700,
+    color: "#2563EB",
+    fontSize: "15.5px",
+  },
+  failureValue: {
+    color: "#DC2626",
+    fontWeight: 600,
+  },
+  statusPill: {
+    display: "inline-flex",
+    width: "fit-content",
+    padding: "6px 14px",
+    borderRadius: "999px",
+    fontWeight: 700,
+    fontSize: "13px",
+  },
+  statusPillLg: {
+    padding: "10px 20px",
+    borderRadius: "999px",
+    fontWeight: 700,
+    fontSize: "14px",
+  },
+  progressHeaderRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: "26px",
+    flexWrap: "wrap",
+    gap: "12px",
+  },
+  progressHeaderLeft: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+  progressIconBox: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "14px",
+    background: "#FEF3C7",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  progressHeadline: {
+    marginBottom: "26px",
+    fontSize: "18px",
+    fontWeight: 700,
+  },
+  stepperWrap: {
+    position: "relative",
+    display: "flex",
+    justifyContent: "space-between",
+    marginBottom: "32px",
+  },
+  stepperTrack: {
+    position: "absolute",
+    top: "24px",
+    left: 0,
+    right: 0,
+    height: "5px",
+    background: "#E2E8F0",
+    borderRadius: "3px",
+    zIndex: 1,
+  },
+  stepperFill: {
+    position: "absolute",
+    top: "24px",
+    left: 0,
+    height: "5px",
+    borderRadius: "3px",
+    background: "#22C55E",
+    zIndex: 2,
+    transition: "width 0.4s ease",
+  },
+  stepperFailedSegment: {
+    position: "absolute",
+    top: "24px",
+    left: "75%",
+    width: "25%",
+    height: "5px",
+    borderRadius: "3px",
+    background: "#EF4444",
+    zIndex: 3,
+  },
+  stepItem: {
+    position: "relative",
+    zIndex: 2,
+    textAlign: "center",
+    flex: 1,
+    padding: "0 6px",
+  },
+  stepCircle: {
+    width: "48px",
+    height: "48px",
+    borderRadius: "50%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "0 auto 14px",
+    fontSize: "16px",
+    fontWeight: 700,
+  },
+  stepTitle: {
+    margin: "0 0 4px",
+    fontSize: "14.5px",
+    fontWeight: 700,
+    color: "#0F172A",
+  },
+  stepDate: {
+    margin: 0,
+    color: "#94A3B8",
+    fontSize: "12.5px",
+  },
+  notesCard: {
+    padding: "18px 20px",
+    borderRadius: "14px",
+    border: "1px solid",
+  },
+  notesHeader: {
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginBottom: "8px",
+  },
+  notesTitle: {
+    margin: 0,
+    fontSize: "15px",
+    fontWeight: 700,
+    color: "#0F172A",
+  },
+  notesText: {
+    margin: 0,
+    fontSize: "14px",
+    lineHeight: "1.6",
+  },
+};
 
 export default Tracking;

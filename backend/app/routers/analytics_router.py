@@ -12,25 +12,57 @@ router = APIRouter(
     tags=["Analytics"]
 )
 
+def apply_date_filter(query, column, start, end):
+
+    if start:
+        start_date = datetime.fromisoformat(start)
+        query = query.filter(column >= start_date)
+
+    if end:
+        end_date = datetime.fromisoformat(end) + timedelta(days=1)
+        query = query.filter(column < end_date)
+
+    return query
+
 
 @router.get("/summary")
 def analytics_summary(
+    start: str = None,
+    end: str = None,
     db: Session = Depends(get_db)
 ):
+    parcel_query = db.query(Parcel)
 
-    total_parcels = db.query(Parcel).count()
+    parcel_query = apply_date_filter(
+        parcel_query,
+        Parcel.created_at,
+        start,
+        end
+    )
 
-    delivered = db.query(Parcel).filter(
+    total_parcels = parcel_query.count()
+
+    delivered = parcel_query.filter(
         Parcel.status == "Delivered"
     ).count()
 
-    failed = db.query(Parcel).filter(
+    failed = parcel_query.filter(
         Parcel.status == "FailedDelivery"
     ).count()
 
-    active_zones = db.query(
-        Customer.pincode
-    ).distinct().count()
+    active_zones = (
+        db.query(Customer.pincode)
+        .join(Parcel, Parcel.customer_id == Customer.id)
+    )
+
+    active_zones = apply_date_filter(
+        active_zones,
+        Parcel.created_at,
+        start,
+        end
+    )
+
+    active_zones = active_zones.distinct().count()
 
     return {
         "totalParcels": total_parcels,
@@ -156,14 +188,16 @@ def delivery_trend(db: Session = Depends(get_db)):
 
     results = (
         db.query(
-            func.date(Parcel.created_at).label("date"),
+            func.date(Parcel.delivered_at).label("date"),
             func.count(Parcel.id).label("count")
         )
         .filter(
-            Parcel.created_at >= seven_days_ago
+            Parcel.status == "Delivered",
+            Parcel.delivered_at != None,
+            Parcel.delivered_at >= seven_days_ago
         )
         .group_by(
-            func.date(Parcel.created_at)
+            func.date(Parcel.delivered_at)
         )
         .all()
     )
