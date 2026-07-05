@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom";
 import { FiHome, FiPackage, FiMapPin, FiClock } from "react-icons/fi";
 import { FaUserCircle } from "react-icons/fa";
 import "../../styles/sidebar.css";
+import { useNavigate } from "react-router-dom";
+import { useAgentProfile } from "../../context/AgentProfileContext";
 
 const NAV_ITEMS = [
   { to: "/agent-dashboard", label: "Dashboard", icon: FiHome },
@@ -11,14 +13,35 @@ const NAV_ITEMS = [
 ];
 
 function AgentSidebar({ sidebarOpen }) {
+
+  const navigate = useNavigate();
+  const { photo } = useAgentProfile();
+
   return (
     <div
       className={"sidebar" + (sidebarOpen ? "" : " is-collapsed")}
       style={{ width: sidebarOpen ? "280px" : "90px" }}
     >
-      <div className="sidebar-profile">
+      <div
+        className="sidebar-profile"
+        onClick={() => navigate("/profile")}
+      >
         <div className="sidebar-avatar">
-          <FaUserCircle size={30} />
+          {photo ? (
+            <img
+              src={photo}
+              alt="Profile"
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: "50%",
+                objectFit: "cover",
+                display: "block"
+              }}
+            />
+          ) : (
+            <FaUserCircle size={30} />
+          )}
         </div>
 
         {sidebarOpen && (

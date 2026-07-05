@@ -65,6 +65,10 @@ import BulkImport from "./admin/pages/BulkImport";
 
 import PendingDeliveriesPage from "./agent/pages/PendingDeliveriesPage";
 
+import Profile from "./agent/pages/Profile";
+
+import { AgentProfileProvider } from "./context/AgentProfileContext";
+
 function App() {
 
     //const [sidebarOpen, setSidebarOpen] =
@@ -72,7 +76,8 @@ function App() {
     
     return (
 
-        <>
+        <AgentProfileProvider>
+
         <SessionTimeout />
         <Routes>
 
@@ -291,6 +296,17 @@ function App() {
                 element={<PendingDeliveriesPage />}
             />
 
+            <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute
+                        allowedRoles={["DeliveryAgent"]}
+                    >
+                        <Profile />
+                    </ProtectedRoute>
+                }
+            />
+
         </Routes>
 
         <ToastContainer
@@ -310,7 +326,7 @@ function App() {
             }}
         />
 
-        </>
+        </AgentProfileProvider>
 
         
     );

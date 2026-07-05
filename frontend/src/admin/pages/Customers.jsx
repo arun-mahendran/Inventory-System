@@ -1,247 +1,212 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import api from "../../api/axios";
 
 import MainLayout from "../components/MainLayout";
 
-import { FiUsers, FiSearch } from "react-icons/fi";
+import "../../styles/customers.css";
+
+import { FiUsers, FiSearch, FiPlus, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+
+const AVATAR_TONES = 5;
+
+function getInitials(name) {
+    if (!name) return "?";
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
 
 function Customers() {
 
-    const [customers, setCustomers] = useState([]);
+    const navigate = useNavigate();
 
+    const [customers, setCustomers] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+
+    const PAGE_SIZE = 10;
 
     useEffect(() => {
 
-    const fetchCustomers = async () => {
+        const fetchCustomers = async () => {
 
-        try {
+            setLoading(true);
 
-            const response = await api.get(
-                `/customers/?search=${search}`
-            );
+            try {
 
-            setCustomers(
-                response.data
-            );
+                const response = await api.get(
+                    `/customers/?search=${search}`
+                );
 
-        } catch (error) {
+                const sortedCustomers = response.data.sort(
+                    (a, b) => new Date(b.created_at) - new Date(a.created_at)
+                );
 
-            console.error(
-                "Customer Error:",
-                error
-            );
+                setCustomers(sortedCustomers);
+                setPage(1); // reset to first page whenever the search changes
 
-        }
+            } catch (error) {
 
+                console.error("Customer Error:", error);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
+
+        // small debounce so we're not firing a request on every keystroke
+        const timeout = setTimeout(fetchCustomers, 300);
+
+        return () => clearTimeout(timeout);
+
+    }, [search]);
+
+    const totalPages = Math.max(1, Math.ceil(customers.length / PAGE_SIZE));
+    const pagedCustomers = customers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+    const goToPage = (nextPage) => {
+        if (nextPage < 1 || nextPage > totalPages) return;
+        setPage(nextPage);
     };
 
-    fetchCustomers();
-
-}, [search]);
-
     return (
-        <>
-            <MainLayout>
+        <MainLayout>
 
-                    <div
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                            marginBottom: "25px"
-                        }}
-                    >
+            <div className="customers-page">
 
-                        <div
-                            style={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: "10px"
-                            }}
-                        >
-                            <FiUsers
-                                size={30}
-                                color="#2563eb"
-                            />
+                {/* Header */}
 
+                <div className="customers-header">
+
+                    <div className="customers-heading">
+                        <span className="customers-icon"><FiUsers /></span>
+                        <div>
                             <h1>Customers</h1>
-
+                            <p className="customers-subtitle">Manage and view all registered customers</p>
                         </div>
-
                     </div>
 
-                    <div
-                        style={{
-                            marginBottom: "20px",
-                            position: "relative",
-                            width: "350px"
-                        }}
+                    <button
+                        type="button"
+                        className="btn-solid-accent"
+                        onClick={() => navigate("/create-customer")}
                     >
+                        <FiPlus /> Add Customer
+                    </button>
 
-                        <FiSearch
-                            size={18}
-                            color="#64748b"
+                </div>
 
-                            style={{
-                                position: "absolute",
-                                top: "50%",
-                                left: "15px",
-                                transform: "translateY(-50%)"
-                            }}
-                        />
+                {/* Toolbar */}
 
+                <div className="customers-toolbar">
+
+                    <div className="customers-search">
+                        <FiSearch className="customers-search-icon" size={18} />
                         <input
                             type="text"
-
                             placeholder="Search by name, phone or email..."
-
                             value={search}
-
-                            onChange={(e) =>
-                                setSearch(
-                                    e.target.value
-                                )
-                            }
-
-                            style={{
-                                width: "100%",
-
-                                padding: "12px 18px 12px 45px",
-
-                                borderRadius: "12px",
-
-                                border: "1px solid #d1d5db",
-
-                                fontSize: "15px"
-                            }}
+                            onChange={(e) => setSearch(e.target.value)}
                         />
-
                     </div>
 
-                    <div
-                        style={{
-                            background: "white",
-                            padding: "24px",
-                            borderRadius: "18px",
-                            boxShadow:
-                                "0 10px 25px rgba(0,0,0,0.08)"
-                        }}
-                    >
+                    {!loading && (
+                        <p className="customers-count">
+                            <strong>{customers.length}</strong> customer{customers.length === 1 ? "" : "s"}
+                        </p>
+                    )}
 
-                        <table
-                            style={{
-                                width: "100%",
-                                borderCollapse: "collapse"
-                            }}
-                        >
+                </div>
+
+                {/* Table */}
+
+                <div className="customers-card">
+
+                    {loading ? (
+                        <p className="customers-loading">Loading customers…</p>
+                    ) : customers.length === 0 ? (
+                        <p className="customers-empty">No customers found.</p>
+                    ) : (
+                        <table className="customers-table">
 
                             <thead>
-
                                 <tr>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Name
-                                    </th>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Phone
-                                    </th>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Pincode
-                                    </th>
-
-                                    <th
-                                        style={{
-                                            textAlign: "left",
-                                            padding: "12px"
-                                        }}
-                                    >
-                                        Address
-                                    </th>
-
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Pincode</th>
+                                    <th>Address</th>
                                 </tr>
-
                             </thead>
 
                             <tbody>
+                                {pagedCustomers.map((customer, index) => (
+                                    <tr key={customer.id}>
 
-                                {customers.map((customer) => (
-
-                                    <tr
-                                        key={customer.id}
-                                        className="table-row"
-                                    >
-
-                                        <td
-                                            style={{
-                                                padding: "12px",
-                                                borderTop:
-                                                    "1px solid #e5e7eb"
-                                            }}
-                                        >
-                                            {customer.customer_name}
+                                        <td>
+                                            <div className="customer-name-cell">
+                                                <span className={`customer-avatar avatar-tone-${index % AVATAR_TONES}`}>
+                                                    {getInitials(customer.customer_name)}
+                                                </span>
+                                                <span className="customer-name">{customer.customer_name}</span>
+                                            </div>
                                         </td>
 
-                                        <td
-                                            style={{
-                                                padding: "12px",
-                                                borderTop:
-                                                    "1px solid #e5e7eb"
-                                            }}
-                                        >
-                                            {customer.phone}
+                                        <td>{customer.phone}</td>
+
+                                        <td>
+                                            <span className="customer-pincode">{customer.pincode}</span>
                                         </td>
 
-                                        <td
-                                            style={{
-                                                padding: "12px",
-                                                borderTop:
-                                                    "1px solid #e5e7eb"
-                                            }}
-                                        >
-                                            {customer.pincode}
-                                        </td>
-
-                                        <td
-                                            style={{
-                                                padding: "12px",
-                                                borderTop:
-                                                    "1px solid #e5e7eb"
-                                            }}
-                                        >
-                                            {customer.address}
-                                        </td>
+                                        <td className="customer-address">{customer.address}</td>
 
                                     </tr>
-
                                 ))}
-
                             </tbody>
 
                         </table>
+                    )}
+
+                </div>
+
+                {/* Pagination */}
+
+                {!loading && customers.length > PAGE_SIZE && (
+                    <div className="customers-pagination">
+
+                        <button
+                            type="button"
+                            className="pagination-btn"
+                            onClick={() => goToPage(page - 1)}
+                            disabled={page === 1}
+                        >
+                            <FiChevronLeft /> Previous
+                        </button>
+
+                        <span className="pagination-info">
+                            Page <strong>{page}</strong> of <strong>{totalPages}</strong>
+                        </span>
+
+                        <button
+                            type="button"
+                            className="pagination-btn"
+                            onClick={() => goToPage(page + 1)}
+                            disabled={page === totalPages}
+                        >
+                            Next <FiChevronRight />
+                        </button>
 
                     </div>
+                )}
 
-                </MainLayout>
-        </>
+            </div>
+
+        </MainLayout>
     );
 }
 
