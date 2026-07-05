@@ -74,33 +74,35 @@ def analytics_summary(
 
 @router.get("/top-zones")
 def get_top_zones(
+    start: str = None,
+    end: str = None,
     db: Session = Depends(get_db)
 ):
 
     zones = (
-
         db.query(
             Customer.pincode,
             func.count(Parcel.id).label("parcels")
         )
-
         .join(
             Parcel,
             Parcel.customer_id == Customer.id
         )
+    )
 
-        .group_by(
-            Customer.pincode
-        )
+    zones = apply_date_filter(
+        zones,
+        Parcel.created_at,
+        start,
+        end
+    )
 
-        .order_by(
-            func.count(Parcel.id).desc()
-        )
-
+    zones = (
+        zones
+        .group_by(Customer.pincode)
+        .order_by(func.count(Parcel.id).desc())
         .limit(5)
-
         .all()
-
     )
 
     return [
@@ -115,15 +117,28 @@ def get_top_zones(
     ]
 
 @router.get("/insights")
-def get_insights(db: Session = Depends(get_db)):
+def get_insights(
+    start: str = None,
+    end: str = None,
+    db: Session = Depends(get_db)
+):
+    
+    parcel_query = db.query(Parcel)
 
-    total = db.query(Parcel).count()
+    parcel_query = apply_date_filter(
+        parcel_query,
+        Parcel.created_at,
+        start,
+        end
+    )
 
-    delivered = db.query(Parcel).filter(
+    total = parcel_query.count()
+
+    delivered = parcel_query.filter(
         Parcel.status == "Delivered"
     ).count()
 
-    failed = db.query(Parcel).filter(
+    failed = parcel_query.filter(
         Parcel.status == "FailedDelivery"
     ).count()
 
@@ -138,7 +153,16 @@ def get_insights(db: Session = Depends(get_db)):
     ).join(
         Parcel,
         Parcel.customer_id == Customer.id
-    ).group_by(
+    )
+
+    top_zone = apply_date_filter(
+        top_zone,
+        Parcel.created_at,
+        start,
+        end
+    )
+
+    top_zone = top_zone.group_by(
         Customer.pincode
     ).order_by(
         func.count(Parcel.id).desc()
@@ -147,7 +171,16 @@ def get_insights(db: Session = Depends(get_db)):
     failure_reason = db.query(
         Parcel.failure_reason,
         func.count(Parcel.id).label("count")
-    ).filter(
+    )
+
+    failure_reason = apply_date_filter(
+        failure_reason,
+        Parcel.created_at,
+        start,
+        end
+    )
+
+    failure_reason = failure_reason.filter(
         Parcel.failure_reason != None
     ).group_by(
         Parcel.failure_reason
@@ -155,7 +188,7 @@ def get_insights(db: Session = Depends(get_db)):
         func.count(Parcel.id).desc()
     ).first()
 
-    pending = db.query(Parcel).filter(
+    pending = parcel_query.filter(
         Parcel.status.in_([
             "Received",
             "Assigned",
@@ -182,9 +215,18 @@ def get_insights(db: Session = Depends(get_db)):
 
 
 @router.get("/delivery-trend")
-def delivery_trend(db: Session = Depends(get_db)):
+def delivery_trend(
+    start: str = None,
+    end: str = None,
+    db: Session = Depends(get_db)
+):
 
-    seven_days_ago = datetime.now() - timedelta(days=6)
+    if start and end:
+        start_date = datetime.fromisoformat(start)
+        end_date = datetime.fromisoformat(end)
+    else:
+        end_date = datetime.now()
+        start_date = end_date - timedelta(days=6)
 
     results = (
         db.query(
@@ -194,7 +236,8 @@ def delivery_trend(db: Session = Depends(get_db)):
         .filter(
             Parcel.status == "Delivered",
             Parcel.delivered_at != None,
-            Parcel.delivered_at >= seven_days_ago
+            Parcel.delivered_at >= start_date,
+            Parcel.delivered_at < end_date + timedelta(days=1)
         )
         .group_by(
             func.date(Parcel.delivered_at)
@@ -212,18 +255,17 @@ def delivery_trend(db: Session = Depends(get_db)):
     # Always return last 7 days
     trend = []
 
-    for i in range(7):
+    days = (end_date.date() - start_date.date()).days + 1
+
+    for i in range(days):
 
         current_day = (
-            seven_days_ago + timedelta(days=i)
+            start_date + timedelta(days=i)
         ).strftime("%d %b")
 
         trend.append({
             "date": current_day,
-            "parcels": parcel_data.get(
-                current_day,
-                0
-            )
+            "parcels": parcel_data.get(current_day, 0)
         })
 
     return trend
