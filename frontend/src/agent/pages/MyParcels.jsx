@@ -1,31 +1,39 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import api from "../../api/axios";
 
 import AgentLayout from "../components/AgentLayout";
 
-//import { FiPackage } from "react-icons/fi";
-
-// import {
-//     FiTruck,
-//     FiCheckCircle,
-//     FiAlertCircle
-// } from "react-icons/fi";
-
-import { FiFilter } from "react-icons/fi";
-
-import { FiMapPin } from "react-icons/fi";
-
 import { toast } from "react-toastify";
 
-import { FiPackage, FiTruck, FiCheckCircle, FiXCircle } from "react-icons/fi";
+import {
+  FiPackage,
+  FiTruck,
+  FiCheckCircle,
+  FiXCircle,
+  FiFilter,
+  FiMapPin,
+  FiSearch,
+  FiDownload,
+  FiCalendar,
+  FiSend,
+  FiCheck,
+  FiChevronLeft,
+  FiChevronRight,
+} from "react-icons/fi";
 
 import { FaBoxesStacked } from "react-icons/fa6";
+
+const PAGE_SIZE = 6;
 
 function MyParcels() {
   const [parcels, setParcels] = useState([]);
 
   const [filterStatus, setFilterStatus] = useState("All");
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const [selectedParcel, setSelectedParcel] = useState(null);
 
@@ -86,11 +94,6 @@ function MyParcels() {
     try {
       const agentId = localStorage.getItem("delivery_agent_id");
 
-      console.log(
-          "Delivery Agent ID:",
-          agentId
-      );
-
       const response = await api.get(`/delivery-agents/${agentId}/parcels`);
 
       const statusOrder = {
@@ -113,6 +116,10 @@ function MyParcels() {
   useEffect(() => {
     fetchParcels();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus, searchTerm]);
 
   const startDelivery = async (parcelId) => {
     try {
@@ -140,7 +147,7 @@ function MyParcels() {
     try {
       await api.patch(`/parcels/${parcelId}/collect-payment`);
 
-      toast.success("Payment Collected Successfully ✅");
+      toast.success("Payment Collected Successfully");
 
       setParcels((prev) =>
         prev.map((parcel) =>
@@ -189,27 +196,237 @@ function MyParcels() {
     }
   };
 
-  const filteredParcels =
-    filterStatus === "All"
-      ? parcels
-      : parcels.filter((parcel) => parcel.status === filterStatus);
-
-  const disabledButton = {
-    padding: "6px 10px",
-    border: "none",
-    borderRadius: "6px",
-    background: "#d1d5db",
-    color: "#6b7280",
-    cursor: "not-allowed",
-  };
-
   const viewParcelDetails = (parcel) => {
-    console.log(parcel);
-
     setSelectedParcel(parcel);
 
     setShowModal(true);
   };
+
+  const exportParcels = () => {
+    if (!filteredParcels.length) {
+      toast.info("No parcels to export");
+
+      return;
+    }
+
+    const headers = [
+      "Tracking No",
+      "Customer ID",
+      "Status",
+      "Created At",
+      "Payment Status",
+    ];
+
+    const rows = filteredParcels.map((p) => [
+      p.tracking_number,
+      p.customer_id,
+      p.status,
+      new Date(p.created_at).toLocaleDateString(),
+      p.payment_status,
+    ]);
+
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell ?? ""}"`).join(","))
+      .join("\n");
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+
+    link.href = url;
+
+    link.setAttribute("download", "my-parcels.csv");
+
+    document.body.appendChild(link);
+
+    link.click();
+
+    document.body.removeChild(link);
+  };
+
+  // ---- Derived data ----
+
+  const stats = useMemo(() => {
+    return {
+      total: parcels.length,
+      outForDelivery: parcels.filter((p) => p.status === "OutForDelivery")
+        .length,
+      delivered: parcels.filter((p) => p.status === "Delivered").length,
+      failed: parcels.filter((p) => p.status === "FailedDelivery").length,
+    };
+  }, [parcels]);
+
+  const filteredParcels = (() => {
+
+   let list =
+      filterStatus === "All"
+         ? parcels
+         : parcels.filter(parcel => parcel.status === filterStatus);
+
+   if (searchTerm.trim()) {
+
+      const term = searchTerm.trim().toLowerCase();
+
+      list = list.filter(
+         parcel =>
+            parcel.tracking_number &&
+            parcel.tracking_number.toLowerCase().includes(term)
+      );
+   }
+
+   return list;
+
+})();
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredParcels.length / PAGE_SIZE),
+  );
+
+  const paginatedParcels = filteredParcels.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE,
+  );
+
+  const rangeStart = filteredParcels.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1;
+
+  const rangeEnd = Math.min(currentPage * PAGE_SIZE, filteredParcels.length);
+
+  const getPageNumbers = () => {
+    const pages = [];
+
+    if (totalPages <= 5) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+
+      return pages;
+    }
+
+    pages.push(1);
+
+    if (currentPage > 3) pages.push("...");
+
+    const start = Math.max(2, currentPage - 1);
+
+    const end = Math.min(totalPages - 1, currentPage + 1);
+
+    for (let i = start; i <= end; i++) pages.push(i);
+
+    if (currentPage < totalPages - 2) pages.push("...");
+
+    pages.push(totalPages);
+
+    return pages;
+  };
+
+  // ---- Style helpers ----
+
+  const statusColors = {
+    Delivered: { bg: "#dcfce7", text: "#16a34a" },
+    FailedDelivery: { bg: "#fee2e2", text: "#dc2626" },
+    OutForDelivery: { bg: "#fef3c7", text: "#d97706" },
+    Assigned: { bg: "#e0e7ff", text: "#4338ca" },
+  };
+
+  const statusLabels = {
+    Delivered: "Delivered",
+    FailedDelivery: "Failed Delivery",
+    OutForDelivery: "Out for Delivery",
+    Assigned: "Assigned",
+  };
+
+  const statusBadge = (status) => {
+    const colors = statusColors[status] || { bg: "#f1f5f9", text: "#475569" };
+
+    return (
+      <span
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "6px 14px",
+          borderRadius: "20px",
+          fontWeight: "600",
+          fontSize: "13px",
+          background: colors.bg,
+          color: colors.text,
+        }}
+      >
+        <span
+          style={{
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%",
+            background: colors.text,
+            display: "inline-block",
+          }}
+        />
+        {statusLabels[status] || status}
+      </span>
+    );
+  };
+
+  const actionButtonStyle = (color, disabled) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: "4px",
+    flex: 1,
+    padding: "7px 8px",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    background: "white",
+    color: disabled ? "#cbd5e1" : color,
+    fontWeight: "600",
+    fontSize: "12px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    whiteSpace: "nowrap",
+    minWidth: 0,
+  });
+
+  const statCards = [
+    {
+      key: "total",
+      label: "Total Parcels",
+      sub: "All assigned parcels",
+      value: stats.total,
+      icon: <FiPackage size={22} color="#2563eb" />,
+      iconBg: "#dbeafe",
+      cardBg: "#f5f8ff",
+      valueColor: "#2563eb",
+    },
+    {
+      key: "out",
+      label: "Out for Delivery",
+      sub: "Currently on the way",
+      value: stats.outForDelivery,
+      icon: <FiTruck size={22} color="#f97316" />,
+      iconBg: "#fed7aa",
+      cardBg: "#fff8f1",
+      valueColor: "#f97316",
+    },
+    {
+      key: "delivered",
+      label: "Delivered",
+      sub: "Successfully delivered",
+      value: stats.delivered,
+      icon: <FiCheckCircle size={22} color="#16a34a" />,
+      iconBg: "#bbf7d0",
+      cardBg: "#f2fbf5",
+      valueColor: "#16a34a",
+    },
+    {
+      key: "failed",
+      label: "Failed Delivery",
+      sub: "Delivery failed",
+      value: stats.failed,
+      icon: <FiXCircle size={22} color="#dc2626" />,
+      iconBg: "#fecaca",
+      cardBg: "#fdf3f3",
+      valueColor: "#dc2626",
+    },
+  ];
 
   return (
     <AgentLayout>
@@ -217,15 +434,97 @@ function MyParcels() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "10px",
-          marginBottom: "25px",
+          gap: "12px",
+          marginBottom: "4px",
         }}
       >
         <FiPackage size={30} color="#2563eb" />
 
-        <h1>My Parcels</h1>
+        <h1 style={{ margin: 0, fontSize: "28px" }}>My Parcels</h1>
       </div>
 
+      <p
+        style={{
+          color: "#64748b",
+          fontSize: "15px",
+          marginTop: "4px",
+          marginBottom: "24px",
+        }}
+      >
+        View and manage all your assigned parcels.
+      </p>
+
+      {/* Stat Cards */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(4, 1fr)",
+          gap: "20px",
+          marginBottom: "24px",
+        }}
+      >
+        {statCards.map((card) => (
+          <div
+            key={card.key}
+            style={{
+              background: card.cardBg,
+              borderRadius: "18px",
+              padding: "22px",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "14px",
+                marginBottom: "14px",
+              }}
+            >
+              <div
+                style={{
+                  width: "46px",
+                  height: "46px",
+                  borderRadius: "12px",
+                  background: card.iconBg,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {card.icon}
+              </div>
+
+              <span style={{ fontWeight: "600", color: "#334155" }}>
+                {card.label}
+              </span>
+            </div>
+
+            <div
+              style={{
+                fontSize: "30px",
+                fontWeight: "700",
+                color: card.valueColor,
+                lineHeight: 1,
+              }}
+            >
+              {card.value}
+            </div>
+
+            <div
+              style={{
+                fontSize: "13px",
+                color: "#64748b",
+                marginTop: "6px",
+              }}
+            >
+              {card.sub}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Main Card */}
       <div
         style={{
           background: "white",
@@ -238,448 +537,480 @@ function MyParcels() {
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "20px",
-            marginBottom: "-5px",
+            gap: "14px",
+            marginBottom: "22px",
+            flexWrap: "wrap",
           }}
         >
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "20px",
-              marginBottom: "25px",
+              flex: "1 1 260px",
+              position: "relative",
+              minWidth: "220px",
             }}
           >
+            <FiSearch
+              size={18}
+              color="#94a3b8"
+              style={{
+                position: "absolute",
+                left: "14px",
+                top: "50%",
+                transform: "translateY(-50%)",
+              }}
+            />
+
+            <input
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search tracking number..."
+              style={{
+                width: "100%",
+                padding: "12px 14px 12px 40px",
+                borderRadius: "12px",
+                border: "1px solid #e2e8f0",
+                fontSize: "14px",
+                outline: "none",
+                boxSizing: "border-box",
+              }}
+            />
+          </div>
+
+          <button
+            onClick={() => setShowFilterDropdown((prev) => !prev)}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "12px 18px",
+              borderRadius: "12px",
+              border: "1px solid #e2e8f0",
+              background: "white",
+              fontWeight: "600",
+              color: "#334155",
+              cursor: "pointer",
+              fontSize: "14px",
+            }}
+          >
+            <FiFilter size={16} />
+            Filter
+          </button>
+
+          <div style={{ position: "relative", width: "220px" }}>
             <div
+              onClick={() => setShowFilterDropdown((prev) => !prev)}
               style={{
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
-                gap: "8px",
+                padding: "12px 16px",
+                borderRadius: "12px",
+                border: "1px solid #e2e8f0",
+                background: "white",
+                cursor: "pointer",
+                fontWeight: "600",
+                fontSize: "14px",
+                color: "#334155",
               }}
             >
-              <FiFilter size={22} color="#2563eb" />
+              {filters.find((f) => f.value === filterStatus)?.label}
 
-              <span
-                style={{
-                  fontSize: "16px",
-                  fontWeight: "600",
-                  color: "#334155",
-                }}
-              >
-                Filter Parcels
+              <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+                {showFilterDropdown ? "▲" : "▼"}
               </span>
             </div>
 
-            <div
-              style={{
-                position: "relative",
-                width: "230px",
-              }}
-            >
+            {showFilterDropdown && (
               <div
-                onClick={() => setShowFilterDropdown(!showFilterDropdown)}
                 style={{
+                  position: "absolute",
+                  top: "54px",
+                  right: 0,
+                  width: "230px",
                   background: "white",
-                  padding: "14px 18px",
-                  borderRadius: "16px",
-                  boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  cursor: "pointer",
-                  fontWeight: "600",
-                  fontSize: "16px",
-                  border: "2px solid #e2e8f0",
+                  borderRadius: "14px",
+                  boxShadow: "0 15px 35px rgba(0,0,0,0.15)",
+                  overflow: "hidden",
+                  zIndex: 1000,
                 }}
               >
-                {filters.find((f) => f.value === filterStatus)?.label}
+                {filters.map((filter) => (
+                  <div
+                    key={filter.value}
+                    onClick={() => {
+                      setFilterStatus(filter.value);
 
-                <span>{showFilterDropdown ? "▲" : "▼"}</span>
+                      setShowFilterDropdown(false);
+                    }}
+                    style={{
+                      padding: "12px 16px",
+                      cursor: "pointer",
+                      fontWeight: "500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      fontSize: "14px",
+                      background:
+                        filterStatus === filter.value ? "#eff6ff" : "white",
+                      borderBottom:
+                        filter.value !== "FailedDelivery"
+                          ? "1px solid #f1f5f9"
+                          : "none",
+                    }}
+                  >
+                    {filter.label}
+                  </div>
+                ))}
               </div>
-
-              {showFilterDropdown && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: "60px",
-                    width: "100%",
-                    background: "white",
-                    borderRadius: "18px",
-                    boxShadow: "0 15px 35px rgba(0,0,0,0.15)",
-                    overflow: "hidden",
-                    zIndex: 1000,
-                  }}
-                >
-                  {filters.map((filter) => (
-                    <div
-                      key={filter.value}
-                      onClick={() => {
-                        setFilterStatus(filter.value);
-
-                        setShowFilterDropdown(false);
-                      }}
-                      onMouseEnter={(e) => {
-                        if (filterStatus !== filter.value) {
-                          e.currentTarget.style.background = "#f8fafc";
-                        }
-
-                        e.currentTarget.style.transform = "translateX(5px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        if (filterStatus !== filter.value) {
-                          e.currentTarget.style.background = "white";
-                        }
-
-                        e.currentTarget.style.transform = "translateX(0)";
-                      }}
-                      style={{
-                        padding: "14px 18px",
-
-                        cursor: "pointer",
-
-                        fontWeight: "500",
-
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-
-                        transition: "all 0.3s ease",
-
-                        background:
-                          filterStatus === filter.value ? "#eff6ff" : "white",
-
-                        borderBottom:
-                          filter.value !== "FailedDelivery"
-                            ? "1px solid #f1f5f9"
-                            : "none",
-                      }}
-                    >
-                      {filter.label}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            )}
           </div>
+
+          <button
+            onClick={exportParcels}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "12px 18px",
+              borderRadius: "12px",
+              border: "1px solid #0f172a",
+              background: "white",
+              fontWeight: "600",
+              color: "#0f172a",
+              cursor: "pointer",
+              fontSize: "14px",
+              marginLeft: "auto",
+            }}
+          >
+            <FiDownload size={16} />
+            Export
+          </button>
         </div>
 
-        <table
-          style={{
-            width: "100%",
-            borderCollapse: "collapse",
-          }}
-        >
-          <thead>
-            <tr>
-              <th
-                style={{
-                  padding: "12px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Tracking No
-              </th>
+        <div style={{ width: "100%" }}>
+          <table
+            style={{
+              width: "100%",
+              tableLayout: "fixed",
+              borderCollapse: "collapse",
+            }}
+          >
+            <colgroup>
+              <col style={{ width: "14%" }} />
+              <col style={{ width: "11%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "13%" }} />
+              <col style={{ width: "13%" }} />
+              <col style={{ width: "34%" }} />
+            </colgroup>
 
-              <th
-                style={{
-                  padding: "18px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Customer ID
-              </th>
-
-              <th
-                style={{
-                  padding: "18px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Status
-              </th>
-
-              <th
-                style={{
-                  padding: "18px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Created At
-              </th>
-
-              <th
-                style={{
-                  padding: "18px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Payment
-              </th>
-
-              <th
-                style={{
-                  padding: "18px",
-                  textAlign: "left",
-                  borderBottom: "1px solid #e5e7eb",
-                  color: "#0f172a",
-                  fontWeight: "700",
-                }}
-              >
-                Actions
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredParcels.map((parcel) => (
-              <tr key={parcel.id}>
-                <td
-                  style={{
-                    padding: "20px 18px",
-                    borderBottom: "1px solid #e5e7eb",
-                    verticalAlign: "middle",
-
-                    color: "#2563eb",
-
-                    fontWeight: "600",
-
-                    cursor: "pointer",
-
-                    textDecoration: "underline",
-                  }}
-                  onClick={() => viewParcelDetails(parcel)}
-                >
-                  {parcel.tracking_number}
-                </td>
-
-                <td
-                  style={{
-                    padding: "20px 18px",
-                    borderBottom: "1px solid #e5e7eb",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  {parcel.customer_id}
-                </td>
-
-                <td
-                  style={{
-                    padding: "20px 18px",
-                    borderBottom: "1px solid #e5e7eb",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  <span
+            <thead>
+              <tr>
+                {[
+                  "Tracking No",
+                  "Customer ID",
+                  "Status",
+                  "Created At",
+                  "Payment",
+                  "Actions",
+                ].map((heading) => (
+                  <th
+                    key={heading}
                     style={{
-                      padding: "8px 14px",
-
-                      borderRadius: "20px",
-
-                      fontWeight: "600",
-
+                      padding: "14px 10px",
+                      textAlign: "left",
+                      borderBottom: "1px solid #e5e7eb",
+                      color: "#0f172a",
+                      fontWeight: "700",
                       fontSize: "14px",
-
-                      background:
-                        parcel.status === "Delivered"
-                          ? "#dcfce7"
-                          : parcel.status === "FailedDelivery"
-                            ? "#fee2e2"
-                            : parcel.status === "OutForDelivery"
-                              ? "#fef3c7"
-                              : "#dbeafe",
-
-                      color:
-                        parcel.status === "Delivered"
-                          ? "#166534"
-                          : parcel.status === "FailedDelivery"
-                            ? "#991b1b"
-                            : parcel.status === "OutForDelivery"
-                              ? "#92400e"
-                              : "#1d4ed8",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
                     }}
                   >
-                    {parcel.status}
-                  </span>
-                </td>
+                    {heading}
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-                <td
-                  style={{
-                    padding: "20px 18px",
-                    borderBottom: "1px solid #e5e7eb",
-                    verticalAlign: "middle",
-                  }}
-                >
-                  {new Date(parcel.created_at).toLocaleDateString()}
-                </td>
-
-                <td
-                  style={{
-                    padding: "12px",
-                    borderTop: "1px solid #e5e7eb",
-                  }}
-                >
-                  {parcel.payment_method === "Prepaid" ? (
-                    <button
-                      disabled
-                      style={{
-                        padding: "6px 10px",
-                        border: "none",
-                        borderRadius: "6px",
-                        background: "#22c55e",
-                        color: "white",
-                        cursor: "not-allowed",
-                        opacity: 0.8,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Paid
-                    </button>
-                  ) : parcel.payment_status === "Pending" ? (
-                    <button
-                      disabled={parcel.status !== "OutForDelivery"}
-                      onClick={() => collectPayment(parcel.id)}
-                      style={
-                        parcel.status === "OutForDelivery"
-                          ? {
-                              padding: "6px 10px",
-                              border: "none",
-                              borderRadius: "6px",
-
-                              background: "#8b5cf6",
-
-                              color: "white",
-
-                              cursor: "pointer",
-
-                              fontWeight: "600",
-                            }
-                          : disabledButton
-                      }
-                    >
-                      Collect ₹{parcel.amount}
-                    </button>
-                  ) : (
-                    <button
-                      disabled
-                      style={{
-                        padding: "6px 10px",
-                        border: "none",
-                        borderRadius: "6px",
-                        background: "#22c55e",
-                        color: "white",
-                        cursor: "not-allowed",
-                        opacity: 0.8,
-                        fontWeight: "600",
-                      }}
-                    >
-                      Paid
-                    </button>
-                  )}
-                </td>
-
-                <td
-                  style={{
-                    padding: "12px",
-                    borderTop: "1px solid #e5e7eb",
-                    minWidth: "280px",
-                  }}
-                >
-                  <div
+            <tbody>
+              {paginatedParcels.map((parcel) => (
+                <tr key={parcel.id}>
+                  <td
                     style={{
-                      display: "flex",
-                      gap: "8px",
-                      alignItems: "center",
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                      color: "#2563eb",
+                      fontWeight: "600",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    onClick={() => viewParcelDetails(parcel)}
+                    title={parcel.tracking_number}
+                  >
+                    {parcel.tracking_number}
+                  </td>
+
+                  <td
+                    style={{
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                      color: "#334155",
                     }}
                   >
-                    <button
-                      disabled={parcel.status !== "Assigned"}
-                      onClick={() => startDelivery(parcel.id)}
-                      style={
-                        parcel.status === "Assigned"
-                          ? {
-                              padding: "6px 10px",
-                              border: "none",
-                              borderRadius: "6px",
-                              background: "#f59e0b",
-                              color: "white",
-                              cursor: "pointer",
-                            }
-                          : disabledButton
-                      }
-                    >
-                      Out
-                    </button>
+                    {parcel.customer_id}
+                  </td>
 
-                    <button
-                      disabled={
-                        parcel.status !== "OutForDelivery" ||
-                        (parcel.payment_method === "CashOnDelivery" &&
-                          parcel.payment_status === "Paid")
-                      }
-                      onClick={() => reportFailure(parcel.id)}
-                      style={
-                        parcel.status === "OutForDelivery" &&
-                        !(
+                  <td
+                    style={{
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                    }}
+                  >
+                    {statusBadge(parcel.status)}
+                  </td>
+
+                  <td
+                    style={{
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                      color: "#475569",
+                    }}
+                  >
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <FiCalendar size={14} color="#94a3b8" />
+                      {new Date(parcel.created_at).toLocaleDateString(
+                        "en-US",
+                      )}
+                    </span>
+                  </td>
+
+                  <td
+                    style={{
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                    }}
+                  >
+                    {parcel.payment_method === "Prepaid" ||
+                    parcel.payment_status !== "Pending" ? (
+                      <span
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "6px",
+                          padding: "6px 14px",
+                          borderRadius: "20px",
+                          fontWeight: "600",
+                          fontSize: "13px",
+                          background: "#dcfce7",
+                          color: "#16a34a",
+                        }}
+                      >
+                        <FiCheck size={13} />
+                        Paid
+                      </span>
+                    ) : (
+                      <button
+                        disabled={parcel.status !== "OutForDelivery"}
+                        onClick={() => collectPayment(parcel.id)}
+                        style={actionButtonStyle(
+                          "#8b5cf6",
+                          parcel.status !== "OutForDelivery",
+                        )}
+                      >
+                        Collect ₹{parcel.amount}
+                      </button>
+                    )}
+                  </td>
+
+                  <td
+                    style={{
+                      padding: "12px 10px",
+                      borderBottom: "1px solid #e5e7eb",
+                      verticalAlign: "middle",
+                    }}
+                  >
+                    <div style={{ display: "flex", gap: "6px" }}>
+                      <button
+                        disabled={parcel.status !== "Assigned"}
+                        onClick={() => startDelivery(parcel.id)}
+                        style={actionButtonStyle(
+                          "#2563eb",
+                          parcel.status !== "Assigned",
+                        )}
+                      >
+                        <FiSend size={14} />
+                        Out
+                      </button>
+
+                      <button
+                        disabled={
+                          parcel.status !== "OutForDelivery" ||
+                          (parcel.payment_method === "CashOnDelivery" &&
+                            parcel.payment_status === "Paid")
+                        }
+                        onClick={() => reportFailure(parcel.id)}
+                        title={
                           parcel.payment_method === "CashOnDelivery" &&
                           parcel.payment_status === "Paid"
-                        )
-                          ? {
-                              padding: "6px 10px",
-                              border: "none",
-                              borderRadius: "6px",
-                              background: "#ef4444",
-                              color: "white",
-                              cursor: "pointer",
-                            }
-                          : disabledButton
-                      }
-                    >
-                      Failed
-                    </button>
+                            ? "Cash already collected — delivery can't be marked as failed"
+                            : undefined
+                        }
+                        style={actionButtonStyle(
+                          "#dc2626",
+                          parcel.status !== "OutForDelivery" ||
+                            (parcel.payment_method === "CashOnDelivery" &&
+                              parcel.payment_status === "Paid"),
+                        )}
+                      >
+                        <FiXCircle size={14} />
+                        Failed
+                      </button>
 
-                    <button
-                      disabled={
-                        parcel.status !== "OutForDelivery" ||
-                        (parcel.payment_method === "CashOnDelivery" &&
-                          parcel.payment_status !== "Paid")
-                      }
-                      onClick={() => markDelivered(parcel.id)}
-                      style={
-                        parcel.status === "OutForDelivery"
-                          ? {
-                              padding: "6px 10px",
-                              border: "none",
-                              borderRadius: "6px",
-                              background: "#22c55e",
-                              color: "white",
-                              cursor: "pointer",
-                            }
-                          : disabledButton
-                      }
-                    >
-                      Delivered
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                      <button
+                        disabled={
+                          parcel.status !== "OutForDelivery" ||
+                          (parcel.payment_method === "CashOnDelivery" &&
+                            parcel.payment_status !== "Paid")
+                        }
+                        onClick={() => markDelivered(parcel.id)}
+                        style={actionButtonStyle(
+                          "#16a34a",
+                          parcel.status !== "OutForDelivery" ||
+                            (parcel.payment_method === "CashOnDelivery" &&
+                              parcel.payment_status !== "Paid"),
+                        )}
+                      >
+                        <FiCheckCircle size={14} />
+                        Delivered
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {paginatedParcels.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={6}
+                    style={{
+                      padding: "40px 18px",
+                      textAlign: "center",
+                      color: "#94a3b8",
+                    }}
+                  >
+                    No parcels found.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Footer / Pagination */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "20px",
+            flexWrap: "wrap",
+            gap: "12px",
+          }}
+        >
+          <span style={{ color: "#64748b", fontSize: "14px" }}>
+            Showing {rangeStart} to {rangeEnd} of {filteredParcels.length}{" "}
+            parcels
+          </span>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                border: "1px solid #e2e8f0",
+                background: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                color: currentPage === 1 ? "#cbd5e1" : "#334155",
+              }}
+            >
+              <FiChevronLeft size={16} />
+            </button>
+
+            {getPageNumbers().map((page, idx) =>
+              page === "..." ? (
+                <span
+                  key={`ellipsis-${idx}`}
+                  style={{ padding: "0 4px", color: "#94a3b8" }}
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  style={{
+                    width: "36px",
+                    height: "36px",
+                    borderRadius: "10px",
+                    border:
+                      page === currentPage
+                        ? "none"
+                        : "1px solid #e2e8f0",
+                    background: page === currentPage ? "#2563eb" : "white",
+                    color: page === currentPage ? "white" : "#334155",
+                    fontWeight: "600",
+                    cursor: "pointer",
+                  }}
+                >
+                  {page}
+                </button>
+              ),
+            )}
+
+            <button
+              onClick={() =>
+                setCurrentPage((p) => Math.min(totalPages, p + 1))
+              }
+              disabled={currentPage === totalPages}
+              style={{
+                width: "36px",
+                height: "36px",
+                borderRadius: "10px",
+                border: "1px solid #e2e8f0",
+                background: "white",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor:
+                  currentPage === totalPages ? "not-allowed" : "pointer",
+                color: currentPage === totalPages ? "#cbd5e1" : "#334155",
+              }}
+            >
+              <FiChevronRight size={16} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {showModal && selectedParcel && (
@@ -691,37 +1022,26 @@ function MyParcels() {
             width: "100%",
             height: "100%",
             background: "rgba(0,0,0,0.5)",
-
             display: "flex",
-
             justifyContent: "center",
-
             alignItems: "center",
-
             zIndex: 9999,
           }}
         >
           <div
             style={{
               background: "white",
-
               width: "580px",
-
               padding: "30px",
-
               borderRadius: "20px",
-
               boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
             }}
           >
             <div
               style={{
                 display: "flex",
-
                 justifyContent: "space-between",
-
                 alignItems: "center",
-
                 marginBottom: "20px",
               }}
             >
@@ -731,11 +1051,8 @@ function MyParcels() {
                 onClick={() => setShowModal(false)}
                 style={{
                   border: "none",
-
                   background: "none",
-
                   cursor: "pointer",
-
                   fontSize: "22px",
                 }}
               >
@@ -790,20 +1107,14 @@ function MyParcels() {
                   rel="noopener noreferrer"
                   style={{
                     width: "fit-content",
-
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "8px",
-
                     padding: "10px 16px",
-
                     background: "#eff6ff",
                     color: "#2563eb",
-
                     borderRadius: "12px",
-
                     textDecoration: "none",
-
                     fontSize: "14px",
                     fontWeight: "600",
                   }}
@@ -829,7 +1140,6 @@ function MyParcels() {
                     selectedParcel.payment_status === "Paid"
                       ? "#16a34a"
                       : "#dc2626",
-
                   fontWeight: "600",
                 }}
               >
@@ -845,36 +1155,7 @@ function MyParcels() {
                   minHeight: "40px",
                 }}
               >
-                <span
-                  style={{
-                    display: "inline-block",
-                    width: "fit-content",
-
-                    padding: "8px 14px",
-                    borderRadius: "20px",
-                    fontWeight: "600",
-
-                    background:
-                      selectedParcel.status === "Delivered"
-                        ? "#dcfce7"
-                        : selectedParcel.status === "FailedDelivery"
-                          ? "#fee2e2"
-                          : selectedParcel.status === "OutForDelivery"
-                            ? "#fef3c7"
-                            : "#e0e7ff",
-
-                    color:
-                      selectedParcel.status === "Delivered"
-                        ? "#166534"
-                        : selectedParcel.status === "FailedDelivery"
-                          ? "#991b1b"
-                          : selectedParcel.status === "OutForDelivery"
-                            ? "#92400e"
-                            : "#4338ca",
-                  }}
-                >
-                  {selectedParcel.status}
-                </span>
+                {statusBadge(selectedParcel.status)}
               </div>
 
               {selectedParcel.status === "FailedDelivery" && (
@@ -933,21 +1214,10 @@ function MyParcels() {
                 marginBottom: "20px",
               }}
             >
-              <span
-                style={{
-                  fontSize: "34px",
-                }}
-              >
-                ⚠️
-              </span>
+              <span style={{ fontSize: "34px" }}>⚠️</span>
 
               <div>
-                <h2
-                  style={{
-                    margin: 0,
-                    fontSize: "34px",
-                  }}
-                >
+                <h2 style={{ margin: 0, fontSize: "28px" }}>
                   Failed Delivery
                 </h2>
 
@@ -995,30 +1265,18 @@ function MyParcels() {
               <option value="Other">Other</option>
             </select>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "12px",
-              }}
-            >
+            <div style={{ display: "flex", gap: "12px" }}>
               <button
                 onClick={submitFailure}
                 disabled={!failureReason}
                 style={{
                   flex: 1,
-
                   background: failureReason ? "#ef4444" : "#d1d5db",
-
                   color: "white",
-
                   border: "none",
-
                   padding: "14px",
-
                   borderRadius: "12px",
-
                   fontWeight: "600",
-
                   cursor: failureReason ? "pointer" : "not-allowed",
                 }}
               >
