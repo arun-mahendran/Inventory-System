@@ -225,19 +225,6 @@
     animation: fadeIn 0.6s ease 0.1s both;
 }
 
-.login-card::before,
-.login-card::after {
-    content: "";
-    position: absolute;
-    left: -11px;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: var(--ink-navy-2);
-}
-
-.login-card::before { top: -11px; }
-.login-card::after { bottom: -11px; }
 
 .manifest-id {
     position: absolute;
@@ -504,10 +491,6 @@
         grid-template-columns: 1fr;
     }
     .login-left {
-        display: none;
-    }
-    .login-card::before,
-    .login-card::after {
         display: none;
     }
 }

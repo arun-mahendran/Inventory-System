@@ -1,446 +1,149 @@
-import { HiOutlineMenuAlt2 } from "react-icons/hi";
-
-import { FiLogOut, FiBell } from "react-icons/fi";
-
-import { useNavigate } from "react-router-dom";
-
 import { useState, useEffect } from "react";
-
+import { HiOutlineMenuAlt2 } from "react-icons/hi";
+import { FiLogOut, FiBell, FiPackage } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
+import "../../styles/navbar.css";
 
 function AgentNavbar({ sidebarOpen, setSidebarOpen }) {
   const navigate = useNavigate();
-
   const [notifications, setNotifications] = useState([]);
-
   const [showNotifications, setShowNotifications] = useState(false);
 
   const fetchNotifications = async () => {
+    const agentId = localStorage.getItem("delivery_agent_id");
 
-    const agentId =
-        localStorage.getItem(
-            "delivery_agent_id"
-        );
-
-    if (
-        !agentId ||
-        agentId === "null"
-    ) {
-        return;
+    if (!agentId || agentId === "null") {
+      return;
     }
 
     try {
-
-        const response =
-            await api.get(
-                `/notifications/${agentId}`
-            );
-
-        setNotifications(
-            response.data
-        );
-
+      const response = await api.get(`/notifications/${agentId}`);
+      setNotifications(response.data);
+    } catch (error) {
+      console.log(error);
     }
-
-    catch (error) {
-
-        console.log(error);
-
-    }
-
-};
+  };
 
   useEffect(() => {
-    const handleClickOutside = () => {
-      setShowNotifications(false);
-    };
+    const handleClickOutside = () => setShowNotifications(false);
 
     if (showNotifications) {
       document.addEventListener("click", handleClickOutside);
     }
 
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
+    return () => document.removeEventListener("click", handleClickOutside);
   }, [showNotifications]);
 
   useEffect(() => {
-
     fetchNotifications();
-
-    const interval = setInterval(() => {
-
-        fetchNotifications();
-
-    }, 10000); // every 10 seconds
-
+    const interval = setInterval(fetchNotifications, 10000); // every 10 seconds
     return () => clearInterval(interval);
+  }, []);
 
-}, []);
+  const unreadCount = notifications.filter((n) => !n.is_read).length;
+
+  const handleBellClick = async (e) => {
+    e.stopPropagation();
+
+    if (!showNotifications) {
+      const agentId = localStorage.getItem("delivery_agent_id");
+
+      try {
+        await api.put(`/notifications/${agentId}/read`);
+        fetchNotifications();
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    setShowNotifications(!showNotifications);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
 
   return (
     <div className="navbar">
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "20px",
-        }}
-      >
+      <div className="navbar-left">
         <button
+          className="navbar-toggle"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          style={{
-            border: "none",
-            background: "#0f172a",
-            color: "white",
-            width: "45px",
-            height: "45px",
-            borderRadius: "12px",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.transform = "scale(1.08)")
-          }
-          onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
-          <HiOutlineMenuAlt2 size={28} />
+          <HiOutlineMenuAlt2 size={24} />
         </button>
 
-        <div className="navbar-title">Delivery Agent Portal</div>
+        <div className="navbar-title navbar-title--brand">
+          <FiPackage className="navbar-brand-icon" />
+          <span>
+            FINAL MILE <span className="navbar-brand-accent">HUB</span>
+          </span>
+        </div>
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "15px",
-          position: "relative",
-        }}
-      >
-        {/* Notification Bell */}
-
+      <div className="navbar-right">
         <button
-          onClick={async (e) => {
-
-            e.stopPropagation();
-
-            if (!showNotifications) {
-
-                const agentId =
-                    localStorage.getItem(
-                        "delivery_agent_id"
-                    );
-
-                try {
-
-                    await api.put(
-                        `/notifications/${agentId}/read`
-                    );
-
-                    fetchNotifications();
-
-                }
-
-                catch (error) {
-
-                    console.log(error);
-
-                }
-
-            }
-
-            setShowNotifications(
-                !showNotifications
-            );
-
-        }}
-          style={{
-            border: "none",
-
-            background: "white",
-
-            width: "50px",
-            height: "50px",
-
-            borderRadius: "50%",
-
-            cursor: "pointer",
-
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-
-            position: "relative",
-
-            boxShadow: "0 5px 15px rgba(0,0,0,0.08)",
-
-            transition: "all 0.3s ease"
-          }}
-
-          onMouseEnter={(e) => {
-
-            e.currentTarget.style.transform =
-                "scale(1.08)";
-
-            }}
-
-            onMouseLeave={(e) => {
-
-            e.currentTarget.style.transform =
-                "scale(1)";
-
-            }}
+          className="navbar-icon-btn"
+          onClick={handleBellClick}
+          aria-label="Notifications"
         >
-            
-          <FiBell size={22} />
-
-          {notifications.filter((n) => !n.is_read).length > 0 && (
-            <span
-              style={{
-                position: "absolute",
-
-                top: "4px",
-                right: "4px",
-
-                width: "20px",
-                height: "20px",
-
-                borderRadius: "50%",
-
-                background: "#ef4444",
-
-                color: "white",
-
-                fontSize: "12px",
-
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {notifications.filter((n) => !n.is_read).length}
-            </span>
+          <FiBell size={20} />
+          {unreadCount > 0 && (
+            <span className="navbar-badge">{unreadCount}</span>
           )}
         </button>
 
-        {/* Notification Dropdown */}
-
         {showNotifications && (
-        <>
-            {/* Blur Overlay */}
+          <>
+            <div className="navbar-overlay" />
 
             <div
-            style={{
-                position: "fixed",
-
-                top: 0,
-                left: 0,
-
-                width: "100vw",
-                height: "100vh",
-
-                backdropFilter: "blur(6px)",
-
-                background:
-                "rgba(15,23,42,0.08)",
-
-                zIndex: 998,
-            }}
-            />
-
-            {/* Dropdown */}
-
-            <div
-            onClick={(e) =>
-                e.stopPropagation()
-            }
-
-            style={{
-                position: "absolute",
-
-                top: "60px",
-                right: "70px",
-
-                width: "340px",
-
-                background:
-                "rgba(255,255,255,0.92)",
-
-                backdropFilter:
-                "blur(20px)",
-
-                border:
-                "1px solid rgba(255,255,255,0.3)",
-
-                borderRadius: "22px",
-
-                padding: "22px",
-
-                boxShadow:
-                "0 20px 40px rgba(0,0,0,0.12)",
-
-                zIndex: 999,
-            }}
+              className="navbar-dropdown"
+              onClick={(e) => e.stopPropagation()}
             >
-            <h3
-                style={{
-                marginBottom: "18px",
+              <h3>
+                <FiBell size={16} />
+                Notifications
+              </h3>
 
-                fontSize: "20px",
-
-                color: "#0f172a",
-                }}
-            >
-                🔔 Notifications
-            </h3>
-
-            {notifications.length === 0 ? (
-
-                <div
-                style={{
-                    textAlign: "center",
-
-                    padding: "25px",
-
-                    color: "#64748b",
-                }}
-                >
-                No Notifications
-                </div>
-
-            ) : (
-
+              {notifications.length === 0 ? (
+                <div className="navbar-dropdown-empty">No notifications</div>
+              ) : (
                 notifications
-                .sort(
+                  .sort(
                     (a, b) =>
-                        new Date(b.created_at) -
-                        new Date(a.created_at)
-                )
-                .slice(0, 3)
-                .map(
-                    (notification) => (
-
+                      new Date(b.created_at) - new Date(a.created_at),
+                  )
+                  .slice(0, 3)
+                  .map((notification) => (
                     <div
-                    key={notification.id}
-
-                    style={{
-                        padding: "14px",
-
-                        marginBottom: "12px",
-
-                        borderRadius: "14px",
-
-                        background:
-                        "rgba(248,250,252,0.8)",
-
-                        border:
-                        "1px solid #e2e8f0",
-
-                        transition:
-                        "all 0.3s ease",
-                    }}
+                      key={notification.id}
+                      className="navbar-dropdown-item"
                     >
-                    <div
-                        style={{
-                        fontSize: "14px",
-
-                        color: "#334155",
-
-                        lineHeight: "1.7",
-
-                        fontWeight: "500",
-                        }}
-                    >
+                      <div className="navbar-dropdown-message">
                         {notification.message}
+                      </div>
+                      <p className="navbar-dropdown-time">
+                        {new Date(notification.created_at).toLocaleString()}
+                      </p>
                     </div>
+                  ))
+              )}
 
-                    <p
-                        style={{
-                        fontSize: "12px",
-
-                        color: "#94a3b8",
-
-                        marginTop: "8px",
-
-                        marginBottom: 0,
-                        }}
-                    >
-                        {new Date(
-                        notification.created_at
-                        ).toLocaleString()}
-                    </p>
-                    </div>
-                )
-                )
-
-            )}
-
-            {
-              notifications.length > 3 && (
-
-                  <p
-                      style={{
-                          textAlign: "center",
-                          color: "#64748b",
-                          fontSize: "13px",
-                          marginTop: "10px",
-                          marginBottom: 0
-                      }}
-                  >
-                      Showing latest 3 notifications
-                  </p>
-
-              )
-          }
+              {notifications.length > 3 && (
+                <p className="navbar-dropdown-footer">
+                  Showing latest 3 notifications
+                </p>
+              )}
             </div>
-        </>
+          </>
         )}
 
-        {/* Logout Button */}
-
-        <button
-          onClick={() => {
-            localStorage.clear();
-
-            navigate("/login");
-          }}
-          style={{
-            border: "none",
-
-            background: "#0f172a",
-
-            color: "white",
-
-            padding: "10px 16px",
-
-            borderRadius: "12px",
-
-            cursor: "pointer",
-
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-
-            fontWeight: "600",
-
-            transition: "all 0.3s ease",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#ef4444";
-
-            e.currentTarget.style.transform = "translateY(-2px)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#0f172a";
-
-            e.currentTarget.style.transform = "translateY(0)";
-          }}
-        >
-          <FiLogOut size={18} />
+        <button className="navbar-logout" onClick={handleLogout}>
+          <FiLogOut size={16} />
           Logout
         </button>
       </div>

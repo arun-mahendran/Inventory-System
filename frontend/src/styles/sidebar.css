@@ -1,20 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --ink-navy: #0f172a;
+    --ink-navy-2: #16213a;
+    --line-navy: #24314f;
+    --signal-orange: #f97316;
+    --signal-orange-2: #f97316;
+    --slate: #64748b;
+    --slate-light: #94a3b8;
+    --danger: #ef4444;
+}
+
 .sidebar {
     position: fixed;
     top: 70px;
     left: 0;
     bottom: 0;
+    z-index: 900;
     display: flex;
     flex-direction: column;
-    background: #0f172a;
+    background: var(--ink-navy);
     color: white;
     padding: 24px 16px;
     overflow-y: auto;
     overflow-x: hidden;
-    transition: all 0.35s ease;
-    border-right:
-        1px solid rgba(255,255,255,0.08);
-    box-shadow:
-        4px 0 20px rgba(0,0,0,0.15);
+    transition: width 0.35s ease;
+    font-family: 'Inter', sans-serif;
 }
 
 /* Scrollbar */
@@ -23,7 +34,7 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-    background: #334155;
+    background: var(--line-navy);
     border-radius: 10px;
 }
 
@@ -31,48 +42,81 @@
     background: transparent;
 }
 
-/* Links */
-.sidebar a {
+/* ---------- Profile ---------- */
+
+.sidebar-profile {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.sidebar-avatar {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--ink-navy-2);
+    border: 2px solid var(--signal-orange);
+    color: var(--signal-orange);
+}
+
+.sidebar-profile h3 {
+    margin: 12px 0 2px;
+    color: white;
+    font-family: 'Big Shoulders Display', sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+}
+
+.sidebar-profile p {
+    color: var(--slate-light);
+    font-size: 13px;
+    margin: 0;
+}
+
+/* ---------- Nav links ---------- */
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.sidebar a.sidebar-link {
     display: flex;
     align-items: center;
     gap: 16px;
-    color: #cbd5e1;
+    color: var(--slate-light);
     text-decoration: none;
-    padding: 12px 16px;   /* reduced */
-    margin-bottom: 8px;   /* reduced */
-    border-radius: 14px;
-    font-size: 14px;      /* reduced */
-    font-weight: 500;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 600;
+    transition: background 0.25s ease, color 0.25s ease;
 }
 
-/* Hover */
-.sidebar a:hover {
-    background:
-        rgba(37,99,235,0.18);
+.sidebar a.sidebar-link svg {
+    flex-shrink: 0;
+}
+
+.sidebar a.sidebar-link:hover {
+    background: rgba(255, 255, 255, 0.06);
     color: white;
-    transform: translateX(4px);
 }
 
-/* Link container */
-.sidebar-link {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-}
-
-/* Active link */
-.active-link {
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb,
-            #3b82f6
-        );
+.sidebar a.active-link {
+    background: var(--signal-orange);
     color: white !important;
     font-weight: 600;
-    box-shadow:
-        0 8px 20px
-        rgba(37,99,235,0.35);
+    box-shadow: 0 8px 20px rgba(249, 115, 22, 0.35);
+}
+
+.sidebar a.active-link:hover {
+    transform: none;
 }
 
 /* Text animation */
@@ -81,39 +125,37 @@
     transition: opacity 0.25s ease;
 }
 
-/* User profile */
-.sidebar-profile {
-    text-align: center;
-    margin-bottom: 35px;
-}
+/* ---------- Search bar (optional) ---------- */
 
-.sidebar-profile h3 {
-    margin-top: 10px;
-    color: white;
-    font-size: 20px;   /* 24 -> 20 */
-}
-
-.sidebar-profile p {
-    color: #94a3b8;
-    font-size: 14px;   /* 16 -> 14 */
-}
-
-/* Search Bar */
 .sidebar-search {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 24px;
 }
 
 .sidebar-search input {
     width: 100%;
-    padding: 14px 14px 14px 45px;
+    padding: 12px 14px 12px 42px;
     border-radius: 30px;
-    border: 1px solid #1e293b;
-    background: #111827;
+    border: 1px solid var(--line-navy);
+    background: var(--ink-navy);
     color: white;
     outline: none;
+    font-size: 13.5px;
+}
+
+.sidebar-search input:focus {
+    border-color: var(--signal-orange);
 }
 
 .sidebar-search input::placeholder {
-    color: #94a3b8;
+    color: var(--slate-light);
+}
+
+.sidebar-search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--slate-light);
+    font-size: 15px;
 }
