@@ -18,6 +18,7 @@ import {
   FiShield,
   FiHeadphones,
   FiArrowLeft,
+  FiInfo,
 } from "react-icons/fi";
 
 import { FaMotorcycle } from "react-icons/fa";
@@ -236,25 +237,48 @@ function AgentTracking() {
         style={{
           display: "flex",
           alignItems: "center",
-          gap: "12px",
-          marginBottom: "4px",
-        }}
-      >
-        <FiMapPin size={30} color="#2563eb" />
-
-        <h1 style={{ margin: 0, fontSize: "28px" }}>Track Assigned Parcel</h1>
-      </div>
-
-      <p
-        style={{
-          color: "#64748b",
-          fontSize: "15px",
-          marginTop: "4px",
+          gap: "16px",
           marginBottom: "24px",
         }}
       >
-        Search and track real-time updates for parcels assigned to you.
-      </p>
+        <div
+          style={{
+            width: "56px",
+            height: "56px",
+            borderRadius: "16px",
+            background: "#e8ecfd",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexShrink: 0,
+          }}
+        >
+          <FiMapPin size={26} color="#3b5bfd" />
+        </div>
+
+        <div>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "26px",
+              fontWeight: "700",
+              color: "#0f172a",
+            }}
+          >
+            Track Assigned Parcel
+          </h1>
+
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "15px",
+              margin: "4px 0 0",
+            }}
+          >
+            Search and track real-time updates for parcels assigned to you.
+          </p>
+        </div>
+      </div>
 
       {/* SEARCH BAR */}
       <div
@@ -339,15 +363,40 @@ function AgentTracking() {
           </button>
         </div>
 
-        <p
+        <div
           style={{
-            margin: "12px 2px 0",
-            color: "#94a3b8",
-            fontSize: "13px",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            margin: "14px 2px 0",
           }}
         >
-          Search only covers parcels currently assigned to you.
-        </p>
+          <div
+            style={{
+              width: "18px",
+              height: "18px",
+              borderRadius: "50%",
+              background: "#3b5bfd",
+              color: "white",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <FiInfo size={11} />
+          </div>
+
+          <p
+            style={{
+              margin: 0,
+              color: "#94a3b8",
+              fontSize: "13px",
+            }}
+          >
+            Search only covers parcels currently assigned to you.
+          </p>
+        </div>
       </div>
 
       {showOverview && (
@@ -357,16 +406,50 @@ function AgentTracking() {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "8px",
+              justifyContent: "space-between",
               marginBottom: "12px",
               padding: "0 2px",
             }}
           >
-            <FiClock size={18} color="#334155" />
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  borderRadius: "50%",
+                  background: "#e8ecfd",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <FiClock size={16} color="#3b5bfd" />
+              </div>
 
-            <h3 style={{ margin: 0, fontSize: "16px", color: "#0f172a" }}>
-              Recent Tracking
-            </h3>
+              <h3 style={{ margin: 0, fontSize: "17px", color: "#0f172a" }}>
+                Recent Tracking
+              </h3>
+            </div>
+
+            {recentParcels.length > 0 && (
+              <a
+                href="#"
+                onClick={(e) => e.preventDefault()}
+                style={{
+                  color: "#3b5bfd",
+                  fontWeight: "600",
+                  fontSize: "14px",
+                  textDecoration: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "4px",
+                }}
+              >
+                View All
+                <FiChevronRight size={16} />
+              </a>
+            )}
           </div>
 
           <div
@@ -380,10 +463,85 @@ function AgentTracking() {
           >
             {recentParcels.length === 0 && (
               <div
-                style={{ padding: "30px", textAlign: "center", color: "#94a3b8" }}
+                style={{
+                  padding: "50px 30px",
+                  textAlign: "center",
+                }}
               >
-                No parcels tracked yet. Search a tracking number above to get
-                started.
+                <div
+                  style={{
+                    position: "relative",
+                    width: "140px",
+                    height: "140px",
+                    margin: "0 auto 20px",
+                    borderRadius: "50%",
+                    background: "#f1f4fe",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg
+                    width="80"
+                    height="80"
+                    viewBox="0 0 80 80"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M18 46 C 30 20, 55 20, 62 10"
+                      stroke="#c7d2fe"
+                      strokeWidth="2.5"
+                      strokeDasharray="4 5"
+                      strokeLinecap="round"
+                    />
+
+                    <circle cx="63" cy="10" r="7" fill="#3b5bfd" />
+
+                    <circle cx="63" cy="10" r="2.5" fill="white" />
+
+                    <rect
+                      x="14"
+                      y="42"
+                      width="34"
+                      height="26"
+                      rx="4"
+                      fill="#a9b7fb"
+                    />
+
+                    <rect
+                      x="14"
+                      y="42"
+                      width="34"
+                      height="11"
+                      rx="4"
+                      fill="#8fa0fa"
+                    />
+
+                    <rect
+                      x="28"
+                      y="42"
+                      width="6"
+                      height="26"
+                      fill="#7c8ff5"
+                    />
+                  </svg>
+                </div>
+
+                <div
+                  style={{
+                    fontWeight: "700",
+                    fontSize: "17px",
+                    color: "#0f172a",
+                    marginBottom: "6px",
+                  }}
+                >
+                  No parcels tracked yet
+                </div>
+
+                <div style={{ color: "#94a3b8", fontSize: "14px" }}>
+                  Search a tracking number above to get started.
+                </div>
               </div>
             )}
 
@@ -519,10 +677,9 @@ function AgentTracking() {
           {/* SUPPORT BANNER */}
           <div
             style={{
-              background: "#eef2ff",
-              border: "1px solid #e0e7ff",
-              borderRadius: "16px",
-              padding: "20px 24px",
+              background: "#eef1fe",
+              borderRadius: "18px",
+              padding: "22px 26px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
@@ -530,28 +687,28 @@ function AgentTracking() {
               gap: "16px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
               <div
                 style={{
-                  width: "38px",
-                  height: "38px",
-                  borderRadius: "10px",
-                  background: "#dbeafe",
+                  width: "44px",
+                  height: "44px",
+                  borderRadius: "12px",
+                  background: "#dbe1fc",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                   flexShrink: 0,
                 }}
               >
-                <FiShield size={18} color="#2563eb" />
+                <FiShield size={20} color="#3b5bfd" />
               </div>
 
               <div>
                 <div
                   style={{
-                    color: "#1d4ed8",
+                    color: "#1d3fd6",
                     fontWeight: "700",
-                    fontSize: "15px",
+                    fontSize: "16px",
                   }}
                 >
                   Need help with your tracking?
@@ -559,9 +716,9 @@ function AgentTracking() {
 
                 <div
                   style={{
-                    color: "#475569",
-                    fontSize: "13px",
-                    marginTop: "2px",
+                    color: "#5b6472",
+                    fontSize: "14px",
+                    marginTop: "3px",
                   }}
                 >
                   Contact support if your parcel is delayed or you have any
@@ -577,14 +734,15 @@ function AgentTracking() {
                 alignItems: "center",
                 gap: "8px",
                 background: "white",
-                color: "#0f172a",
-                border: "1px solid #0f172a",
-                padding: "10px 18px",
+                color: "#3b5bfd",
+                border: "none",
+                padding: "12px 22px",
                 borderRadius: "12px",
                 fontWeight: "600",
                 fontSize: "14px",
                 textDecoration: "none",
                 whiteSpace: "nowrap",
+                boxShadow: "0 4px 10px rgba(59,91,253,0.12)",
               }}
             >
               <FiHeadphones size={16} />
@@ -649,7 +807,7 @@ function AgentTracking() {
                 marginBottom: "10px",
               }}
             >
-              No parcel assigned to you was found with tracking number
+              This parcel is not assigned to you. Please check the tracking number and try again.
             </p>
 
             <p

@@ -4,6 +4,8 @@ import api from "../../api/axios";
 
 import AgentLayout from "../components/AgentLayout";
 
+import { FiChevronUp, FiChevronDown } from "react-icons/fi";
+
 import { toast } from "react-toastify";
 
 import {
@@ -83,7 +85,7 @@ function MyParcels() {
     {
       label: (
         <>
-          <FiXCircle /> Failed Delivery
+          <FiXCircle /> Failed
         </>
       ),
       value: "FailedDelivery",
@@ -331,7 +333,7 @@ function MyParcels() {
 
   const statusLabels = {
     Delivered: "Delivered",
-    FailedDelivery: "Failed Delivery",
+    FailedDelivery: "Failed",
     OutForDelivery: "Out for Delivery",
     Assigned: "Assigned",
   };
@@ -697,38 +699,58 @@ function MyParcels() {
           >
             <colgroup>
               <col style={{ width: "14%" }} />
-              <col style={{ width: "11%" }} />
+              <col style={{ width: "14%" }} />   {/* Customer ID: 11% → 14% */}
               <col style={{ width: "15%" }} />
               <col style={{ width: "13%" }} />
               <col style={{ width: "13%" }} />
-              <col style={{ width: "34%" }} />
+              <col style={{ width: "31%" }} />   {/* Actions: 34% → 31% */}
             </colgroup>
 
             <thead>
-              <tr>
+              <tr style={{ background: "#f8fafc" }}>
                 {[
-                  "Tracking No",
-                  "Customer ID",
-                  "Status",
-                  "Created At",
-                  "Payment",
-                  "Actions",
-                ].map((heading) => (
+                  { label: "Tracking No", sortable: true },
+                  { label: "Customer ID", sortable: true, extraPad: true },
+                  { label: "Status", sortable: true },
+                  { label: "Created At", sortable: true },
+                  { label: "Payment", sortable: false },
+                  { label: "Actions", sortable: false },
+                ].map((col) => (
                   <th
-                    key={heading}
+                    key={col.label}
                     style={{
-                      padding: "14px 10px",
+                      padding: "14px 20px",
+                      paddingRight: col.extraPad ? "40px" : "20px",
                       textAlign: "left",
                       borderBottom: "1px solid #e5e7eb",
-                      color: "#0f172a",
+                      color: "#64748b",
                       fontWeight: "700",
-                      fontSize: "14px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      fontSize: "12.5px",
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {heading}
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      {col.label}
+
+                      {col.sortable && (
+                        <span
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            lineHeight: 0,
+                            marginTop: "-2px",
+                          }}
+                        >
+                          <FiChevronUp size={11} style={{ color: "#3b5bfd" }} />
+                          <FiChevronDown
+                            size={11}
+                            style={{ color: "#cbd5e1", marginTop: "-3px" }}
+                          />
+                        </span>
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -739,7 +761,7 @@ function MyParcels() {
                 <tr key={parcel.id}>
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                       color: "#2563eb",
@@ -757,7 +779,8 @@ function MyParcels() {
 
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
+                      paddingRight: "40px",   // extra breathing room before Status
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                       color: "#334155",
@@ -768,7 +791,7 @@ function MyParcels() {
 
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                     }}
@@ -778,7 +801,7 @@ function MyParcels() {
 
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                       color: "#475569",
@@ -800,7 +823,7 @@ function MyParcels() {
 
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                     }}
@@ -839,7 +862,7 @@ function MyParcels() {
 
                   <td
                     style={{
-                      padding: "12px 10px",
+                      padding: "14px 20px",
                       borderBottom: "1px solid #e5e7eb",
                       verticalAlign: "middle",
                     }}

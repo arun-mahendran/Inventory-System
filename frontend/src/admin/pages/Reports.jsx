@@ -561,9 +561,7 @@ function Reports() {
               </div>
 
               <p style={styles.modalNote}>
-                Saved on this device for now. Actual automatic generation and
-                delivery will start working once the backend adds schedule
-                support.
+                This feature is coming soon. You'll be able to schedule reports for automatic generation and delivery.
               </p>
 
               <div style={styles.modalActions}>
@@ -627,8 +625,7 @@ function Reports() {
               </div>
 
               <p style={styles.modalNote}>
-                Saved on this device for now. Actual emails will start going
-                out once the backend adds an email-delivery endpoint.
+                This feature is coming soon. You'll be able to receive reports automatically in your registered email inbox.
               </p>
 
               <div style={styles.modalActions}>
@@ -685,8 +682,7 @@ function Reports() {
               </label>
 
               <p style={styles.modalNote}>
-                These preferences are saved on this device. Syncing them
-                across devices will need a backend settings endpoint.
+                This feature is coming soon. More report customization options and personalized settings will be available in an upcoming update.
               </p>
 
               <div style={styles.modalActions}>
