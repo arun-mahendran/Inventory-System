@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import ReactMarkdown from "react-markdown";
+
 import MainLayout from "../components/MainLayout";
 
 import api from "../../api/axios";
@@ -235,7 +237,9 @@ function AIAssistant() {
                       color: message.role === "user" ? "white" : "#0F172A",
                     }}
                   >
-                    {message.text}
+                    <ReactMarkdown>
+                      {message.text}
+                    </ReactMarkdown>
                   </div>
                 ))}
 
