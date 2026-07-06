@@ -124,6 +124,8 @@
 }
 
 .sidebar a.active-link:hover {
+    background: var(--signal-orange);
+    color: white !important;
     transform: none;
 }
 
