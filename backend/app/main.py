@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi import Depends
+from fastapi import Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
@@ -42,6 +43,19 @@ app = FastAPI(
 # def startup():
 #     Base.metadata.create_all(bind=engine)
 
+
+# ------------------------------
+# Request Logger (ADD THIS)
+# ------------------------------
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    print(f"REQUEST: {request.method} {request.url.path}")
+    response = await call_next(request)
+    return response
+
+# ------------------------------
+# CORS
+# ------------------------------
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
