@@ -3,11 +3,11 @@ from fastapi import Depends
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database import Base, engine
-from app.models import User
-
+# from app.models import User
 from app.routers.user_router import router as user_router
 from app.routers.auth_router import router as auth_router
 from app.routers.hub_router import router as hub_router
+print("HUB_IMPORT_OK")
 from app.routers.customer_router import router as customer_router
 from app.routers.delivery_agent_router import (
     router as delivery_agent_router
@@ -18,14 +18,14 @@ from app.routers.parcel_router import (
 from app.routers.dashboard_router import (
     router as dashboard_router
 )
-from app.models.notification_model import Notification
-from app.models.parcel_assignment_history import (
-    ParcelAssignmentHistory
-)
+# from app.models.notification_model import Notification
+# from app.models.parcel_assignment_history import (
+#     ParcelAssignmentHistory
+# )
 
-from app.utils.auth import get_current_user
-from app.utils.roles import require_admin
-from app.routers import ai_router
+# from app.utils.auth import get_current_user
+# from app.utils.roles import require_admin
+# from app.routers import ai_router
 from app.routers import analytics_router
 from app.routers import notification_router
 from app.routers import report_router
@@ -33,22 +33,26 @@ from app.routers import (agent_report_router)
 from app.routers import (bulk_import_router)
 
 
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(
     title="Final Mile Delivery Hub Management System",
     version="1.0.0"
 )
 
+# @app.on_event("startup")
+# def startup():
+#     Base.metadata.create_all(bind=engine)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
-        "https://inventory-system-zyywmiod.onslate.in"
+        "http://127.0.0.1:5173",
+        "https://inventory-system-zyywmiod.onslate.in",
     ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 
@@ -56,11 +60,12 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(hub_router)
+print("HUB_ROUTER_OK")
 app.include_router(customer_router)
 app.include_router(delivery_agent_router)
 app.include_router(parcel_router)
 app.include_router(dashboard_router)
-app.include_router(ai_router.router)
+# app.include_router(ai_router.router)
 app.include_router(analytics_router.router)
 app.include_router(notification_router.router)
 app.include_router(report_router.router)
@@ -69,25 +74,25 @@ app.include_router(bulk_import_router.router)
 
 
 # Protected Route
-@app.get("/protected")
-def protected_route(
-    user=Depends(get_current_user)
-):
-    return {
-        "message": "Access Granted",
-        "user": user
-    }
+# @app.get("/protected")
+# def protected_route(
+#     user=Depends(get_current_user)
+# ):
+#     return {
+#         "message": "Access Granted",
+#         "user": user
+#     }
 
 
 # Admin Route
-@app.get("/admin-only")
-def admin_only_route(
-    user=Depends(require_admin)
-):
-    return {
-        "message": "Welcome Admin",
-        "user": user
-    }
+# @app.get("/admin-only")
+# def admin_only_route(
+#     user=Depends(require_admin)
+# ):
+#     return {
+#         "message": "Welcome Admin",
+#         "user": user
+#     }
 
 
 # Home

@@ -11,12 +11,12 @@ from app.services.delivery_agent_service import (
     get_all_agents,
     get_agent_by_id,
     delete_delivery_agent,
-    get_agent_parcels
+    #get_agent_parcels
 )
 
 from app.utils.dependencies import get_db
 
-from app.models.parcel import Parcel
+# from app.models.parcel import Parcel
 
 
 router = APIRouter(
@@ -75,39 +75,39 @@ def get_agent(
     )
 
 
-@router.get(
-    "/{agent_id}/parcels"
-)
-def get_parcels_of_agent(
-    agent_id: int,
-    db: Session = Depends(get_db)
-):
-    return get_agent_parcels(
-        db,
-        agent_id
-    )
+# @router.get(
+#     "/{agent_id}/parcels"
+# )
+# def get_parcels_of_agent(
+#     agent_id: int,
+#     db: Session = Depends(get_db)
+# ):
+#     return get_agent_parcels(
+#         db,
+#         agent_id
+#     )
 
 
-@router.get(
-    "/tracking/{tracking_number}"
-)
-def track_parcel(
-    tracking_number: str,
-    db: Session = Depends(get_db)
-):
+# @router.get(
+#     "/tracking/{tracking_number}"
+# )
+# def track_parcel(
+#     tracking_number: str,
+#     db: Session = Depends(get_db)
+# ):
 
-    parcel = db.query(Parcel).filter(
-        Parcel.tracking_number == tracking_number
-    ).first()
+#     parcel = db.query(Parcel).filter(
+#         Parcel.tracking_number == tracking_number
+#     ).first()
 
-    if not parcel:
+#     if not parcel:
 
-        raise HTTPException(
-            status_code=404,
-            detail="Parcel not found"
-        )
+#         raise HTTPException(
+#             status_code=404,
+#             detail="Parcel not found"
+#         )
 
-    return parcel
+#     return parcel
 
 
 @router.delete("/{agent_id}")

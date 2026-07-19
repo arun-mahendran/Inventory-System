@@ -16,6 +16,7 @@ from app.models.parcel_assignment_history import (
 )
 from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException
+from app.models.notification_model import Notification
 
 
 def create_parcel(
@@ -424,8 +425,22 @@ def reassign_failed_parcel(
         )
 
     parcel.assigned_agent_id = agent.id
+    old_agent_id = parcel.assigned_agent_id
+    
+    db.query(Notification).filter(
+        Notification.agent_id == old_agent_id,
+        Notification.message == f"New Parcel Assigned: {parcel.tracking_number}"
+    ).delete(synchronize_session=False)
+    
     parcel.status = "Assigned"
     parcel.failure_reason = None
+    
+    notification = Notification(
+        agent_id=agent.id,
+        message=f"New Parcel Assigned: {parcel.tracking_number}"
+    )
+
+    db.add(notification)
 
     history = ParcelAssignmentHistory(
         parcel_id=parcel.id,

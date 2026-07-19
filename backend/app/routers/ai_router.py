@@ -9,8 +9,14 @@ from app.database import get_db
 from app.models.parcel import Parcel
 from app.models.customer import Customer
 from app.models.delivery_agent import DeliveryAgent
-
-from ai.gemini_service import ask_delivery_ai
+print("AI_ROUTER_START")
+try:
+    from ai.gemini_service import ask_delivery_ai
+    print("AI_SERVICE_IMPORTED")
+except Exception as e:
+    print("AI IMPORT ERROR:", repr(e))
+    raise
+print("AI_SERVICE_IMPORTED")
 
 router = APIRouter(
     prefix="/ai",

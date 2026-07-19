@@ -1,18 +1,31 @@
 import os
-
-from google import genai
-
 from dotenv import load_dotenv
+from google import genai
 
 load_dotenv()
 
-client = genai.Client(
-    api_key=os.getenv("GEMINI_API_KEY")
-)
+client = None
 
 
-def ask_delivery_ai(context, question):
+def get_client():
+    global client
 
+    if client is None:
+        api_key = os.getenv("GEMINI_API_KEY")
+
+        if not api_key:
+            raise RuntimeError(
+                "GEMINI_API_KEY environment variable is missing."
+            )
+
+        print("✅ Gemini API Key Found")
+
+        client = genai.Client(api_key=api_key)
+
+    return client
+
+
+def ask_delivery_ai(context: str, question: str) -> str:
     prompt = f"""
 You are an AI Delivery Intelligence Assistant for a professional logistics company.
 
@@ -185,19 +198,24 @@ Always keep responses professional, clean, and suitable for an enterprise logist
 """
 
     try:
+        client = get_client()
 
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt
         )
 
+        if not response or not response.text:
+            return (
+                "⚠️ No response was received from the AI service."
+            )
+
         return response.text
 
     except Exception as e:
-
-        print("Gemini Error:", e)
+        print(f"Gemini Error: {e}")
 
         return (
-            "⚠️ AI service is currently busy. "
-            "Please try again in a few seconds."
+            "⚠️ AI service is currently unavailable. "
+            "Please try again later."
         )

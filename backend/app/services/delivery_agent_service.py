@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import or_, String
-import random
-import string
+# import random
+# import string
 from app.models.user import User
 from app.models.hub import Hub
 from app.models.delivery_agent import DeliveryAgent
@@ -21,19 +21,19 @@ from app.models.parcel import Parcel
 from app.models.parcel_assignment_history import (
     ParcelAssignmentHistory
 )
-from app.models.customer import Customer
+#from app.models.customer import Customer
 
-def generate_temp_password():
+# def generate_temp_password():
 
-    characters = (
-        string.ascii_letters +
-        string.digits
-    )
+#     characters = (
+#         string.ascii_letters +
+#         string.digits
+#     )
 
-    return "".join(
-        random.choice(characters)
-        for _ in range(8)
-    )
+#     return "".join(
+#         random.choice(characters)
+#         for _ in range(8)
+#     )
 
 
 def create_delivery_agent(
@@ -204,49 +204,49 @@ def get_agent_by_id(
     ).first()
 
 
-def get_agent_parcels(
-    db: Session,
-    agent_id: int
-):
+# def get_agent_parcels(
+#     db: Session,
+#     agent_id: int
+# ):
 
-    parcels = (
-        db.query(Parcel)
-        .filter(
-            Parcel.assigned_agent_id == agent_id
-        )
-        .all()
-    )
+#     parcels = (
+#         db.query(Parcel)
+#         .filter(
+#             Parcel.assigned_agent_id == agent_id
+#         )
+#         .all()
+#     )
 
-    for parcel in parcels:
+#     for parcel in parcels:
 
-        customer = db.query(Customer).filter(
-            Customer.id == parcel.customer_id
-        ).first()
+#         customer = db.query(Customer).filter(
+#             Customer.id == parcel.customer_id
+#         ).first()
 
-        if customer:
+#         if customer:
 
-            parcel.customer_name = (
-                customer.customer_name
-            )
+#             parcel.customer_name = (
+#                 customer.customer_name
+#             )
 
-            parcel.phone = (
-                customer.phone
-            )
+#             parcel.phone = (
+#                 customer.phone
+#             )
 
-            parcel.address = (
-                customer.address
-            )
+#             parcel.address = (
+#                 customer.address
+#             )
 
-        parcel.history_count = len(
-            db.query(
-                ParcelAssignmentHistory
-            ).filter(
-                ParcelAssignmentHistory.parcel_id
-                == parcel.id
-            ).all()
-        )
+#         parcel.history_count = len(
+#             db.query(
+#                 ParcelAssignmentHistory
+#             ).filter(
+#                 ParcelAssignmentHistory.parcel_id
+#                 == parcel.id
+#             ).all()
+#         )
 
-    return parcels
+#     return parcels
 
 
 def delete_delivery_agent(

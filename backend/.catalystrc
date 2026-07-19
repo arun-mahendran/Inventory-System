@@ -1,0 +1,30 @@
+{
+  "defaults": {
+    "project": 1,
+    "env": 1
+  },
+  "actives": {
+    "project": 1,
+    "env": 1
+  },
+  "projects": [
+    {
+      "idx": 1,
+      "id": "46163000000016001",
+      "name": "Ecommerce-Inventory-Billing-System",
+      "domain": {
+        "id": "50043520954",
+        "name": "ecommerce-inventory-billing-system-60076019948.development"
+      },
+      "timezone": "Asia/Kolkata",
+      "env": [
+        {
+          "idx": 1,
+          "id": "60076019948",
+          "name": "Development",
+          "type": 3
+        }
+      ]
+    }
+  ]
+}
