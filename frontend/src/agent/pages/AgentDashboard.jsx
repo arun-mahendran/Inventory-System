@@ -54,7 +54,16 @@ function AgentDashboard() {
       try {
         const agentId = localStorage.getItem("delivery_agent_id");
 
-        const response = await api.get(`/delivery-agents/${agentId}/parcels`);
+        if (!agentId) {
+          console.error("Delivery Agent ID not found");
+          return;
+        }
+
+        const response = await api.get("/parcels", {
+          params: {
+            agent_id: agentId,
+          },
+        });
 
         const parcelData = response.data;
 

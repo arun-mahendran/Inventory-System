@@ -128,9 +128,12 @@ function AgentDeliveryHistory() {
     try {
       const agentId = localStorage.getItem("delivery_agent_id");
 
-      const response = await api.get(`/agent-reports/${agentId}/download-pdf`, {
-        responseType: "blob",
-      });
+      const response = await api.get(
+        `/agent-reports/${agentId}/download-pdf`,
+        {
+          responseType: "blob",
+        }
+      );
 
       const url = window.URL.createObjectURL(new Blob([response.data]));
 
@@ -157,7 +160,11 @@ function AgentDeliveryHistory() {
 
         const agentId = localStorage.getItem("delivery_agent_id");
 
-        const response = await api.get(`/delivery-agents/${agentId}/parcels`);
+        const response = await api.get("/parcels", {
+          params: {
+            agent_id: agentId,
+          },
+        });
 
         const completedParcels = response.data
           .filter(

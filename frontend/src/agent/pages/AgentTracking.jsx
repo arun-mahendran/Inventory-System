@@ -85,7 +85,11 @@ function AgentTracking() {
     try {
       const agentId = localStorage.getItem("delivery_agent_id");
 
-      const response = await api.get(`/delivery-agents/${agentId}/parcels`);
+      const response = await api.get("/parcels", {
+        params: {
+          agent_id: agentId,
+        },
+      });
 
       const match = response.data.find(
         (item) =>
