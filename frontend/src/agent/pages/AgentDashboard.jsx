@@ -59,7 +59,7 @@ function AgentDashboard() {
           return;
         }
 
-        const response = await api.get("/parcels", {
+        const response = await api.get("/parcels/", {
           params: {
             agent_id: agentId,
           },

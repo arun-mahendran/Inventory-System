@@ -25,7 +25,7 @@ function PendingDeliveriesPage() {
       try {
         const agentId = localStorage.getItem("delivery_agent_id");
 
-        const response = await api.get("/parcels", {
+        const response = await api.get("/parcels/", {
           params: {
             agent_id: agentId,
           },
