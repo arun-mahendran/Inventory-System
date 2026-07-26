@@ -42,9 +42,28 @@ function getStatusStyle(status) {
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
+function Shimmer({ width = "100%", height = "16px", radius = "8px", style = {} }) {
+  return (
+    <div
+      className="skeleton-shimmer"
+      style={{
+        width,
+        height,
+        borderRadius: radius,
+        background: "#E2E8F0",
+        position: "relative",
+        overflow: "hidden",
+        ...style,
+      }}
+    />
+  );
+}
+
 function DeliveryAgents() {
   const [agents, setAgents] = useState([]);
   const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(true);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState(null);
@@ -62,6 +81,8 @@ function DeliveryAgents() {
 
   const fetchAgents = useCallback(async () => {
     try {
+      setLoading(true);
+
       const params = {};
 
       if (searchTerm.trim()) {
@@ -78,6 +99,8 @@ function DeliveryAgents() {
       setCurrentPage(1);
     } catch (error) {
       console.error("Agent Error:", error);
+    } finally {
+      setLoading(false);
     }
   }, [searchTerm, selectedHub]);
 
@@ -148,6 +171,25 @@ function DeliveryAgents() {
 
   return (
     <>
+      <style>{`
+        .skeleton-shimmer::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.6) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          animation: skeleton-shimmer 1.4s infinite;
+        }
+        @keyframes skeleton-shimmer {
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
+
       <MainLayout>
         <div style={styles.page}>
           {/* Header */}
@@ -289,116 +331,155 @@ function DeliveryAgents() {
               </thead>
 
               <tbody>
-                {paginatedAgents.map((agent, index) => {
-                  const avatar = AVATAR_COLORS[index % AVATAR_COLORS.length];
-                  const status = getStatusStyle(agent.availability_status);
-                  const hubName =
-                    agent.hub_name ||
-                    hubs.find((h) => h.id === agent.hub_id)?.hub_name ||
-                    "—";
-
-                  return (
-                    <tr
-                      key={agent.id}
-                      style={styles.tr}
-                      onMouseEnter={(e) =>
-                        (e.currentTarget.style.background = "#F8FAFC")
-                      }
-                      onMouseLeave={(e) =>
-                        (e.currentTarget.style.background = "transparent")
-                      }
-                    >
+                {loading ? (
+                  Array.from({ length: pageSize }).map((_, i) => (
+                    <tr key={`skeleton-${i}`} style={styles.tr}>
                       <td style={styles.td}>
                         <div style={styles.agentCell}>
-                          <div
-                            style={{
-                              ...styles.avatar,
-                              background: avatar.bg,
-                              color: avatar.fg,
-                            }}
-                          >
-                            {agent.agent_name?.charAt(0)?.toUpperCase() || "A"}
-                          </div>
-                          <div>
-                            <div style={styles.agentName}>
-                              {agent.agent_name}
-                            </div>
-                            <div style={styles.agentSub}>
-                              {agent.vehicle_number}
-                            </div>
+                          <Shimmer width="42px" height="42px" radius="50%" />
+                          <div style={{ flex: 1 }}>
+                            <Shimmer width="110px" height="14px" style={{ marginBottom: "6px" }} />
+                            <Shimmer width="80px" height="12px" />
                           </div>
                         </div>
                       </td>
 
                       <td style={styles.td}>
-                        <span style={styles.agentIdText}>
-                          {`AGT-${String(agent.id).padStart(4, "0")}`}
-                        </span>
+                        <Shimmer width="80px" height="14px" />
                       </td>
 
                       <td style={styles.td}>
-                        <div style={styles.pincodeText}>{agent.pincode}</div>
-                        <div style={styles.hubText}>{hubName}</div>
+                        <Shimmer width="60px" height="14px" style={{ marginBottom: "6px" }} />
+                        <Shimmer width="90px" height="12px" />
                       </td>
 
                       <td style={styles.td}>
-                        <div style={styles.parcelsCell}>
-                          <span>{agent.current_parcel_count}</span>
-                          <div style={styles.parcelIconBox}>
-                            <FiPackage size={14} color="#4F46E5" />
-                          </div>
-                        </div>
+                        <Shimmer width="60px" height="14px" />
                       </td>
 
                       <td style={styles.td}>
-                        <span
-                          style={{
-                            ...styles.statusBadge,
-                            background: status.bg,
-                            color: status.fg,
-                          }}
-                        >
-                          <span
-                            style={{
-                              ...styles.statusDot,
-                              background: status.dot,
-                            }}
-                          />
-                          {agent.availability_status}
-                        </span>
+                        <Shimmer width="90px" height="26px" radius="999px" />
                       </td>
 
                       <td style={styles.td}>
-                        <div style={styles.actionsCell}>
-                          <button
-                            onClick={() =>
-                              handleDelete(agent.id, agent.agent_name)
-                            }
-                            style={styles.iconButtonDanger}
-                            title="Delete agent"
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "#FEF2F2";
-                              e.currentTarget.style.borderColor = "#FECACA";
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = "white";
-                              e.currentTarget.style.borderColor = "#E2E8F0";
-                            }}
-                          >
-                            <FiTrash2 size={15} color="#EF4444" />
-                          </button>
-                        </div>
+                        <Shimmer width="36px" height="36px" radius="10px" />
                       </td>
                     </tr>
-                  );
-                })}
+                  ))
+                ) : (
+                  <>
+                    {paginatedAgents.map((agent, index) => {
+                      const avatar = AVATAR_COLORS[index % AVATAR_COLORS.length];
+                      const status = getStatusStyle(agent.availability_status);
+                      const hubName =
+                        agent.hub_name ||
+                        hubs.find((h) => h.id === agent.hub_id)?.hub_name ||
+                        "—";
 
-                {paginatedAgents.length === 0 && (
-                  <tr>
-                    <td colSpan={6} style={styles.emptyState}>
-                      No delivery agents found.
-                    </td>
-                  </tr>
+                      return (
+                        <tr
+                          key={agent.id}
+                          style={styles.tr}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = "#F8FAFC")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "transparent")
+                          }
+                        >
+                          <td style={styles.td}>
+                            <div style={styles.agentCell}>
+                              <div
+                                style={{
+                                  ...styles.avatar,
+                                  background: avatar.bg,
+                                  color: avatar.fg,
+                                }}
+                              >
+                                {agent.agent_name?.charAt(0)?.toUpperCase() || "A"}
+                              </div>
+                              <div>
+                                <div style={styles.agentName}>
+                                  {agent.agent_name}
+                                </div>
+                                <div style={styles.agentSub}>
+                                  {agent.vehicle_number}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+
+                          <td style={styles.td}>
+                            <span style={styles.agentIdText}>
+                              {`AGT-${String(agent.id).padStart(4, "0")}`}
+                            </span>
+                          </td>
+
+                          <td style={styles.td}>
+                            <div style={styles.pincodeText}>{agent.pincode}</div>
+                            <div style={styles.hubText}>{hubName}</div>
+                          </td>
+
+                          <td style={styles.td}>
+                            <div style={styles.parcelsCell}>
+                              <span>{agent.current_parcel_count}</span>
+                              <div style={styles.parcelIconBox}>
+                                <FiPackage size={14} color="#4F46E5" />
+                              </div>
+                            </div>
+                          </td>
+
+                          <td style={styles.td}>
+                            <span
+                              style={{
+                                ...styles.statusBadge,
+                                background: status.bg,
+                                color: status.fg,
+                              }}
+                            >
+                              <span
+                                style={{
+                                  ...styles.statusDot,
+                                  background: status.dot,
+                                }}
+                              />
+                              {agent.availability_status}
+                            </span>
+                          </td>
+
+                          <td style={styles.td}>
+                            <div style={styles.actionsCell}>
+                              <button
+                                onClick={() =>
+                                  handleDelete(agent.id, agent.agent_name)
+                                }
+                                style={styles.iconButtonDanger}
+                                title="Delete agent"
+                                onMouseEnter={(e) => {
+                                  e.currentTarget.style.background = "#FEF2F2";
+                                  e.currentTarget.style.borderColor = "#FECACA";
+                                }}
+                                onMouseLeave={(e) => {
+                                  e.currentTarget.style.background = "white";
+                                  e.currentTarget.style.borderColor = "#E2E8F0";
+                                }}
+                              >
+                                <FiTrash2 size={15} color="#EF4444" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+
+                    {paginatedAgents.length === 0 && (
+                      <tr>
+                        <td colSpan={6} style={styles.emptyState}>
+                          No delivery agents found.
+                        </td>
+                      </tr>
+                    )}
+                  </>
                 )}
               </tbody>
             </table>
@@ -406,7 +487,9 @@ function DeliveryAgents() {
             {/* Footer / pagination */}
             <div style={styles.footerRow}>
               <span style={styles.footerText}>
-                {totalAgents === 0
+                {loading
+                  ? "Loading agents..."
+                  : totalAgents === 0
                   ? "No agents"
                   : `Showing ${rangeStart} to ${rangeEnd} of ${totalAgents} agents`}
               </span>
