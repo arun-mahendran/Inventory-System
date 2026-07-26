@@ -34,7 +34,10 @@ function AgentDashboard() {
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const [loading, setLoading] = useState(true);
+  // Only show skeleton if this is the first load in this session
+  const hasLoadedBefore = sessionStorage.getItem("agentDashboardLoaded") === "true";
+
+  const [loading, setLoading] = useState(!hasLoadedBefore);
 
   const [summary, setSummary] = useState({
     assigned: 0,
@@ -48,7 +51,12 @@ function AgentDashboard() {
   useEffect(() => {
     const fetchSummary = async () => {
       try {
-        setLoading(true);
+        // Only flip loading to true if we didn't already skip it
+        if (hasLoadedBefore) {
+          setLoading(false); // ensure it stays false, no flicker
+        } else {
+          setLoading(true);
+        }
 
         const agentId = localStorage.getItem("delivery_agent_id");
 
@@ -73,18 +81,15 @@ function AgentDashboard() {
         setSummary({
           assigned: parcelData.filter((parcel) => parcel.status === "Assigned")
             .length,
-
           outForDelivery: parcelData.filter(
             (parcel) => parcel.status === "OutForDelivery",
           ).length,
-
           delivered: parcelData.filter(
             (parcel) =>
               parcel.status === "Delivered" &&
               parcel.delivered_at &&
               new Date(parcel.delivered_at).toDateString() === today,
           ).length,
-
           failed: parcelData.filter(
             (parcel) =>
               parcel.status === "FailedDelivery" &&
@@ -92,6 +97,9 @@ function AgentDashboard() {
               new Date(parcel.failed_at).toDateString() === today,
           ).length,
         });
+
+        // Mark that we've successfully loaded once this session
+        sessionStorage.setItem("agentDashboardLoaded", "true");
       } catch (error) {
         console.error("Agent Dashboard Error:", error);
       } finally {
