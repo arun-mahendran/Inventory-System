@@ -11,6 +11,21 @@ import { FiUsers, FiSearch, FiPlus, FiChevronLeft, FiChevronRight } from "react-
 
 const AVATAR_TONES = 5;
 
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+    <div
+        className="skeleton-shimmer"
+        style={{
+            width,
+            height,
+            borderRadius: radius,
+            background: "#e5e7eb",
+            position: "relative",
+            overflow: "hidden",
+            ...style,
+        }}
+    />
+);
+
 function getInitials(name) {
     if (!name) return "?";
     const parts = name.trim().split(/\s+/);
@@ -78,6 +93,25 @@ function Customers() {
     return (
         <MainLayout>
 
+            <style>{`
+                .skeleton-shimmer::after {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    transform: translateX(-100%);
+                    background: linear-gradient(
+                        90deg,
+                        rgba(255,255,255,0) 0%,
+                        rgba(255,255,255,0.6) 50%,
+                        rgba(255,255,255,0) 100%
+                    );
+                    animation: skeleton-shimmer 1.4s infinite;
+                }
+                @keyframes skeleton-shimmer {
+                    100% { transform: translateX(100%); }
+                }
+            `}</style>
+
             <div className="customers-page">
 
                 {/* Header */}
@@ -129,7 +163,45 @@ function Customers() {
                 <div className="customers-card">
 
                     {loading ? (
-                        <p className="customers-loading">Loading customers…</p>
+                        <table className="customers-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Phone</th>
+                                    <th>Pincode</th>
+                                    <th>Address</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                                    <tr key={`skeleton-${i}`}>
+
+                                        <td>
+                                            <div className="customer-name-cell" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                                                <Shimmer width="36px" height="36px" radius="50%" />
+                                                <Shimmer width="120px" height="14px" />
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <Shimmer width="100px" height="14px" />
+                                        </td>
+
+                                        <td>
+                                            <Shimmer width="70px" height="20px" radius="20px" />
+                                        </td>
+
+                                        <td>
+                                            <Shimmer width="180px" height="14px" />
+                                        </td>
+
+                                    </tr>
+                                ))}
+                            </tbody>
+
+                        </table>
                     ) : customers.length === 0 ? (
                         <p className="customers-empty">No customers found.</p>
                     ) : (
