@@ -28,8 +28,25 @@ import { FaBoxesStacked } from "react-icons/fa6";
 
 const PAGE_SIZE = 6;
 
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+  <div
+    className="skeleton-shimmer"
+    style={{
+      width,
+      height,
+      borderRadius: radius,
+      background: "#e5e7eb",
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}
+  />
+);
+
 function MyParcels() {
   const [parcels, setParcels] = useState([]);
+
+  const [loading, setLoading] = useState(true);
 
   const [filterStatus, setFilterStatus] = useState("All");
 
@@ -94,10 +111,13 @@ function MyParcels() {
 
   const fetchParcels = async () => {
     try {
+      setLoading(true);
+
       const agentId = localStorage.getItem("delivery_agent_id");
 
       if (!agentId) {
         console.error("Delivery Agent ID not found");
+        setLoading(false);
         return;
       }
 
@@ -121,6 +141,8 @@ function MyParcels() {
       setParcels(sortedParcels);
     } catch (error) {
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -441,6 +463,25 @@ function MyParcels() {
 
   return (
     <AgentLayout>
+      <style>{`
+        .skeleton-shimmer::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.6) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          animation: skeleton-shimmer 1.4s infinite;
+        }
+        @keyframes skeleton-shimmer {
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
+
       <div
         style={{
           display: "flex",
@@ -474,65 +515,91 @@ function MyParcels() {
           marginBottom: "24px",
         }}
       >
-        {statCards.map((card) => (
-          <div
-            key={card.key}
-            style={{
-              background: card.cardBg,
-              borderRadius: "18px",
-              padding: "22px",
-              boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "14px",
-                marginBottom: "14px",
-              }}
-            >
+        {loading
+          ? Array.from({ length: 4 }).map((_, i) => (
               <div
+                key={i}
                 style={{
-                  width: "46px",
-                  height: "46px",
-                  borderRadius: "12px",
-                  background: card.iconBg,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  background: "#f8fafc",
+                  borderRadius: "18px",
+                  padding: "22px",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
                 }}
               >
-                {card.icon}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "14px",
+                    marginBottom: "14px",
+                  }}
+                >
+                  <Shimmer width="46px" height="46px" radius="12px" />
+                  <Shimmer width="120px" height="14px" />
+                </div>
+                <Shimmer width="60px" height="30px" style={{ marginBottom: "8px" }} />
+                <Shimmer width="140px" height="13px" />
               </div>
+            ))
+          : statCards.map((card) => (
+              <div
+                key={card.key}
+                style={{
+                  background: card.cardBg,
+                  borderRadius: "18px",
+                  padding: "22px",
+                  boxShadow: "0 8px 20px rgba(0,0,0,0.05)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "14px",
+                    marginBottom: "14px",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: "46px",
+                      height: "46px",
+                      borderRadius: "12px",
+                      background: card.iconBg,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {card.icon}
+                  </div>
 
-              <span style={{ fontWeight: "600", color: "#334155" }}>
-                {card.label}
-              </span>
-            </div>
+                  <span style={{ fontWeight: "600", color: "#334155" }}>
+                    {card.label}
+                  </span>
+                </div>
 
-            <div
-              style={{
-                fontSize: "30px",
-                fontWeight: "700",
-                color: card.valueColor,
-                lineHeight: 1,
-              }}
-            >
-              {card.value}
-            </div>
+                <div
+                  style={{
+                    fontSize: "30px",
+                    fontWeight: "700",
+                    color: card.valueColor,
+                    lineHeight: 1,
+                  }}
+                >
+                  {card.value}
+                </div>
 
-            <div
-              style={{
-                fontSize: "13px",
-                color: "#64748b",
-                marginTop: "6px",
-              }}
-            >
-              {card.sub}
-            </div>
-          </div>
-        ))}
+                <div
+                  style={{
+                    fontSize: "13px",
+                    color: "#64748b",
+                    marginTop: "6px",
+                  }}
+                >
+                  {card.sub}
+                </div>
+              </div>
+            ))}
       </div>
 
       {/* Main Card */}
@@ -766,188 +833,219 @@ function MyParcels() {
             </thead>
 
             <tbody>
-              {paginatedParcels.map((parcel) => (
-                <tr key={parcel.id}>
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                      color: "#2563eb",
-                      fontWeight: "600",
-                      cursor: "pointer",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                    onClick={() => viewParcelDetails(parcel)}
-                    title={parcel.tracking_number}
-                  >
-                    {parcel.tracking_number}
-                  </td>
-
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      paddingRight: "40px",   // extra breathing room before Status
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                      color: "#334155",
-                    }}
-                  >
-                    {parcel.customer_id}
-                  </td>
-
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    {statusBadge(parcel.status)}
-                  </td>
-
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                      color: "#475569",
-                    }}
-                  >
-                    <span
-                      style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "8px",
-                      }}
-                    >
-                      <FiCalendar size={14} color="#94a3b8" />
-                      {new Date(parcel.created_at).toLocaleDateString(
-                        "en-US",
-                      )}
-                    </span>
-                  </td>
-
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    {parcel.payment_method === "Prepaid" ||
-                    parcel.payment_status !== "Pending" ? (
-                      <span
+              {loading ? (
+                Array.from({ length: PAGE_SIZE }).map((_, i) => (
+                  <tr key={`skeleton-${i}`}>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <Shimmer width="90%" height="14px" />
+                    </td>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <Shimmer width="70%" height="14px" />
+                    </td>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <Shimmer width="100px" height="24px" radius="20px" />
+                    </td>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <Shimmer width="80px" height="14px" />
+                    </td>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <Shimmer width="90px" height="24px" radius="20px" />
+                    </td>
+                    <td style={{ padding: "14px 20px", borderBottom: "1px solid #e5e7eb" }}>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <Shimmer width="100%" height="30px" radius="8px" />
+                        <Shimmer width="100%" height="30px" radius="8px" />
+                        <Shimmer width="100%" height="30px" radius="8px" />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <>
+                  {paginatedParcels.map((parcel) => (
+                    <tr key={parcel.id}>
+                      <td
                         style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "6px",
-                          padding: "6px 14px",
-                          borderRadius: "20px",
+                          padding: "14px 20px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                          color: "#2563eb",
                           fontWeight: "600",
-                          fontSize: "13px",
-                          background: "#dcfce7",
-                          color: "#16a34a",
+                          cursor: "pointer",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                        onClick={() => viewParcelDetails(parcel)}
+                        title={parcel.tracking_number}
+                      >
+                        {parcel.tracking_number}
+                      </td>
+
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          paddingRight: "40px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                          color: "#334155",
                         }}
                       >
-                        <FiCheck size={13} />
-                        Paid
-                      </span>
-                    ) : (
-                      <button
-                        disabled={parcel.status !== "OutForDelivery"}
-                        onClick={() => collectPayment(parcel.id)}
-                        style={actionButtonStyle(
-                          "#8b5cf6",
-                          parcel.status !== "OutForDelivery",
-                        )}
-                      >
-                        Collect ₹{parcel.amount}
-                      </button>
-                    )}
-                  </td>
+                        {parcel.customer_id}
+                      </td>
 
-                  <td
-                    style={{
-                      padding: "14px 20px",
-                      borderBottom: "1px solid #e5e7eb",
-                      verticalAlign: "middle",
-                    }}
-                  >
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <button
-                        disabled={parcel.status !== "Assigned"}
-                        onClick={() => startDelivery(parcel.id)}
-                        style={actionButtonStyle(
-                          "#2563eb",
-                          parcel.status !== "Assigned",
-                        )}
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                        }}
                       >
-                        <FiSend size={14} />
-                        Out
-                      </button>
+                        {statusBadge(parcel.status)}
+                      </td>
 
-                      <button
-                        disabled={
-                          parcel.status !== "OutForDelivery" ||
-                          (parcel.payment_method === "CashOnDelivery" &&
-                            parcel.payment_status === "Paid")
-                        }
-                        onClick={() => reportFailure(parcel.id)}
-                        title={
-                          parcel.payment_method === "CashOnDelivery" &&
-                          parcel.payment_status === "Paid"
-                            ? "Cash already collected — delivery can't be marked as failed"
-                            : undefined
-                        }
-                        style={actionButtonStyle(
-                          "#dc2626",
-                          parcel.status !== "OutForDelivery" ||
-                            (parcel.payment_method === "CashOnDelivery" &&
-                              parcel.payment_status === "Paid"),
-                        )}
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                          color: "#475569",
+                        }}
                       >
-                        <FiXCircle size={14} />
-                        Failed
-                      </button>
+                        <span
+                          style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            gap: "8px",
+                          }}
+                        >
+                          <FiCalendar size={14} color="#94a3b8" />
+                          {new Date(parcel.created_at).toLocaleDateString(
+                            "en-US",
+                          )}
+                        </span>
+                      </td>
 
-                      <button
-                        disabled={
-                          parcel.status !== "OutForDelivery" ||
-                          (parcel.payment_method === "CashOnDelivery" &&
-                            parcel.payment_status !== "Paid")
-                        }
-                        onClick={() => markDelivered(parcel.id)}
-                        style={actionButtonStyle(
-                          "#16a34a",
-                          parcel.status !== "OutForDelivery" ||
-                            (parcel.payment_method === "CashOnDelivery" &&
-                              parcel.payment_status !== "Paid"),
-                        )}
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                        }}
                       >
-                        <FiCheckCircle size={14} />
-                        Delivered
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                        {parcel.payment_method === "Prepaid" ||
+                        parcel.payment_status !== "Pending" ? (
+                          <span
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "6px",
+                              padding: "6px 14px",
+                              borderRadius: "20px",
+                              fontWeight: "600",
+                              fontSize: "13px",
+                              background: "#dcfce7",
+                              color: "#16a34a",
+                            }}
+                          >
+                            <FiCheck size={13} />
+                            Paid
+                          </span>
+                        ) : (
+                          <button
+                            disabled={parcel.status !== "OutForDelivery"}
+                            onClick={() => collectPayment(parcel.id)}
+                            style={actionButtonStyle(
+                              "#8b5cf6",
+                              parcel.status !== "OutForDelivery",
+                            )}
+                          >
+                            Collect ₹{parcel.amount}
+                          </button>
+                        )}
+                      </td>
 
-              {paginatedParcels.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={6}
-                    style={{
-                      padding: "40px 18px",
-                      textAlign: "center",
-                      color: "#94a3b8",
-                    }}
-                  >
-                    No parcels found.
-                  </td>
-                </tr>
+                      <td
+                        style={{
+                          padding: "14px 20px",
+                          borderBottom: "1px solid #e5e7eb",
+                          verticalAlign: "middle",
+                        }}
+                      >
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <button
+                            disabled={parcel.status !== "Assigned"}
+                            onClick={() => startDelivery(parcel.id)}
+                            style={actionButtonStyle(
+                              "#2563eb",
+                              parcel.status !== "Assigned",
+                            )}
+                          >
+                            <FiSend size={14} />
+                            Out
+                          </button>
+
+                          <button
+                            disabled={
+                              parcel.status !== "OutForDelivery" ||
+                              (parcel.payment_method === "CashOnDelivery" &&
+                                parcel.payment_status === "Paid")
+                            }
+                            onClick={() => reportFailure(parcel.id)}
+                            title={
+                              parcel.payment_method === "CashOnDelivery" &&
+                              parcel.payment_status === "Paid"
+                                ? "Cash already collected — delivery can't be marked as failed"
+                                : undefined
+                            }
+                            style={actionButtonStyle(
+                              "#dc2626",
+                              parcel.status !== "OutForDelivery" ||
+                                (parcel.payment_method === "CashOnDelivery" &&
+                                  parcel.payment_status === "Paid"),
+                            )}
+                          >
+                            <FiXCircle size={14} />
+                            Failed
+                          </button>
+
+                          <button
+                            disabled={
+                              parcel.status !== "OutForDelivery" ||
+                              (parcel.payment_method === "CashOnDelivery" &&
+                                parcel.payment_status !== "Paid")
+                            }
+                            onClick={() => markDelivered(parcel.id)}
+                            style={actionButtonStyle(
+                              "#16a34a",
+                              parcel.status !== "OutForDelivery" ||
+                                (parcel.payment_method === "CashOnDelivery" &&
+                                  parcel.payment_status !== "Paid"),
+                            )}
+                          >
+                            <FiCheckCircle size={14} />
+                            Delivered
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+
+                  {paginatedParcels.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={6}
+                        style={{
+                          padding: "40px 18px",
+                          textAlign: "center",
+                          color: "#94a3b8",
+                        }}
+                      >
+                        No parcels found.
+                      </td>
+                    </tr>
+                  )}
+                </>
               )}
             </tbody>
           </table>
@@ -1130,7 +1228,6 @@ function MyParcels() {
                 >
                   {selectedParcel.address || "-"}
                 </span>
-
                 <a
                   href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
                     selectedParcel.address,
