@@ -11,7 +11,7 @@ from app.models.customer import Customer
 from app.models.delivery_agent import DeliveryAgent
 print("AI_ROUTER_START")
 try:
-    from ai.gemini_service import ask_delivery_ai
+    from app.ai.gemini_service import ask_delivery_ai
     print("AI_SERVICE_IMPORTED")
 except Exception as e:
     print("AI IMPORT ERROR:", repr(e))

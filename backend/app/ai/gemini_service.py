@@ -1,16 +1,16 @@
 import os
 from dotenv import load_dotenv
-from google import genai
+import google.generativeai as genai
 
 load_dotenv()
 
-client = None
+model = None
 
 
-def get_client():
-    global client
+def get_model():
+    global model
 
-    if client is None:
+    if model is None:
         api_key = os.getenv("GEMINI_API_KEY")
 
         if not api_key:
@@ -20,9 +20,11 @@ def get_client():
 
         print("✅ Gemini API Key Found")
 
-        client = genai.Client(api_key=api_key)
+        genai.configure(api_key=api_key)
 
-    return client
+        model = genai.GenerativeModel("gemini-2.5-flash")
+
+    return model
 
 
 def ask_delivery_ai(context: str, question: str) -> str:
@@ -198,17 +200,12 @@ Always keep responses professional, clean, and suitable for an enterprise logist
 """
 
     try:
-        client = get_client()
+        model = get_model()
 
-        response = client.models.generate_content(
-            model="gemini-2.5-flash",
-            contents=prompt
-        )
+        response = model.generate_content(prompt)
 
         if not response or not response.text:
-            return (
-                "⚠️ No response was received from the AI service."
-            )
+            return "⚠️ No response was received from the AI service."
 
         return response.text
 
