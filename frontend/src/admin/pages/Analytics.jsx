@@ -31,7 +31,6 @@ import {
   FiBell,
   FiAlertTriangle,
   FiInbox,
-  FiRefreshCw,
 } from "react-icons/fi";
 
 import { HiOutlineSparkles } from "react-icons/hi2";
@@ -89,27 +88,6 @@ function EmptyState({ title, subtitle, height = 300 }) {
   );
 }
 
-// Skeleton shimmer block (same pattern used across other pages)
-const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
-  <div
-    className="skeleton-shimmer"
-    style={{
-      width,
-      height,
-      borderRadius: radius,
-      background: "#e5e7eb",
-      position: "relative",
-      overflow: "hidden",
-      ...style,
-    }}
-  />
-);
-
-// Module-level flag — lives outside the component so it survives
-// unmount/remount when navigating between pages (Dashboard -> Analytics -> Dashboard -> Analytics).
-// Only resets on a full page refresh/reload.
-let hasLoadedAnalyticsOnce = false;
-
 function Analytics() {
   const [topZones, setTopZones] = useState([]);
 
@@ -122,12 +100,6 @@ function Analytics() {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
 
   const [tempRange, setTempRange] = useState({ start: "", end: "" });
-
-  // Only true the very first time this page is ever loaded in this browser session
-  const [isInitialLoad, setIsInitialLoad] = useState(!hasLoadedAnalyticsOnce);
-
-  // True on every fetch (initial or refetch) — used for a subtle "Updating..." indicator
-  const [refreshing, setRefreshing] = useState(false);
 
   const [stats, setStats] = useState({
     totalParcels: 0,
@@ -208,25 +180,10 @@ function Analytics() {
   };
 
   useEffect(() => {
-    const fetchAll = async () => {
-      setRefreshing(true);
-      try {
-        await Promise.all([
-          fetchSummary(dateRange),
-          fetchTopZones(dateRange),
-          fetchInsights(dateRange),
-          fetchTrend(dateRange),
-        ]);
-      } finally {
-        setRefreshing(false);
-        // Skeleton only ever shows once — flip local + global flag off after first completed fetch
-        setIsInitialLoad(false);
-        hasLoadedAnalyticsOnce = true;
-      }
-    };
-
-    fetchAll();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    fetchSummary(dateRange);
+    fetchTopZones(dateRange);
+    fetchInsights(dateRange);
+    fetchTrend(dateRange);
   }, [dateRange]);
 
   const handleToggleCalendar = () => {
@@ -310,28 +267,6 @@ function Analytics() {
 
   return (
     <MainLayout>
-      <style>{`
-        .skeleton-shimmer::after {
-            content: "";
-            position: absolute;
-            inset: 0;
-            transform: translateX(-100%);
-            background: linear-gradient(
-                90deg,
-                rgba(255,255,255,0) 0%,
-                rgba(255,255,255,0.6) 50%,
-                rgba(255,255,255,0) 100%
-            );
-            animation: skeleton-shimmer 1.4s infinite;
-        }
-        @keyframes skeleton-shimmer {
-            100% { transform: translateX(100%); }
-        }
-        @keyframes spin {
-            100% { transform: rotate(360deg); }
-        }
-      `}</style>
-
       <div style={styles.page}>
         {/* Header */}
         <div style={styles.headerRow}>
@@ -349,18 +284,6 @@ function Analytics() {
           </div>
 
           <div style={styles.headerActions}>
-            {/* Subtle "updating" indicator — only shows on refetches, not the initial load */}
-            {refreshing && !isInitialLoad && (
-              <span style={styles.refreshingChip}>
-                <FiRefreshCw
-                  size={13}
-                  color="#2563EB"
-                  style={{ animation: "spin 0.8s linear infinite" }}
-                />
-                Updating...
-              </span>
-            )}
-
             <div style={styles.calendarWrap}>
               <div
                 onClick={handleToggleCalendar}
@@ -455,11 +378,7 @@ function Analytics() {
                 </div>
                 <div style={styles.statTextCol}>
                   <span style={styles.statLabel}>{meta.label}</span>
-                  {isInitialLoad ? (
-                    <Shimmer width="60px" height="26px" />
-                  ) : (
-                    <span style={styles.statValue}>{stats[meta.key]}</span>
-                  )}
+                  <span style={styles.statValue}>{stats[meta.key]}</span>
                 </div>
               </div>
             );
@@ -483,18 +402,7 @@ function Analytics() {
               </div>
             </div>
 
-            {isInitialLoad ? (
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "14px", height: 300, padding: "0 8px 20px" }}>
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <Shimmer
-                    key={i}
-                    width="100%"
-                    height={`${40 + Math.random() * 60}%`}
-                    radius="6px"
-                  />
-                ))}
-              </div>
-            ) : hasTrendData ? (
+            {hasTrendData ? (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={trendData}>
                   <defs>
@@ -565,16 +473,7 @@ function Analytics() {
               <h2 style={styles.cardTitle}>Delivery Status</h2>
             </div>
 
-            {isInitialLoad ? (
-              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", padding: "10px 0" }}>
-                <Shimmer width="220px" height="220px" radius="50%" />
-                <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
-                  <Shimmer width="100%" height="16px" />
-                  <Shimmer width="100%" height="16px" />
-                  <Shimmer width="100%" height="16px" />
-                </div>
-              </div>
-            ) : hasStatusData ? (
+            {hasStatusData ? (
               <>
                 <div style={styles.donutWrap}>
                   <ResponsiveContainer width="100%" height={220}>
@@ -652,7 +551,7 @@ function Analytics() {
                 </div>
               </div>
 
-              {!isInitialLoad && topZones.length > 5 && (
+              {topZones.length > 5 && (
                 <button
                   onClick={() => setShowAllZones((s) => !s)}
                   style={styles.viewAllButton}
@@ -663,15 +562,7 @@ function Analytics() {
             </div>
 
             <div style={styles.zonesGrid}>
-              {isInitialLoad ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <div key={`zone-skeleton-${i}`} style={styles.zoneCard}>
-                    <Shimmer width="70px" height="16px" style={{ marginBottom: "12px" }} />
-                    <Shimmer width="100%" height="6px" radius="4px" style={{ marginBottom: "8px" }} />
-                    <Shimmer width="30px" height="13px" />
-                  </div>
-                ))
-              ) : hasZoneData ? (
+              {hasZoneData ? (
                 visibleZones.map((zone) => (
                   <div key={zone.pincode} style={styles.zoneCard}>
                     <span style={styles.zonePincode}>{zone.pincode}</span>
@@ -711,48 +602,37 @@ function Analytics() {
             </div>
 
             <div style={styles.insightsList}>
-              {isInitialLoad ? (
-                Array.from({ length: 4 }).map((_, i) => (
-                  <div key={`insight-skeleton-${i}`} style={styles.insightRow}>
-                    <Shimmer width="17px" height="17px" radius="4px" style={{ marginTop: "2px" }} />
-                    <Shimmer width="100%" height="14px" />
-                  </div>
-                ))
-              ) : (
-                <>
-                  <div style={styles.insightRow}>
-                    <FiCheckCircle size={17} color="#16A34A" style={styles.insightIcon} />
-                    <span>
-                      Delivery success rate is{" "}
-                      <b>{insights.success_rate}%</b>.
-                    </span>
-                  </div>
+              <div style={styles.insightRow}>
+                <FiCheckCircle size={17} color="#16A34A" style={styles.insightIcon} />
+                <span>
+                  Delivery success rate is{" "}
+                  <b>{insights.success_rate}%</b>.
+                </span>
+              </div>
 
-                  <div style={styles.insightRow}>
-                    <FiTrendingUp size={17} color="#2563EB" style={styles.insightIcon} />
-                    <span>
-                      <b>{insights.top_zone}</b> is the most active delivery
-                      zone.
-                    </span>
-                  </div>
+              <div style={styles.insightRow}>
+                <FiTrendingUp size={17} color="#2563EB" style={styles.insightIcon} />
+                <span>
+                  <b>{insights.top_zone}</b> is the most active delivery
+                  zone.
+                </span>
+              </div>
 
-                  <div style={styles.insightRow}>
-                    <FiAlertTriangle size={17} color="#D97706" style={styles.insightIcon} />
-                    <span>
-                      <b>{insights.failure_reason}</b> is the major failure
-                      reason.
-                    </span>
-                  </div>
+              <div style={styles.insightRow}>
+                <FiAlertTriangle size={17} color="#D97706" style={styles.insightIcon} />
+                <span>
+                  <b>{insights.failure_reason}</b> is the major failure
+                  reason.
+                </span>
+              </div>
 
-                  <div style={styles.insightRow}>
-                    <FiBell size={17} color="#EF4444" style={styles.insightIcon} />
-                    <span>
-                      <b>{insights.pending}</b> parcels require immediate
-                      attention.
-                    </span>
-                  </div>
-                </>
-              )}
+              <div style={styles.insightRow}>
+                <FiBell size={17} color="#EF4444" style={styles.insightIcon} />
+                <span>
+                  <b>{insights.pending}</b> parcels require immediate
+                  attention.
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -805,15 +685,6 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
-  },
-  refreshingChip: {
-    display: "flex",
-    alignItems: "center",
-    gap: "7px",
-    fontSize: "13px",
-    fontWeight: 600,
-    color: "#2563EB",
-    whiteSpace: "nowrap",
   },
   dateRangeChip: {
     display: "flex",
