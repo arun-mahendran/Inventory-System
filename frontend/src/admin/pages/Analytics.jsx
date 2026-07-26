@@ -31,6 +31,7 @@ import {
   FiBell,
   FiAlertTriangle,
   FiInbox,
+  FiRefreshCw,
 } from "react-icons/fi";
 
 import { HiOutlineSparkles } from "react-icons/hi2";
@@ -117,7 +118,11 @@ function Analytics() {
 
   const [tempRange, setTempRange] = useState({ start: "", end: "" });
 
-  const [loading, setLoading] = useState(true);
+  // Only true on the very first load — controls the full skeleton
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  // True on every fetch (initial or refetch) — used for a subtle "Updating..." indicator
+  const [refreshing, setRefreshing] = useState(false);
 
   const [stats, setStats] = useState({
     totalParcels: 0,
@@ -199,7 +204,7 @@ function Analytics() {
 
   useEffect(() => {
     const fetchAll = async () => {
-      setLoading(true);
+      setRefreshing(true);
       try {
         await Promise.all([
           fetchSummary(dateRange),
@@ -208,11 +213,14 @@ function Analytics() {
           fetchTrend(dateRange),
         ]);
       } finally {
-        setLoading(false);
+        setRefreshing(false);
+        // Skeleton only ever shows once — flip this off after the first completed fetch
+        setIsInitialLoad(false);
       }
     };
 
     fetchAll();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange]);
 
   const handleToggleCalendar = () => {
@@ -313,6 +321,9 @@ function Analytics() {
         @keyframes skeleton-shimmer {
             100% { transform: translateX(100%); }
         }
+        @keyframes spin {
+            100% { transform: rotate(360deg); }
+        }
       `}</style>
 
       <div style={styles.page}>
@@ -332,6 +343,18 @@ function Analytics() {
           </div>
 
           <div style={styles.headerActions}>
+            {/* Subtle "updating" indicator — only shows on refetches, not the initial load */}
+            {refreshing && !isInitialLoad && (
+              <span style={styles.refreshingChip}>
+                <FiRefreshCw
+                  size={13}
+                  color="#2563EB"
+                  style={{ animation: "spin 0.8s linear infinite" }}
+                />
+                Updating...
+              </span>
+            )}
+
             <div style={styles.calendarWrap}>
               <div
                 onClick={handleToggleCalendar}
@@ -426,7 +449,7 @@ function Analytics() {
                 </div>
                 <div style={styles.statTextCol}>
                   <span style={styles.statLabel}>{meta.label}</span>
-                  {loading ? (
+                  {isInitialLoad ? (
                     <Shimmer width="60px" height="26px" />
                   ) : (
                     <span style={styles.statValue}>{stats[meta.key]}</span>
@@ -454,7 +477,7 @@ function Analytics() {
               </div>
             </div>
 
-            {loading ? (
+            {isInitialLoad ? (
               <div style={{ display: "flex", alignItems: "flex-end", gap: "14px", height: 300, padding: "0 8px 20px" }}>
                 {Array.from({ length: 7 }).map((_, i) => (
                   <Shimmer
@@ -536,7 +559,7 @@ function Analytics() {
               <h2 style={styles.cardTitle}>Delivery Status</h2>
             </div>
 
-            {loading ? (
+            {isInitialLoad ? (
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", padding: "10px 0" }}>
                 <Shimmer width="220px" height="220px" radius="50%" />
                 <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -623,7 +646,7 @@ function Analytics() {
                 </div>
               </div>
 
-              {!loading && topZones.length > 5 && (
+              {!isInitialLoad && topZones.length > 5 && (
                 <button
                   onClick={() => setShowAllZones((s) => !s)}
                   style={styles.viewAllButton}
@@ -634,7 +657,7 @@ function Analytics() {
             </div>
 
             <div style={styles.zonesGrid}>
-              {loading ? (
+              {isInitialLoad ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <div key={`zone-skeleton-${i}`} style={styles.zoneCard}>
                     <Shimmer width="70px" height="16px" style={{ marginBottom: "12px" }} />
@@ -682,7 +705,7 @@ function Analytics() {
             </div>
 
             <div style={styles.insightsList}>
-              {loading ? (
+              {isInitialLoad ? (
                 Array.from({ length: 4 }).map((_, i) => (
                   <div key={`insight-skeleton-${i}`} style={styles.insightRow}>
                     <Shimmer width="17px" height="17px" radius="4px" style={{ marginTop: "2px" }} />
@@ -776,6 +799,15 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "12px",
+  },
+  refreshingChip: {
+    display: "flex",
+    alignItems: "center",
+    gap: "7px",
+    fontSize: "13px",
+    fontWeight: 600,
+    color: "#2563EB",
+    whiteSpace: "nowrap",
   },
   dateRangeChip: {
     display: "flex",
