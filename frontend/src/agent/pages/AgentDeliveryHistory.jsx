@@ -119,7 +119,11 @@ function SortIcon({ active, direction }) {
 function AgentDeliveryHistory() {
   const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+
+  // Only show skeleton if this is the first load in this session
+  const hasLoadedBefore = sessionStorage.getItem("agentHistoryLoaded") === "true";
+
+  const [loading, setLoading] = useState(!hasLoadedBefore);
 
   const [startDate, setStartDate] = useState(() => {
   const date = new Date();
@@ -171,8 +175,6 @@ function AgentDeliveryHistory() {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        setLoading(true);
-
         const agentId = localStorage.getItem("delivery_agent_id");
 
         const response = await api.get("/parcels/", {
@@ -195,6 +197,9 @@ function AgentDeliveryHistory() {
 
         setHistory(completedParcels);
         setFilteredHistory(completedParcels);
+
+        // Mark that we've successfully loaded once this session
+        sessionStorage.setItem("agentHistoryLoaded", "true");
       } catch (error) {
         console.log(error);
       } finally {

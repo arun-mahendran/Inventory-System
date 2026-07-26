@@ -46,10 +46,7 @@ const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }
 function MyParcels() {
   const [parcels, setParcels] = useState([]);
 
-  // Only show skeleton if this is the first load in this session
-  const hasLoadedBefore = sessionStorage.getItem("myParcelsLoaded") === "true";
-
-  const [loading, setLoading] = useState(!hasLoadedBefore);
+  const [loading, setLoading] = useState(true);
 
   const [filterStatus, setFilterStatus] = useState("All");
 
@@ -112,11 +109,9 @@ function MyParcels() {
     },
   ];
 
-  const fetchParcels = async (isInitial = false) => {
+  const fetchParcels = async () => {
     try {
-      if (isInitial && !hasLoadedBefore) {
-        setLoading(true);
-      }
+      setLoading(true);
 
       const agentId = localStorage.getItem("delivery_agent_id");
 
@@ -144,9 +139,6 @@ function MyParcels() {
       );
 
       setParcels(sortedParcels);
-
-      // Mark that we've successfully loaded once this session
-      sessionStorage.setItem("myParcelsLoaded", "true");
     } catch (error) {
       console.error(error);
     } finally {
@@ -155,7 +147,7 @@ function MyParcels() {
   };
 
   useEffect(() => {
-    fetchParcels(true);
+    fetchParcels();
   }, []);
 
   useEffect(() => {
