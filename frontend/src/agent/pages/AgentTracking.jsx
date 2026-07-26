@@ -23,6 +23,21 @@ import {
 
 import { FaMotorcycle } from "react-icons/fa";
 
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+  <div
+    className="skeleton-shimmer"
+    style={{
+      width,
+      height,
+      borderRadius: radius,
+      background: "#e2e8f0",
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}
+  />
+);
+
 function AgentTracking() {
   const [trackingNumber, setTrackingNumber] = useState("");
 
@@ -233,10 +248,29 @@ function AgentTracking() {
     });
   };
 
-  const showOverview = !parcel && !error;
+  const showOverview = !parcel && !error && !searching;
 
   return (
     <AgentLayout>
+      <style>{`
+        .skeleton-shimmer::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.6) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          animation: skeleton-shimmer 1.4s infinite;
+        }
+        @keyframes skeleton-shimmer {
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
+
       <div
         style={{
           display: "flex",
@@ -402,6 +436,113 @@ function AgentTracking() {
           </p>
         </div>
       </div>
+
+      {searching && (
+        <div
+          style={{
+            background: "white",
+            padding: "24px",
+            borderRadius: "18px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+          }}
+        >
+          <div
+            style={{
+              background: "#f8fafc",
+              padding: "30px",
+              borderRadius: "18px",
+              border: "1px solid #e2e8f0",
+              marginBottom: "25px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginBottom: "25px",
+              }}
+            >
+              <Shimmer width="26px" height="26px" radius="8px" />
+              <Shimmer width="200px" height="22px" />
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "180px 1fr",
+                rowGap: "20px",
+              }}
+            >
+              <Shimmer width="90px" height="14px" />
+              <Shimmer width="160px" height="14px" />
+
+              <Shimmer width="70px" height="14px" />
+              <Shimmer width="140px" height="14px" />
+
+              <Shimmer width="60px" height="14px" />
+              <Shimmer width="120px" height="14px" />
+
+              <Shimmer width="60px" height="14px" />
+              <Shimmer width="100px" height="28px" radius="20px" />
+
+              <Shimmer width="70px" height="14px" />
+              <div>
+                <Shimmer width="90%" height="14px" style={{ marginBottom: "10px" }} />
+                <Shimmer width="60%" height="14px" style={{ marginBottom: "20px" }} />
+                <div style={{ display: "flex", gap: "12px" }}>
+                  <Shimmer width="150px" height="40px" radius="12px" />
+                  <Shimmer width="140px" height="40px" radius="12px" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            style={{
+              background: "#f8fafc",
+              padding: "35px",
+              borderRadius: "20px",
+              border: "1px solid #e2e8f0",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "35px",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                <Shimmer width="28px" height="28px" radius="8px" />
+                <Shimmer width="180px" height="22px" />
+              </div>
+              <Shimmer width="130px" height="34px" radius="30px" />
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: "20px",
+              }}
+            >
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} style={{ textAlign: "center", width: "150px" }}>
+                  <Shimmer
+                    width="36px"
+                    height="36px"
+                    radius="50%"
+                    style={{ margin: "0 auto" }}
+                  />
+                  <Shimmer width="80px" height="12px" style={{ margin: "15px auto 0" }} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {showOverview && (
         <>

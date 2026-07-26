@@ -32,6 +32,21 @@ const AVATAR_COLORS = [
   { bg: "#E3F9EE", color: "#0F9D58" },
 ];
 
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+  <div
+    className="skeleton-shimmer"
+    style={{
+      width,
+      height,
+      borderRadius: radius,
+      background: "#e5e7eb",
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}
+  />
+);
+
 function formatDate(dateStr) {
   if (!dateStr) return "-";
   const d = new Date(dateStr);
@@ -309,6 +324,25 @@ function AgentDeliveryHistory() {
 
   return (
     <AgentLayout>
+      <style>{`
+        .skeleton-shimmer::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          transform: translateX(-100%);
+          background: linear-gradient(
+            90deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.6) 50%,
+            rgba(255,255,255,0) 100%
+          );
+          animation: skeleton-shimmer 1.4s infinite;
+        }
+        @keyframes skeleton-shimmer {
+          100% { transform: translateX(100%); }
+        }
+      `}</style>
+
       <div className="history-page" style={{ paddingBottom: "40px" }}>
         {/* Header */}
         <div
@@ -485,40 +519,65 @@ function AgentDeliveryHistory() {
             marginBottom: "22px",
           }}
         >
-          <StatCard
-            icon={<FiPackage size={22} color="#7C3AED" />}
-            iconBg="#EFE7FE"
-            label="Total Deliveries"
-            value={totalDeliveries}
-          />
+          {loading ? (
+            Array.from({ length: 4 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  background: "#fff",
+                  borderRadius: "16px",
+                  padding: "18px 20px",
+                  boxShadow: "0 1px 3px rgba(16, 24, 40, 0.06)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "14px",
+                }}
+              >
+                <Shimmer width="46px" height="46px" radius="12px" />
+                <div style={{ flex: 1 }}>
+                  <Shimmer width="90px" height="12px" style={{ marginBottom: "8px" }} />
+                  <Shimmer width="60px" height="22px" />
+                </div>
+              </div>
+            ))
+          ) : (
+            <>
+              <StatCard
+                icon={<FiPackage size={22} color="#7C3AED" />}
+                iconBg="#EFE7FE"
+                label="Total Deliveries"
+                value={totalDeliveries}
+              />
 
-          <StatCard
-            icon={<FiCheckCircle size={22} color="#0F9D58" />}
-            iconBg="#E3F9EE"
-            label="Delivered"
-            value={deliveredCount}
-            badge={`${deliveredPct}%`}
-            badgeBg="#E3F9EE"
-            badgeColor="#0F9D58"
-          />
+              <StatCard
+                icon={<FiCheckCircle size={22} color="#0F9D58" />}
+                iconBg="#E3F9EE"
+                label="Delivered"
+                value={deliveredCount}
+                badge={`${deliveredPct}%`}
+                badgeBg="#E3F9EE"
+                badgeColor="#0F9D58"
+              />
 
-          <StatCard
-            icon={<FiXCircle size={22} color="#E11D48" />}
-            iconBg="#FDE8EC"
-            label="Failed"
-            value={failedCount}
-            badge={`${failedPct}%`}
-            badgeBg="#FDE8EC"
-            badgeColor="#E11D48"
-          />
+              <StatCard
+                icon={<FiXCircle size={22} color="#E11D48" />}
+                iconBg="#FDE8EC"
+                label="Failed"
+                value={failedCount}
+                badge={`${failedPct}%`}
+                badgeBg="#FDE8EC"
+                badgeColor="#E11D48"
+              />
 
-          <StatCard
-            icon={<FiCalendar size={22} color="#2563eb" />}
-            iconBg="#DBEAFE"
-            label="Date Range"
-            value={formatShortRange(startDate, endDate)}
-            valueSize="14px"
-          />
+              <StatCard
+                icon={<FiCalendar size={22} color="#2563eb" />}
+                iconBg="#DBEAFE"
+                label="Date Range"
+                value={formatShortRange(startDate, endDate)}
+                valueSize="14px"
+              />
+            </>
+          )}
         </div>
 
         {/* Table */}
@@ -570,11 +629,35 @@ function AgentDeliveryHistory() {
 
               <tbody>
                 {loading ? (
-                  <tr>
-                    <td colSpan="6" className="empty-history" style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>
-                      Loading delivery history...
-                    </td>
-                  </tr>
+                  Array.from({ length: rowsPerPage }).map((_, i) => (
+                    <tr key={`skeleton-${i}`} style={{ borderTop: "1px solid #F1F2F4" }}>
+                      <td style={tdStyle}>
+                        <Shimmer width="90px" height="14px" />
+                      </td>
+                      <td style={tdStyle}>
+                        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                          <Shimmer width="32px" height="32px" radius="50%" />
+                          <div>
+                            <Shimmer width="110px" height="13px" style={{ marginBottom: "6px" }} />
+                            <Shimmer width="60px" height="11px" />
+                          </div>
+                        </div>
+                      </td>
+                      <td style={tdStyle}>
+                        <Shimmer width="80px" height="22px" radius="999px" />
+                      </td>
+                      <td style={tdStyle}>
+                        <Shimmer width="90px" height="13px" style={{ marginBottom: "6px" }} />
+                        <Shimmer width="60px" height="11px" />
+                      </td>
+                      <td style={tdStyle}>
+                        <Shimmer width="70%" height="13px" />
+                      </td>
+                      <td style={{ ...tdStyle, textAlign: "right" }}>
+                        <Shimmer width="34px" height="34px" radius="8px" style={{ marginLeft: "auto" }} />
+                      </td>
+                    </tr>
+                  ))
                 ) : paginatedHistory.length > 0 ? (
                   paginatedHistory.map((parcel, index) => {
                     const avatar = AVATAR_COLORS[index % AVATAR_COLORS.length];
