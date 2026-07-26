@@ -88,6 +88,22 @@ function EmptyState({ title, subtitle, height = 300 }) {
   );
 }
 
+// Skeleton shimmer block (same pattern used across other pages)
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+  <div
+    className="skeleton-shimmer"
+    style={{
+      width,
+      height,
+      borderRadius: radius,
+      background: "#e5e7eb",
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}
+  />
+);
+
 function Analytics() {
   const [topZones, setTopZones] = useState([]);
 
@@ -100,6 +116,8 @@ function Analytics() {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
 
   const [tempRange, setTempRange] = useState({ start: "", end: "" });
+
+  const [loading, setLoading] = useState(true);
 
   const [stats, setStats] = useState({
     totalParcels: 0,
@@ -180,10 +198,21 @@ function Analytics() {
   };
 
   useEffect(() => {
-    fetchSummary(dateRange);
-    fetchTopZones(dateRange);
-    fetchInsights(dateRange);
-    fetchTrend(dateRange);
+    const fetchAll = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([
+          fetchSummary(dateRange),
+          fetchTopZones(dateRange),
+          fetchInsights(dateRange),
+          fetchTrend(dateRange),
+        ]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
   }, [dateRange]);
 
   const handleToggleCalendar = () => {
@@ -267,6 +296,25 @@ function Analytics() {
 
   return (
     <MainLayout>
+      <style>{`
+        .skeleton-shimmer::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            transform: translateX(-100%);
+            background: linear-gradient(
+                90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.6) 50%,
+                rgba(255,255,255,0) 100%
+            );
+            animation: skeleton-shimmer 1.4s infinite;
+        }
+        @keyframes skeleton-shimmer {
+            100% { transform: translateX(100%); }
+        }
+      `}</style>
+
       <div style={styles.page}>
         {/* Header */}
         <div style={styles.headerRow}>
@@ -378,7 +426,11 @@ function Analytics() {
                 </div>
                 <div style={styles.statTextCol}>
                   <span style={styles.statLabel}>{meta.label}</span>
-                  <span style={styles.statValue}>{stats[meta.key]}</span>
+                  {loading ? (
+                    <Shimmer width="60px" height="26px" />
+                  ) : (
+                    <span style={styles.statValue}>{stats[meta.key]}</span>
+                  )}
                 </div>
               </div>
             );
@@ -402,7 +454,18 @@ function Analytics() {
               </div>
             </div>
 
-            {hasTrendData ? (
+            {loading ? (
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "14px", height: 300, padding: "0 8px 20px" }}>
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <Shimmer
+                    key={i}
+                    width="100%"
+                    height={`${40 + Math.random() * 60}%`}
+                    radius="6px"
+                  />
+                ))}
+              </div>
+            ) : hasTrendData ? (
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={trendData}>
                   <defs>
@@ -473,7 +536,16 @@ function Analytics() {
               <h2 style={styles.cardTitle}>Delivery Status</h2>
             </div>
 
-            {hasStatusData ? (
+            {loading ? (
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "20px", padding: "10px 0" }}>
+                <Shimmer width="220px" height="220px" radius="50%" />
+                <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <Shimmer width="100%" height="16px" />
+                  <Shimmer width="100%" height="16px" />
+                  <Shimmer width="100%" height="16px" />
+                </div>
+              </div>
+            ) : hasStatusData ? (
               <>
                 <div style={styles.donutWrap}>
                   <ResponsiveContainer width="100%" height={220}>
@@ -551,7 +623,7 @@ function Analytics() {
                 </div>
               </div>
 
-              {topZones.length > 5 && (
+              {!loading && topZones.length > 5 && (
                 <button
                   onClick={() => setShowAllZones((s) => !s)}
                   style={styles.viewAllButton}
@@ -562,7 +634,15 @@ function Analytics() {
             </div>
 
             <div style={styles.zonesGrid}>
-              {hasZoneData ? (
+              {loading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <div key={`zone-skeleton-${i}`} style={styles.zoneCard}>
+                    <Shimmer width="70px" height="16px" style={{ marginBottom: "12px" }} />
+                    <Shimmer width="100%" height="6px" radius="4px" style={{ marginBottom: "8px" }} />
+                    <Shimmer width="30px" height="13px" />
+                  </div>
+                ))
+              ) : hasZoneData ? (
                 visibleZones.map((zone) => (
                   <div key={zone.pincode} style={styles.zoneCard}>
                     <span style={styles.zonePincode}>{zone.pincode}</span>
@@ -602,37 +682,48 @@ function Analytics() {
             </div>
 
             <div style={styles.insightsList}>
-              <div style={styles.insightRow}>
-                <FiCheckCircle size={17} color="#16A34A" style={styles.insightIcon} />
-                <span>
-                  Delivery success rate is{" "}
-                  <b>{insights.success_rate}%</b>.
-                </span>
-              </div>
+              {loading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={`insight-skeleton-${i}`} style={styles.insightRow}>
+                    <Shimmer width="17px" height="17px" radius="4px" style={{ marginTop: "2px" }} />
+                    <Shimmer width="100%" height="14px" />
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div style={styles.insightRow}>
+                    <FiCheckCircle size={17} color="#16A34A" style={styles.insightIcon} />
+                    <span>
+                      Delivery success rate is{" "}
+                      <b>{insights.success_rate}%</b>.
+                    </span>
+                  </div>
 
-              <div style={styles.insightRow}>
-                <FiTrendingUp size={17} color="#2563EB" style={styles.insightIcon} />
-                <span>
-                  <b>{insights.top_zone}</b> is the most active delivery
-                  zone.
-                </span>
-              </div>
+                  <div style={styles.insightRow}>
+                    <FiTrendingUp size={17} color="#2563EB" style={styles.insightIcon} />
+                    <span>
+                      <b>{insights.top_zone}</b> is the most active delivery
+                      zone.
+                    </span>
+                  </div>
 
-              <div style={styles.insightRow}>
-                <FiAlertTriangle size={17} color="#D97706" style={styles.insightIcon} />
-                <span>
-                  <b>{insights.failure_reason}</b> is the major failure
-                  reason.
-                </span>
-              </div>
+                  <div style={styles.insightRow}>
+                    <FiAlertTriangle size={17} color="#D97706" style={styles.insightIcon} />
+                    <span>
+                      <b>{insights.failure_reason}</b> is the major failure
+                      reason.
+                    </span>
+                  </div>
 
-              <div style={styles.insightRow}>
-                <FiBell size={17} color="#EF4444" style={styles.insightIcon} />
-                <span>
-                  <b>{insights.pending}</b> parcels require immediate
-                  attention.
-                </span>
-              </div>
+                  <div style={styles.insightRow}>
+                    <FiBell size={17} color="#EF4444" style={styles.insightIcon} />
+                    <span>
+                      <b>{insights.pending}</b> parcels require immediate
+                      attention.
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

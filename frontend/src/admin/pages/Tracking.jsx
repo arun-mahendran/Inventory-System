@@ -28,6 +28,22 @@ function getStatusBadge(status) {
   return STATUS_BADGE[status] || STATUS_BADGE.Received;
 }
 
+// Skeleton shimmer block (same pattern used across other pages)
+const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
+  <div
+    className="skeleton-shimmer"
+    style={{
+      width,
+      height,
+      borderRadius: radius,
+      background: "#e5e7eb",
+      position: "relative",
+      overflow: "hidden",
+      ...style,
+    }}
+  />
+);
+
 function Tracking() {
   const [trackingNumber, setTrackingNumber] = useState("");
 
@@ -35,7 +51,13 @@ function Tracking() {
 
   const [error, setError] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const searchParcel = async () => {
+    setLoading(true);
+    setError("");
+    setParcel(null);
+
     try {
       const response = await api.get(`/parcels/tracking/${trackingNumber}`);
 
@@ -48,6 +70,8 @@ function Tracking() {
       setParcel(null);
 
       setError("Parcel not found");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -70,6 +94,25 @@ function Tracking() {
   return (
     <>
       <MainLayout>
+        <style>{`
+          .skeleton-shimmer::after {
+              content: "";
+              position: absolute;
+              inset: 0;
+              transform: translateX(-100%);
+              background: linear-gradient(
+                  90deg,
+                  rgba(255,255,255,0) 0%,
+                  rgba(255,255,255,0.6) 50%,
+                  rgba(255,255,255,0) 100%
+              );
+              animation: skeleton-shimmer 1.4s infinite;
+          }
+          @keyframes skeleton-shimmer {
+              100% { transform: translateX(100%); }
+          }
+        `}</style>
+
         <div style={styles.page}>
           {/* Header */}
           <div style={styles.headerRow}>
@@ -105,22 +148,106 @@ function Tracking() {
 
               <button
                 onClick={searchParcel}
-                style={styles.searchButton}
+                disabled={loading}
+                style={{
+                  ...styles.searchButton,
+                  opacity: loading ? 0.7 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
+                }}
                 onMouseEnter={(e) =>
-                  (e.currentTarget.style.background = "#1D4ED8")
+                  !loading && (e.currentTarget.style.background = "#1D4ED8")
                 }
                 onMouseLeave={(e) =>
-                  (e.currentTarget.style.background = "#2563EB")
+                  !loading && (e.currentTarget.style.background = "#2563EB")
                 }
               >
                 <FiSearch size={17} />
-                Search
+                {loading ? "Searching..." : "Search"}
               </button>
             </div>
           </div>
 
+          {/* Loading skeleton */}
+          {loading && (
+            <div style={styles.resultsGrid}>
+              {/* TRACKING RESULT SKELETON */}
+              <div style={styles.card}>
+                <div style={styles.cardHeaderRow}>
+                  <div style={styles.cardIconBox}>
+                    <FiPackage size={24} color="#2563EB" />
+                  </div>
+                  <h2 style={styles.cardTitle}>Tracking Result</h2>
+                </div>
+
+                <div style={styles.infoGrid}>
+                  <span style={styles.infoLabel}>Tracking Number</span>
+                  <Shimmer width="160px" height="16px" />
+
+                  <span style={styles.infoLabel}>Status</span>
+                  <Shimmer width="110px" height="24px" radius="999px" />
+
+                  <span style={styles.infoLabel}>Customer ID</span>
+                  <Shimmer width="120px" height="16px" />
+
+                  <span style={styles.infoLabel}>Assigned Agent ID</span>
+                  <Shimmer width="90px" height="16px" />
+
+                  <span style={styles.infoLabel}>Created At</span>
+                  <Shimmer width="180px" height="16px" />
+                </div>
+              </div>
+
+              {/* DELIVERY PROGRESS SKELETON */}
+              <div style={styles.card}>
+                <div style={styles.progressHeaderRow}>
+                  <div style={styles.progressHeaderLeft}>
+                    <div style={styles.progressIconBox}>
+                      <FiClock size={22} color="#B45309" />
+                    </div>
+                    <h2 style={styles.cardTitle}>Delivery Progress</h2>
+                  </div>
+
+                  <Shimmer width="120px" height="30px" radius="999px" />
+                </div>
+
+                <div style={{ marginBottom: "26px" }}>
+                  <Shimmer width="260px" height="20px" />
+                </div>
+
+                <div style={styles.stepperWrap}>
+                  <div style={styles.stepperTrack} />
+
+                  {[0, 1, 2, 3].map((i) => (
+                    <div key={i} style={styles.stepItem}>
+                      <Shimmer
+                        width="48px"
+                        height="48px"
+                        radius="50%"
+                        style={{ margin: "0 auto 14px" }}
+                      />
+                      <div style={{ display: "flex", justifyContent: "center", marginBottom: "6px" }}>
+                        <Shimmer width="70px" height="14px" />
+                      </div>
+                      <div style={{ display: "flex", justifyContent: "center" }}>
+                        <Shimmer width="90px" height="12px" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ ...styles.notesCard, borderColor: "#E2E8F0" }}>
+                  <div style={styles.notesHeader}>
+                    <Shimmer width="20px" height="20px" radius="6px" />
+                    <Shimmer width="120px" height="16px" />
+                  </div>
+                  <Shimmer width="90%" height="14px" />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Not found */}
-          {error && (
+          {!loading && error && (
             <div style={styles.notFoundCard}>
               <div style={styles.notFoundIconBox}>
                 <FiX size={32} color="#EF4444" />
@@ -137,7 +264,7 @@ function Tracking() {
           )}
 
           {/* Empty state before any search */}
-          {!parcel && !error && (
+          {!loading && !parcel && !error && (
             <div style={styles.emptyCard}>
               <div style={styles.emptyIconBox}>
                 <FiPackage size={40} color="#93C5FD" />
@@ -164,7 +291,7 @@ function Tracking() {
             </div>
           )}
 
-          {parcel && (
+          {!loading && parcel && (
             <div style={styles.resultsGrid}>
               {/* TRACKING RESULT CARD */}
               <div style={styles.card}>
