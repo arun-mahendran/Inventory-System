@@ -105,6 +105,11 @@ const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }
   />
 );
 
+// Module-level flag — lives outside the component so it survives
+// unmount/remount when navigating between pages (Dashboard -> Analytics -> Dashboard -> Analytics).
+// Only resets on a full page refresh/reload.
+let hasLoadedAnalyticsOnce = false;
+
 function Analytics() {
   const [topZones, setTopZones] = useState([]);
 
@@ -118,8 +123,8 @@ function Analytics() {
 
   const [tempRange, setTempRange] = useState({ start: "", end: "" });
 
-  // Only true on the very first load — controls the full skeleton
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
+  // Only true the very first time this page is ever loaded in this browser session
+  const [isInitialLoad, setIsInitialLoad] = useState(!hasLoadedAnalyticsOnce);
 
   // True on every fetch (initial or refetch) — used for a subtle "Updating..." indicator
   const [refreshing, setRefreshing] = useState(false);
@@ -214,8 +219,9 @@ function Analytics() {
         ]);
       } finally {
         setRefreshing(false);
-        // Skeleton only ever shows once — flip this off after the first completed fetch
+        // Skeleton only ever shows once — flip local + global flag off after first completed fetch
         setIsInitialLoad(false);
+        hasLoadedAnalyticsOnce = true;
       }
     };
 
