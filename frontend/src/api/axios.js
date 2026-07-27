@@ -1,7 +1,6 @@
 import axios from "axios";
 
-const BASE_URL =
-  "https://inventory-system-backend-50043520954.development.catalystappsail.in";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 console.log("🚀 API Base URL:", BASE_URL);
 
