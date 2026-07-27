@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = "https://finalmilehubbackend.development.catalystappsail.in";
 
 console.log("🚀 API Base URL:", BASE_URL);
 
