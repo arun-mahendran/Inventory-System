@@ -9,7 +9,7 @@ import AgentPerformance from "../components/AgentPerformance";
 import DeliveryStatusChart from "../components/DeliveryStatusChart";
 
 // react-icons imports — swap emoji for crisp, professional glyphs
-import { HiOutlineLocationMarker } from "react-icons/hi";
+import { HiOutlineLocationMarker, HiOutlineSun } from "react-icons/hi";
 import { FiSearch } from "react-icons/fi";
 
 const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
@@ -150,12 +150,16 @@ function Dashboard() {
 
                     <h1
                         style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "10px",
                             fontSize: "34px",
                             marginBottom: "10px",
                             color: "#0f172a"
                         }}
                     >
-                        Good Afternoon, Arun 👋
+                        Welcome back, Arun
+                        <HiOutlineSun size={28} style={{ color: "#f97316" }} />
                     </h1>
 
                     <p

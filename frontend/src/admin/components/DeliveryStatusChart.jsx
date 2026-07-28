@@ -6,6 +6,8 @@ import {
     ResponsiveContainer
 } from "recharts";
 
+import { HiOutlineChartPie } from "react-icons/hi";
+
 function DeliveryStatusChart({ summary }) {
 
     const data = [
@@ -52,8 +54,19 @@ function DeliveryStatusChart({ summary }) {
             }}
         >
 
-            <h2>
-                📊 Delivery Analytics
+            <h2
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    color: "#0f172a"
+                }}
+            >
+                <HiOutlineChartPie
+                    size={22}
+                    style={{ color: "#f97316" }}
+                />
+                Delivery Analytics
             </h2>
 
             <div

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
+import { HiOutlineUserGroup, HiOutlineTrophy, HiOutlineExclamationTriangle } from "react-icons/hi2";
 
 const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
   <div
@@ -123,8 +124,16 @@ function AgentPerformance() {
                 }
             `}</style>
 
-            <h2>
-                🚚 Top 5 Agent Performance
+            <h2
+                style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    color: "#0f172a"
+                }}
+            >
+                <HiOutlineUserGroup size={22} style={{ color: "#f97316" }} />
+                Top 5 Agent Performance
             </h2>
 
             <div
@@ -149,11 +158,15 @@ function AgentPerformance() {
                 >
                     <h3
                         style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
                             marginBottom: "20px",
                             fontSize: "24px"
                         }}
                     >
-                        🏆 Top Performer
+                        <HiOutlineTrophy size={24} />
+                        Top Performer
                     </h3>
 
                     {loading ? (
@@ -207,11 +220,15 @@ function AgentPerformance() {
                 >
                     <h3
                         style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "8px",
                             marginBottom: "20px",
                             fontSize: "24px"
                         }}
                     >
-                        ⚠ Needs Attention
+                        <HiOutlineExclamationTriangle size={24} />
+                        Needs Attention
                     </h3>
 
                     {loading ? (
