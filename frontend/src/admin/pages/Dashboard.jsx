@@ -8,6 +8,10 @@ import RecentParcels from "../components/RecentParcels";
 import AgentPerformance from "../components/AgentPerformance";
 import DeliveryStatusChart from "../components/DeliveryStatusChart";
 
+// react-icons imports — swap emoji for crisp, professional glyphs
+import { HiOutlineLocationMarker } from "react-icons/hi";
+import { FiSearch } from "react-icons/fi";
+
 const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
   <div
     className="skeleton-shimmer"
@@ -236,8 +240,19 @@ function Dashboard() {
                         }}
                     >
 
-                        <h2>
-                            📍 Pincode Analytics
+                        <h2
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "10px",
+                                color: "#0f172a",
+                            }}
+                        >
+                            <HiOutlineLocationMarker
+                                size={22}
+                                style={{ color: "#f97316" }}
+                            />
+                            Pincode Analytics
                         </h2>
 
                         <div
@@ -250,22 +265,34 @@ function Dashboard() {
                             }}
                         >
 
-                            <input
-                                type="text"
-                                placeholder="Enter Pincode"
-                                value={searchPincode}
-                                onChange={(e) =>
-                                    setSearchPincode(
-                                        e.target.value
-                                    )
-                                }
-                                style={{
-                                    padding: "10px",
-                                    border: "1px solid #d1d5db",
-                                    borderRadius: "10px",
-                                    width: "220px"
-                                }}
-                            />
+                            <div style={{ position: "relative" }}>
+                                <FiSearch
+                                    size={16}
+                                    style={{
+                                        position: "absolute",
+                                        left: "12px",
+                                        top: "50%",
+                                        transform: "translateY(-50%)",
+                                        color: "#94a3b8",
+                                    }}
+                                />
+                                <input
+                                    type="text"
+                                    placeholder="Enter Pincode"
+                                    value={searchPincode}
+                                    onChange={(e) =>
+                                        setSearchPincode(
+                                            e.target.value
+                                        )
+                                    }
+                                    style={{
+                                        padding: "10px 10px 10px 34px",
+                                        border: "1px solid #d1d5db",
+                                        borderRadius: "10px",
+                                        width: "220px"
+                                    }}
+                                />
+                            </div>
 
                             <button
                                 onClick={() => {
