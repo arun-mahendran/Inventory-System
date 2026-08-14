@@ -16,7 +16,6 @@ try:
 except Exception as e:
     print("AI IMPORT ERROR:", repr(e))
     raise
-print("AI_SERVICE_IMPORTED")
 
 router = APIRouter(
     prefix="/ai",
