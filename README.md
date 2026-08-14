@@ -283,10 +283,6 @@ PostgreSQL   Gemini API
 
 This project is developed for educational, academic, and demonstration purposes.
 
-## 📧 Delivery Agent Opportunities
-
-finalmile.hr@gmail.com
-
 ---
 
 Built with ❤️ using React, FastAPI, PostgreSQL, and modern web technologies.
