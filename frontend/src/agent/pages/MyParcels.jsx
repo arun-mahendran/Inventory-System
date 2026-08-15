@@ -47,6 +47,7 @@ function MyParcels() {
   const [parcels, setParcels] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const [filterStatus, setFilterStatus] = useState("All");
 
@@ -111,13 +112,16 @@ function MyParcels() {
 
   const fetchParcels = async () => {
     try {
-      setLoading(true);
+      if (!hasLoadedOnce) {
+        setLoading(true);
+      }
 
       const agentId = localStorage.getItem("delivery_agent_id");
 
       if (!agentId) {
         console.error("Delivery Agent ID not found");
         setLoading(false);
+        setHasLoadedOnce(true);
         return;
       }
 
@@ -143,6 +147,7 @@ function MyParcels() {
       console.error(error);
     } finally {
       setLoading(false);
+      setHasLoadedOnce(true);
     }
   };
 

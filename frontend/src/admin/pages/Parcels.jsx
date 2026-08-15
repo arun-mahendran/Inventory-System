@@ -59,6 +59,7 @@ function Parcels() {
   const [parcels, setParcels] = useState([]);
 
   const [loading, setLoading] = useState(true);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -83,7 +84,9 @@ function Parcels() {
   const [showPageSizeDropdown, setShowPageSizeDropdown] = useState(false);
 
   const fetchParcels = async () => {
-    setLoading(true);
+    if (!hasLoadedOnce) {
+      setLoading(true);
+    }
 
     try {
       const response = await api.get("/parcels/");
@@ -105,6 +108,7 @@ function Parcels() {
       console.error("Parcel Error:", error);
     } finally {
       setLoading(false);
+      setHasLoadedOnce(true);
     }
   };
 
