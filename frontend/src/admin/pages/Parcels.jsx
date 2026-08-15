@@ -37,29 +37,10 @@ function getStatusStyle(status) {
 
 const PAGE_SIZE_OPTIONS = [10, 20, 50];
 
-// Skeleton shimmer block (same pattern used in Customers page)
-const Shimmer = ({ width = "100%", height = "16px", radius = "8px", style = {} }) => (
-  <div
-    className="skeleton-shimmer"
-    style={{
-      width,
-      height,
-      borderRadius: radius,
-      background: "#e5e7eb",
-      position: "relative",
-      overflow: "hidden",
-      ...style,
-    }}
-  />
-);
-
 function Parcels() {
   const navigate = useNavigate();
 
   const [parcels, setParcels] = useState([]);
-
-  const [loading, setLoading] = useState(true);
-  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -84,10 +65,6 @@ function Parcels() {
   const [showPageSizeDropdown, setShowPageSizeDropdown] = useState(false);
 
   const fetchParcels = async () => {
-    if (!hasLoadedOnce) {
-      setLoading(true);
-    }
-
     try {
       const response = await api.get("/parcels/");
 
@@ -106,9 +83,6 @@ function Parcels() {
       setParcels(sortedParcels);
     } catch (error) {
       console.error("Parcel Error:", error);
-    } finally {
-      setLoading(false);
-      setHasLoadedOnce(true);
     }
   };
 
@@ -278,25 +252,6 @@ function Parcels() {
   return (
     <>
       <MainLayout>
-        <style>{`
-          .skeleton-shimmer::after {
-              content: "";
-              position: absolute;
-              inset: 0;
-              transform: translateX(-100%);
-              background: linear-gradient(
-                  90deg,
-                  rgba(255,255,255,0) 0%,
-                  rgba(255,255,255,0.6) 50%,
-                  rgba(255,255,255,0) 100%
-              );
-              animation: skeleton-shimmer 1.4s infinite;
-          }
-          @keyframes skeleton-shimmer {
-              100% { transform: translateX(100%); }
-          }
-        `}</style>
-
         <div style={styles.page}>
           {/* Header */}
           <div style={styles.headerRow}>
@@ -426,267 +381,235 @@ function Parcels() {
               </thead>
 
               <tbody>
-                {loading ? (
-                  Array.from({ length: pageSize }).map((_, i) => (
-                    <tr key={`skeleton-${i}`}>
+                {paginatedParcels.map((parcel) => {
+                  const status = getStatusStyle(parcel.status);
+                  const isAssigned = parcel.status === "Assigned";
+                  const isOutForDelivery = parcel.status === "OutForDelivery";
+                  const isFailed = parcel.status === "FailedDelivery";
+                  const hasHistory = parcel.history_count > 1;
+
+                  return (
+                    <tr
+                      key={parcel.id}
+                      style={styles.tr}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = "#F8FAFC")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
+                    >
                       <td style={styles.td}>
-                        <Shimmer width="140px" height="14px" />
+                        <span
+                          style={styles.trackingLink}
+                          onClick={() => viewParcelDetails(parcel.id)}
+                        >
+                          {parcel.tracking_number}
+                        </span>
                       </td>
+
+                      <td style={styles.td}>{parcel.customer_id}</td>
+
                       <td style={styles.td}>
-                        <Shimmer width="90px" height="14px" />
+                        <span
+                          style={{
+                            ...styles.statusBadge,
+                            background: status.bg,
+                            color: status.fg,
+                          }}
+                        >
+                          <span
+                            style={{
+                              ...styles.statusDot,
+                              background: status.dot,
+                            }}
+                          />
+                          {parcel.status}
+                        </span>
                       </td>
+
                       <td style={styles.td}>
-                        <Shimmer width="100px" height="22px" radius="999px" />
+                        {parcel.assigned_agent_id
+                          ? `Agent ${parcel.assigned_agent_id}`
+                          : "-"}
                       </td>
-                      <td style={styles.td}>
-                        <Shimmer width="80px" height="14px" />
-                      </td>
+
                       <td style={styles.td}>
                         <div style={styles.actionsCell}>
-                          <Shimmer width="44px" height="26px" radius="8px" />
-                          <Shimmer width="50px" height="26px" radius="8px" />
-                          <Shimmer width="66px" height="26px" radius="8px" />
-                          <Shimmer width="70px" height="26px" radius="8px" />
-                          <Shimmer width="66px" height="26px" radius="8px" />
+                          <button
+                            disabled={!isAssigned}
+                            onClick={() => outForDelivery(parcel.id)}
+                            style={
+                              isAssigned
+                                ? styles.actionSolid("#F97316")
+                                : styles.actionMuted
+                            }
+                          >
+                            Out
+                          </button>
+
+                          <button
+                            disabled={!isOutForDelivery}
+                            onClick={() => openFailedModal(parcel.id)}
+                            style={
+                              isOutForDelivery
+                                ? styles.actionSolid("#EF4444", "#EF4444")
+                                : styles.actionMuted
+                            }
+                          >
+                            Failed
+                          </button>
+
+                          <button
+                            disabled={!isOutForDelivery}
+                            onClick={() => markDelivered(parcel.id)}
+                            style={
+                              isOutForDelivery
+                                ? styles.actionSolid("#22C55E", "#22C55E")
+                                : styles.actionMuted
+                            }
+                          >
+                            Delivered
+                          </button>
+
+                          <button
+                            disabled={!isFailed}
+                            onClick={() => reassignParcel(parcel.id)}
+                            style={
+                              isFailed
+                                ? styles.actionSolid("#2563EB", "#2563EB")
+                                : styles.actionMuted
+                            }
+                          >
+                            Reassign
+                          </button>
+
+                          {hasHistory ? (
+                            <Link
+                              to={`/parcel-history/${parcel.id}`}
+                              style={styles.historyActive}
+                            >
+                              <FiClock size={13} />
+                              History
+                            </Link>
+                          ) : (
+                            <span style={styles.historyMuted}>
+                              <FiClock size={13} />
+                              History
+                            </span>
+                          )}
                         </div>
                       </td>
                     </tr>
-                  ))
-                ) : (
-                  <>
-                    {paginatedParcels.map((parcel) => {
-                      const status = getStatusStyle(parcel.status);
-                      const isAssigned = parcel.status === "Assigned";
-                      const isOutForDelivery = parcel.status === "OutForDelivery";
-                      const isFailed = parcel.status === "FailedDelivery";
-                      const hasHistory = parcel.history_count > 1;
+                  );
+                })}
 
-                      return (
-                        <tr
-                          key={parcel.id}
-                          style={styles.tr}
-                          onMouseEnter={(e) =>
-                            (e.currentTarget.style.background = "#F8FAFC")
-                          }
-                          onMouseLeave={(e) =>
-                            (e.currentTarget.style.background = "transparent")
-                          }
-                        >
-                          <td style={styles.td}>
-                            <span
-                              style={styles.trackingLink}
-                              onClick={() => viewParcelDetails(parcel.id)}
-                            >
-                              {parcel.tracking_number}
-                            </span>
-                          </td>
-
-                          <td style={styles.td}>{parcel.customer_id}</td>
-
-                          <td style={styles.td}>
-                            <span
-                              style={{
-                                ...styles.statusBadge,
-                                background: status.bg,
-                                color: status.fg,
-                              }}
-                            >
-                              <span
-                                style={{
-                                  ...styles.statusDot,
-                                  background: status.dot,
-                                }}
-                              />
-                              {parcel.status}
-                            </span>
-                          </td>
-
-                          <td style={styles.td}>
-                            {parcel.assigned_agent_id
-                              ? `Agent ${parcel.assigned_agent_id}`
-                              : "-"}
-                          </td>
-
-                          <td style={styles.td}>
-                            <div style={styles.actionsCell}>
-                              <button
-                                disabled={!isAssigned}
-                                onClick={() => outForDelivery(parcel.id)}
-                                style={
-                                  isAssigned
-                                    ? styles.actionSolid("#F97316")
-                                    : styles.actionMuted
-                                }
-                              >
-                                Out
-                              </button>
-
-                              <button
-                                disabled={!isOutForDelivery}
-                                onClick={() => openFailedModal(parcel.id)}
-                                style={
-                                  isOutForDelivery
-                                    ? styles.actionSolid("#EF4444", "#EF4444")
-                                    : styles.actionMuted
-                                }
-                              >
-                                Failed
-                              </button>
-
-                              <button
-                                disabled={!isOutForDelivery}
-                                onClick={() => markDelivered(parcel.id)}
-                                style={
-                                  isOutForDelivery
-                                    ? styles.actionSolid("#22C55E", "#22C55E")
-                                    : styles.actionMuted
-                                }
-                              >
-                                Delivered
-                              </button>
-
-                              <button
-                                disabled={!isFailed}
-                                onClick={() => reassignParcel(parcel.id)}
-                                style={
-                                  isFailed
-                                    ? styles.actionSolid("#2563EB", "#2563EB")
-                                    : styles.actionMuted
-                                }
-                              >
-                                Reassign
-                              </button>
-
-                              {hasHistory ? (
-                                <Link
-                                  to={`/parcel-history/${parcel.id}`}
-                                  style={styles.historyActive}
-                                >
-                                  <FiClock size={13} />
-                                  History
-                                </Link>
-                              ) : (
-                                <span style={styles.historyMuted}>
-                                  <FiClock size={13} />
-                                  History
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })}
-
-                    {paginatedParcels.length === 0 && (
-                      <tr>
-                        <td colSpan={5} style={styles.emptyState}>
-                          No parcels found.
-                        </td>
-                      </tr>
-                    )}
-                  </>
+                {paginatedParcels.length === 0 && (
+                  <tr>
+                    <td colSpan={5} style={styles.emptyState}>
+                      No parcels found.
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
 
             {/* Footer / pagination */}
-            {!loading && (
-              <div style={styles.footerRow}>
-                <span style={styles.footerText}>
-                  {totalParcels === 0
-                    ? "No parcels"
-                    : `Showing ${rangeStart} to ${rangeEnd} of ${totalParcels} parcels`}
-                </span>
+            <div style={styles.footerRow}>
+              <span style={styles.footerText}>
+                {totalParcels === 0
+                  ? "No parcels"
+                  : `Showing ${rangeStart} to ${rangeEnd} of ${totalParcels} parcels`}
+              </span>
 
-                <div style={styles.paginationControls}>
-                  <button
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    style={{
-                      ...styles.pageArrowButton,
-                      opacity: currentPage === 1 ? 0.4 : 1,
-                      cursor: currentPage === 1 ? "not-allowed" : "pointer",
-                    }}
-                  >
-                    <FiChevronLeft size={16} />
-                  </button>
+              <div style={styles.paginationControls}>
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  style={{
+                    ...styles.pageArrowButton,
+                    opacity: currentPage === 1 ? 0.4 : 1,
+                    cursor: currentPage === 1 ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <FiChevronLeft size={16} />
+                </button>
 
-                  {pageNumbers.map((p, idx) =>
-                    p === "..." ? (
-                      <span key={`ellipsis-${idx}`} style={styles.ellipsis}>
-                        …
-                      </span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => setCurrentPage(p)}
-                        style={{
-                          ...styles.pageNumberButton,
-                          ...(p === currentPage
-                            ? styles.pageNumberButtonActive
-                            : {}),
-                        }}
-                      >
-                        {p}
-                      </button>
-                    )
-                  )}
-
-                  <button
-                    onClick={() =>
-                      setCurrentPage((p) => Math.min(totalPages, p + 1))
-                    }
-                    disabled={currentPage === totalPages}
-                    style={{
-                      ...styles.pageArrowButton,
-                      opacity: currentPage === totalPages ? 0.4 : 1,
-                      cursor:
-                        currentPage === totalPages ? "not-allowed" : "pointer",
-                    }}
-                  >
-                    <FiChevronRight size={16} />
-                  </button>
-
-                  <div style={styles.pageSizeWrap}>
-                    <div
-                      onClick={() => setShowPageSizeDropdown((s) => !s)}
-                      style={styles.pageSizeButton}
+                {pageNumbers.map((p, idx) =>
+                  p === "..." ? (
+                    <span key={`ellipsis-${idx}`} style={styles.ellipsis}>
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => setCurrentPage(p)}
+                      style={{
+                        ...styles.pageNumberButton,
+                        ...(p === currentPage
+                          ? styles.pageNumberButtonActive
+                          : {}),
+                      }}
                     >
-                      <span>{pageSize} / page</span>
-                      <FiChevronDown size={14} color="#64748B" />
-                    </div>
+                      {p}
+                    </button>
+                  )
+                )}
 
-                    {showPageSizeDropdown && (
-                      <div style={styles.pageSizeDropdown}>
-                        {PAGE_SIZE_OPTIONS.map((size) => (
-                          <div
-                            key={size}
-                            onClick={() => {
-                              setPageSize(size);
-                              setCurrentPage(1);
-                              setShowPageSizeDropdown(false);
-                            }}
-                            onMouseEnter={(e) =>
-                              (e.currentTarget.style.background = "#F8FAFC")
-                            }
-                            onMouseLeave={(e) =>
-                              (e.currentTarget.style.background = "white")
-                            }
-                            style={{
-                              ...styles.pageSizeOption,
-                              fontWeight: size === pageSize ? 700 : 500,
-                              color: size === pageSize ? "#1D4ED8" : "#0F172A",
-                            }}
-                          >
-                            {size} / page
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                <button
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(totalPages, p + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  style={{
+                    ...styles.pageArrowButton,
+                    opacity: currentPage === totalPages ? 0.4 : 1,
+                    cursor:
+                      currentPage === totalPages ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <FiChevronRight size={16} />
+                </button>
+
+                <div style={styles.pageSizeWrap}>
+                  <div
+                    onClick={() => setShowPageSizeDropdown((s) => !s)}
+                    style={styles.pageSizeButton}
+                  >
+                    <span>{pageSize} / page</span>
+                    <FiChevronDown size={14} color="#64748B" />
                   </div>
+
+                  {showPageSizeDropdown && (
+                    <div style={styles.pageSizeDropdown}>
+                      {PAGE_SIZE_OPTIONS.map((size) => (
+                        <div
+                          key={size}
+                          onClick={() => {
+                            setPageSize(size);
+                            setCurrentPage(1);
+                            setShowPageSizeDropdown(false);
+                          }}
+                          onMouseEnter={(e) =>
+                            (e.currentTarget.style.background = "#F8FAFC")
+                          }
+                          onMouseLeave={(e) =>
+                            (e.currentTarget.style.background = "white")
+                          }
+                          style={{
+                            ...styles.pageSizeOption,
+                            fontWeight: size === pageSize ? 700 : 500,
+                            color: size === pageSize ? "#1D4ED8" : "#0F172A",
+                          }}
+                        >
+                          {size} / page
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
